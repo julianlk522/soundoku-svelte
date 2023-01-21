@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Cell from "../components/cell.svelte";
+    import Row from "../components/row.svelte";
 </script>
 
 <main>
-    <Cell />
+    <Row />
 </main>
 
 <style>
