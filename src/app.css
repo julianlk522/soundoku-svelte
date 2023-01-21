@@ -1,0 +1,77 @@
+/* Slightly modified version of Josh Comeau's Custom CSS Reset
+https://www.joshwcomeau.com/css/custom-css-reset/ */
+*/ *,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+* {
+	--color-primary: hsl(240deg, 100%, 35%);
+	--color-primary-soft: hsl(240deg, 100%, 35%, 50%);
+	--color-primary-muted: hsl(225deg, 100%, 25%);
+
+	--color-secondary: hsl(164deg, 100%, 36%);
+	--color-secondary-soft: hsl(164deg, 100%, 36%, 50%);
+	--color-secondary-muted: hsl(164deg, 100%, 25%);
+
+	--color-accent: hsl(330deg, 100%, 50%);
+	margin: 0;
+	font-family: 'Kameron', serif;
+	color-scheme: light dark;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+}
+html,
+body {
+	height: 100%;
+}
+body {
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+}
+
+a {
+	font-weight: 500;
+	text-decoration: inherit;
+}
+
+body {
+	display: flex;
+	place-items: center;
+	min-width: 320px;
+	min-height: 100vh;
+}
+
+h1 {
+	font-size: 3.2em;
+	line-height: 1.1;
+}
+
+/* @media (prefers-color-scheme: light) {
+} */
