@@ -1,11 +1,20 @@
-<script>
-    let selectedCell = false
-    let completed = false
-    let value = 5
+<script lang='ts'>
+    // let completed = false
+    export let value: number | null = 0
+    export let selectedCell: number | null = null
+    export let rowIndex = 0
+    export let indexInRow = 0
+    $: selected = selectedCell === rowIndex * 9 + indexInRow
+    $: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
 </script>
 
-<button class="cell" on:click={() => selectedCell = !selectedCell} class:selected={selectedCell}>
-    {completed ? value : ""}
+<button
+    class="cell"
+    class:selected={selected}
+    class:rightEdgeOfLocalBox={rightEdgeOfLocalBox}
+>
+    <!-- {completed ? value : ""} -->
+    {value}
 </button>
 
 <style>
@@ -47,7 +56,7 @@
     background-color: var(--color-primary-soft);
 }
 
-.edgeOfLocalBox {
+.rightEdgeOfLocalBox {
     border-right: 4px solid black;
 }
 

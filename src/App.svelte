@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Row from "../components/row.svelte";
+    import Board from "../components/board.svelte"
 </script>
 
 <main>
-    <Row />
+    <Board/>
 </main>
 
 <style>

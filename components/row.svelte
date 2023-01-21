@@ -1,16 +1,21 @@
-<script>
+<script lang='ts'>
     import Cell from "./cell.svelte";
 
-    let row = Array.from(Array(10)).map((_, i) => i + 1)
-    let rowIndex = 5
+    export let row: (number | null)[] = []
+    export let rowIndex = 0
     $: bottomEdgeOfLocalBox = rowIndex === 2 || rowIndex === 5
-    let selectedCell
-    let startingBoard
+    export let selectedCell: number | null = null
+    // let startingBoard
 </script>
 
 <div class="row" class:bottomEdgeOfLocalBox>
-    {#each row as cell}
-    <Cell />
+    {#each row as value, i}
+    <Cell
+        {value}
+        {selectedCell}
+        {rowIndex}
+        indexInRow = {i}
+    />
     {/each}
 </div>
 
