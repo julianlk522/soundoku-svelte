@@ -1,4 +1,4 @@
-/* Slightly modified version of Josh Comeau's Custom CSS Reset
+/* Modified version of Josh Comeau's Custom CSS Reset
 https://www.joshwcomeau.com/css/custom-css-reset/ */
 */ *,
 *::before,
@@ -6,6 +6,15 @@ https://www.joshwcomeau.com/css/custom-css-reset/ */
 	box-sizing: border-box;
 }
 * {
+	margin: 0;
+	font-family: 'Kameron', serif;
+	color-scheme: light dark;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+
 	--color-primary: hsl(240deg, 100%, 35%);
 	--color-primary-soft: hsl(240deg, 100%, 35%, 50%);
 	--color-primary-muted: hsl(225deg, 100%, 25%);
@@ -15,17 +24,10 @@ https://www.joshwcomeau.com/css/custom-css-reset/ */
 	--color-secondary-muted: hsl(164deg, 100%, 25%);
 
 	--color-accent: hsl(330deg, 100%, 50%);
-	margin: 0;
-	font-family: 'Kameron', serif;
-	color-scheme: light dark;
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-text-size-adjust: 100%;
 }
 html,
-body {
+body,
+#app {
 	height: 100%;
 }
 body {
@@ -61,10 +63,11 @@ a {
 	text-decoration: inherit;
 }
 
-body {
+body,
+#app {
 	display: flex;
 	place-items: center;
-	min-width: 320px;
+	width: 100%;
 	min-height: 100vh;
 }
 
