@@ -1,0 +1,39 @@
+<script lang='ts'>
+    export let value: number
+</script>
+
+<button class="selectionButton">{value}</button>
+
+<style>
+.selectionButton {
+  display: flex;
+  height: 0.5rem;
+  width: 0.5rem;
+  padding: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  background: #eee;
+  border-radius: 0.25rem;
+  box-shadow: 0px 0px 4px rgb(0 0 0 / 25%);
+}
+
+.selectionButton:hover {
+  background: #ccc;
+}
+
+.selectionButton:active {
+  box-shadow: 0px 0px 2px 1px rgb(0 0 0 / 25%);
+}
+
+@media (min-width: 640px) {
+  .selectionButton {
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .selectionButton {
+    padding: 3rem;
+  }
+}
+</style>
