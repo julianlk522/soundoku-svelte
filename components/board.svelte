@@ -1,8 +1,9 @@
 <script lang='ts'>
     import {selectedCellStore, selectedNumberStore} from '../src/stores'
     import {onMount, createEventDispatcher} from 'svelte'
-    import Row from "./Row.svelte";
     import {makepuzzle, solvepuzzle} from 'sudoku'
+    import {playAudio, stopAudio, playArpeggio} from './audio'
+    import Row from "./Row.svelte";
 
     const dispatch = createEventDispatcher()
 
@@ -46,7 +47,14 @@
     }
 
     function handleCellSelected(event: CustomEvent) {
-      selectedCellStore.set(event.detail.val)
+      selectedCellStore.set(event.detail.index)
+
+      if (event.detail.value !== null) {
+        stopAudio()
+
+        const panning = (event.detail.index % 9) / 4 - 1
+        playAudio(event.detail.value - 1, panning)
+      }
     }
 
     function handleGuess(num: number) {
@@ -64,16 +72,16 @@
     }
 
     onMount(() => {
-        start = makepuzzle()
-        
-        //  solvepuzzle() relies on a range of 0-8 so it must be run before mapping values to 1-9
-        solution = solvepuzzle(start).map((num: number) => num + 1)
-        
-        start = start.map((num: number | null) => num != null ? num + 1 : null)
-        fillCellsToDecreaseDifficulty()
-        board = [...start]
+      start = makepuzzle()
+      
+      //  solvepuzzle() relies on a range of 0-8 so it must be run before mapping values to 1-9
+      solution = solvepuzzle(start).map((num: number) => num + 1)
+      
+      start = start.map((num: number | null) => num != null ? num + 1 : null)
+      fillCellsToDecreaseDifficulty()
+      board = [...start]
 
-        setRows()
+      setRows()
     })
 </script>
 

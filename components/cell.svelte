@@ -15,9 +15,7 @@
     $: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
 
     function handleSelect() {
-      dispatch('select', {
-        val: rowIndex * 9 + indexInRow
-      })
+      dispatch('select', {index: rowIndex * 9 + indexInRow, value})
     }
 </script>
 

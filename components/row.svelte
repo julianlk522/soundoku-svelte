@@ -9,9 +9,7 @@
     // let startingBoard
 
     function handleCellSelect(event: CustomEvent) {
-        dispatch('select', {
-            val: event.detail.val
-        })
+        dispatch('select', event.detail)
     }
 </script>
 
