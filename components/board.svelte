@@ -17,13 +17,40 @@
         }
     }
 
+    function fillCellsToDecreaseDifficulty() {
+      //  check for number of initially filled spaces
+      let filledNumsCount = start.filter(
+        (val: number | null) => val !== null
+      ).length;
+
+      let n = 80 - filledNumsCount;
+      const checkedIndices = [];
+
+      while (n > 0) {
+        const randomIndex = Math.floor(Math.random() * 81);
+        if (
+          checkedIndices.indexOf(randomIndex) === -1 &&
+          start[randomIndex] === null
+        ) {
+          start.splice(randomIndex, 1, solution[randomIndex]);
+          n--;
+        }
+        checkedIndices.push(randomIndex);
+      }
+    }
+
+    function handleCellSelected(event: CustomEvent) {
+      selectedCell = event.detail.val
+    }
+
     onMount(() => {
         start = makepuzzle()
-
+        
         //  solvepuzzle() relies on a range of 0-8 so it must be run before mapping values to 1-9
         solution = solvepuzzle(start).map((num: number) => num + 1)
-
+        
         start = start.map((num: number | null) => num != null ? num + 1 : null)
+        fillCellsToDecreaseDifficulty()
         board = [...start]
 
         setRows()
@@ -35,6 +62,8 @@
         <Row
             rowIndex = {i}
             {row}
+            {selectedCell}
+            on:select={handleCellSelected}
         />
     {/each}
 </div>

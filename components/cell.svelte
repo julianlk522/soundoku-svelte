@@ -1,4 +1,7 @@
 <script lang='ts'>
+    import {createEventDispatcher} from 'svelte'
+    const dispatch = createEventDispatcher()
+
     // let completed = false
     export let value: number | null = 0
     export let selectedCell: number | null = null
@@ -6,12 +9,19 @@
     export let indexInRow = 0
     $: selected = selectedCell === rowIndex * 9 + indexInRow
     $: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
+
+    function handleSelect() {
+      dispatch('select', {
+        val: rowIndex * 9 + indexInRow
+      })
+    }
 </script>
 
 <button
     class="cell"
     class:selected={selected}
     class:rightEdgeOfLocalBox={rightEdgeOfLocalBox}
+    on:click={handleSelect}
 >
     <!-- {completed ? value : ""} -->
     {value}

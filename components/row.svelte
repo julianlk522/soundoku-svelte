@@ -1,11 +1,19 @@
 <script lang='ts'>
     import Cell from "./cell.svelte";
+    import {createEventDispatcher} from 'svelte'
+    const dispatch = createEventDispatcher()
 
     export let row: (number | null)[] = []
     export let rowIndex = 0
     $: bottomEdgeOfLocalBox = rowIndex === 2 || rowIndex === 5
     export let selectedCell: number | null = null
     // let startingBoard
+
+    function handleCellSelect(event: CustomEvent) {
+        dispatch('select', {
+            val: event.detail.val
+        })
+    }
 </script>
 
 <div class="row" class:bottomEdgeOfLocalBox>
@@ -15,6 +23,7 @@
         {selectedCell}
         {rowIndex}
         indexInRow = {i}
+        on:select={handleCellSelect}
     />
     {/each}
 </div>
