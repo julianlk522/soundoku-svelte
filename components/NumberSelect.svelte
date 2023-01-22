@@ -1,6 +1,10 @@
 <script lang='ts'>
     import NumberSelectButton from "./NumberSelectButton.svelte";
+
     let nums = Array.from(Array(9)).map((_, i) => i + 1)
+
+    export let time = ""
+    export let errors = 0
 </script>
 
 <div id="grid">
@@ -8,6 +12,9 @@
         <NumberSelectButton value={num} />
     {/each}
 </div>
+
+<h3 class="timer">{time}</h3>
+<h3 class="errors">Errors: {errors}</h3>
 
 <style>
 #grid {
@@ -18,7 +25,7 @@
   align-items: center;
 }
 
-/* .timer {
+.timer {
   text-align: center;
   margin-top: 1rem;
   display: inline-block;
@@ -42,5 +49,5 @@
   .errors {
     font-size: 1.5rem;
   }
-} */
+}
 </style>
