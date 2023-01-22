@@ -24,7 +24,7 @@
     on:click={handleSelect}
 >
     <!-- {completed ? value : ""} -->
-    {value}
+    {value !== null ? value : ""}
 </button>
 
 <style>

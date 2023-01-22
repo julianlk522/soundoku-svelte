@@ -1,6 +1,6 @@
 <script lang='ts'>
     import {onMount} from 'svelte'
-    import Row from "./row.svelte";
+    import Row from "./Row.svelte";
     import {makepuzzle, solvepuzzle} from 'sudoku'
 
     let start: (number | null)[]
@@ -70,7 +70,8 @@
 
 <style>
 #board {
-  width: auto;
+  width: min-content;
+  max-width: 75%;
   border: 4px solid black;
   margin-bottom: 2rem;
   background-color: #eee;

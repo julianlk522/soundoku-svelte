@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import Cell from "./cell.svelte";
+    import Cell from "./Cell.svelte";
     import {createEventDispatcher} from 'svelte'
     const dispatch = createEventDispatcher()
 
