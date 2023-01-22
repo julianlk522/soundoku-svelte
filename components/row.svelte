@@ -6,7 +6,6 @@
     export let row: (number | null)[] = []
     export let rowIndex = 0
     $: bottomEdgeOfLocalBox = rowIndex === 2 || rowIndex === 5
-    export let selectedCell: number | null = null
     // let startingBoard
 
     function handleCellSelect(event: CustomEvent) {
@@ -20,7 +19,6 @@
     {#each row as value, i}
     <Cell
         {value}
-        {selectedCell}
         {rowIndex}
         indexInRow = {i}
         on:select={handleCellSelect}

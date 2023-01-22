@@ -1,12 +1,16 @@
 <script lang='ts'>
+    import {selectedCellStore} from '../src/stores'
     import {createEventDispatcher} from 'svelte'
     const dispatch = createEventDispatcher()
 
     // let completed = false
     export let value: number | null = 0
-    export let selectedCell: number | null = null
     export let rowIndex = 0
     export let indexInRow = 0
+
+    let selectedCell: number | null
+    selectedCellStore.subscribe(index => selectedCell = index)
+
     $: selected = selectedCell === rowIndex * 9 + indexInRow
     $: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
 
