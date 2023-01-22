@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {selectedCellStore, selectedNumberStore} from '../src/stores'
+    import {selectedCellStore, selectedNumberStore, remainingCellsStore} from '../src/stores'
     import {onMount, createEventDispatcher} from 'svelte'
     import {makepuzzle, solvepuzzle} from 'sudoku'
     import {playAudio, stopAudio, playArpeggio} from './audio'
@@ -30,9 +30,10 @@
         (val: number | null) => val !== null
       ).length;
 
-      let n = 50 - filledNumsCount;
-      const checkedIndices = [];
+      const desiredFilledNumsCount = 50
+      let n = desiredFilledNumsCount - filledNumsCount;
 
+      const checkedIndices = [];
       while (n > 0) {
         const randomIndex = Math.floor(Math.random() * 81);
         if (
@@ -44,6 +45,7 @@
         }
         checkedIndices.push(randomIndex);
       }
+      remainingCellsStore.set(81 - desiredFilledNumsCount)
     }
 
     function handleCellSelected(event: CustomEvent) {
@@ -66,7 +68,10 @@
     }
 
     function handleCorrectGuess() {
+      //  just for TS linting, even though this condition is impossible
       if (selectedCell === null) return
+
+      remainingCellsStore.update(n => n - 1)
       board.splice(selectedCell, 1, solution[selectedCell])
       setRows()
     }
