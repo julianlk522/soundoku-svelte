@@ -1,9 +1,12 @@
 <script lang='ts'>
     import {selectedNumberStore} from '../src/stores'
+    import {stopAudio, playAudio} from './audio'
     export let value: number
 
     function handleNumberSelect(value: number) {
       selectedNumberStore.set(value)
+      stopAudio()
+      playAudio(value - 1)
     }
 </script>
 
