@@ -1,8 +1,16 @@
 <script lang='ts'>
+    import {selectedNumberStore} from '../src/stores'
     export let value: number
+
+    function handleNumberSelect(value: number) {
+      selectedNumberStore.set(value)
+    }
 </script>
 
-<button class="selectionButton">{value}</button>
+<button
+    class="selectionButton"
+    on:click={() => handleNumberSelect(value)}    
+>{value}</button>
 
 <style>
 .selectionButton {

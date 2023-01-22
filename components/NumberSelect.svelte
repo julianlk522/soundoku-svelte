@@ -7,17 +7,26 @@
     export let errors = 0
 </script>
 
-<div id="grid">
-    {#each nums as num (num)}
-        <NumberSelectButton value={num} />
-    {/each}
+<div class="flex-column">
+    <div id="selection-grid">
+        {#each nums as num (num)}
+            <NumberSelectButton
+                value={num}
+            />
+        {/each}
+    </div>
+    <h3 class="timer">{time}</h3>
+    <h3 id="errors">Errors: {errors}</h3>
 </div>
 
-<h3 class="timer">{time}</h3>
-<h3 class="errors">Errors: {errors}</h3>
 
 <style>
-#grid {
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+#selection-grid {
   width: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -35,18 +44,18 @@
   font-size: 1.5rem;
 }
 
-.errors {
+#errors {
   margin-top: 1rem;
   font-size: 1rem;
   text-align: center;
 }
 
 @media (min-width: 640px) {
-  .errors,
+  #errors,
   .timer {
     margin-top: 2rem;
   }
-  .errors {
+  #errors {
     font-size: 1.5rem;
   }
 }

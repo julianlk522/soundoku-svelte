@@ -1,13 +1,19 @@
 <script lang='ts'>
-    import {onMount} from 'svelte'
+    import {selectedCellStore, selectedNumberStore} from '../src/stores'
+    import {onMount, createEventDispatcher} from 'svelte'
     import Row from "./Row.svelte";
     import {makepuzzle, solvepuzzle} from 'sudoku'
+
+    const dispatch = createEventDispatcher()
 
     let start: (number | null)[]
     let board: (number | null)[] = []
     let solution: number[]
     let rows: (number | null)[][] = []
+
     let selectedCell: number | null = null
+    selectedCellStore.subscribe(index => selectedCell = index)
+    selectedNumberStore.subscribe(val => handleGuess(val))
 
     //  split board into groups of 9 and assign product to rows
     function setRows() {
@@ -23,7 +29,7 @@
         (val: number | null) => val !== null
       ).length;
 
-      let n = 80 - filledNumsCount;
+      let n = 50 - filledNumsCount;
       const checkedIndices = [];
 
       while (n > 0) {
@@ -40,7 +46,21 @@
     }
 
     function handleCellSelected(event: CustomEvent) {
-      selectedCell = event.detail.val
+      selectedCellStore.set(event.detail.val)
+    }
+
+    function handleGuess(num: number) {
+      if (selectedCell === null || board[selectedCell] !== null) return
+      if (solution[selectedCell] === num) {
+        return handleCorrectGuess()
+      }
+      dispatch('incorrect-guess')
+    }
+
+    function handleCorrectGuess() {
+      if (selectedCell === null) return
+      board.splice(selectedCell, 1, solution[selectedCell])
+      setRows()
     }
 
     onMount(() => {
@@ -62,7 +82,6 @@
         <Row
             rowIndex = {i}
             {row}
-            {selectedCell}
             on:select={handleCellSelected}
         />
     {/each}
