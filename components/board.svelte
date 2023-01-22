@@ -16,6 +16,13 @@
     selectedCellStore.subscribe(index => selectedCell = index)
     selectedNumberStore.subscribe(val => handleGuess(val))
 
+    remainingCellsStore.subscribe(remaining => {
+      if (!remaining) {
+        stopAudio()
+        playArpeggio()
+      }
+    })
+
     //  split board into groups of 9 and assign product to rows
     function setRows() {
         rows = [];
