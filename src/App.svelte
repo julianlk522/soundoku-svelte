@@ -45,6 +45,7 @@
 <main
     class:game-over-fadeout={gameOver}
 >
+    <div class="leavesBg"></div>
     <Board
     on:incorrect-guess={() => errors++}
     on:win={handleWin}
@@ -70,9 +71,9 @@
         height: 100%;
         width: 100%;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        z-index: 1;
         background-image: linear-gradient(
             200deg,
             hsl(240deg, 100%, 35%, 95%) -5%,
@@ -88,9 +89,24 @@
         );
     }
 
+    .leavesBg {
+        height: 35%;
+        width: 100%;
+        background-image: url('assets/leavesBg.svg');
+        position: absolute;
+        z-index: -1;
+        opacity: 50%;
+    }
+
     .game-over-fadeout {
         opacity: 0.1;
         filter: blur(8px);
+    }
+
+    @media (min-width: 640px) {
+        .leavesBg {
+            top: 0;
+        }
     }
 
     @media (min-width: 896px) {
@@ -98,12 +114,11 @@
             flex-direction: row;
             justify-content: space-evenly;
         }
-    }
 
-    /* .svgBgWrapper {
-        height: 20%;
-        top: initial;
-        bottom: 0;
-        opacity: 20%;
-    } */
+        .leavesBg {
+            height: 20%;
+            top: initial;
+            bottom: 0;
+        }
+    }
 </style>
