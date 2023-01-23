@@ -7,10 +7,10 @@
 
     const dispatch = createEventDispatcher()
 
-    let start: (number | null)[]
     let board: (number | null)[] = []
     let solution: number[]
     let rows: (number | null)[][] = []
+    let completedCells = new Set<number>()
 
     selectedCellStore.set(null)
     $: $selectedCellStore
@@ -28,7 +28,7 @@
 
     function fillCellsToDecreaseDifficulty() {
       //  check for number of initially filled spaces
-      let filledNumsCount = start.filter(
+      let filledNumsCount = board.filter(
         (val: number | null) => val !== null
       ).length;
 
@@ -40,9 +40,9 @@
         const randomIndex = Math.floor(Math.random() * 81);
         if (
           checkedIndices.indexOf(randomIndex) === -1 &&
-          start[randomIndex] === null
+          board[randomIndex] === null
         ) {
-          start.splice(randomIndex, 1, solution[randomIndex]);
+          board.splice(randomIndex, 1, solution[randomIndex]);
           n--;
         }
         checkedIndices.push(randomIndex);
@@ -76,6 +76,7 @@
       remainingCellsStore.update(n => n - 1)
       board.splice($selectedCellStore, 1, solution[$selectedCellStore])
       setRows()
+      completedCells.add($selectedCellStore)
     }
 
     function checkForWin(remaining: number) {
@@ -87,14 +88,13 @@
     }
 
     onMount(() => {
-      start = makepuzzle()
+      board = makepuzzle()
       
       //  solvepuzzle() relies on a range of 0-8 so it must be run before mapping values to 1-9
-      solution = solvepuzzle(start).map((num: number) => num + 1)
+      solution = solvepuzzle(board).map((num: number) => num + 1)
       
-      start = start.map((num: number | null) => num != null ? num + 1 : null)
+      board = board.map((num: number | null) => num != null ? num + 1 : null)
       fillCellsToDecreaseDifficulty()
-      board = [...start]
 
       setRows()
     })
@@ -105,6 +105,7 @@
         <Row
             rowIndex = {i}
             {row}
+            {completedCells}
             on:select={handleCellSelected}
         />
     {/each}

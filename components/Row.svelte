@@ -5,6 +5,7 @@
 
     export let row: (number | null)[] = []
     export let rowIndex = 0
+    export let completedCells: Set<number>
     $: bottomEdgeOfLocalBox = rowIndex === 2 || rowIndex === 5
     // let startingBoard
 
@@ -19,6 +20,7 @@
         {value}
         {rowIndex}
         indexInRow = {i}
+        {completedCells}
         on:select={handleCellSelect}
     />
     {/each}
