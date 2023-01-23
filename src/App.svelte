@@ -8,6 +8,7 @@
     let errors = 0
     let timer: NodeJS.Timeout
     let gameOver = false
+    let gameReset = false
 
     function formatSeconds(totalSeconds: number) {
         const minutes = Math.floor(totalSeconds / 60);
@@ -22,6 +23,15 @@
         gameOver = true
     }
 
+    function handleNewGame() {
+        time = 0
+        timer = setInterval(() => time++, 1000)
+        errors = 0
+        gameOver = false
+        gameReset = true
+        setTimeout(() => gameReset = false, 0)
+    }
+
     onMount(() => {
         clearInterval(timer)
         time = 0
@@ -31,6 +41,7 @@
     onDestroy(() => clearInterval(timer))
 </script>
 
+{#if !gameReset}
 <main
     class:game-over-fadeout={gameOver}
 >
@@ -43,11 +54,13 @@
         {errors}
     />
 </main>
+{/if}
 
 {#if gameOver}
     <GameOverPopup
         victoryTime={formatSeconds(time)}
-        {errors}    
+        {errors}
+        on:new-game={handleNewGame}
     />
 {/if}
 

@@ -1,4 +1,7 @@
 <script lang='ts'>
+    import {createEventDispatcher} from 'svelte'
+    const dispatch = createEventDispatcher()
+
     export let victoryTime = "0: 00"
     export let errors = 0
 </script>
@@ -15,6 +18,7 @@
       <button
         id="replayButton"
         class="button"
+        on:click={() => dispatch('new-game')}
       >
         Play Again?
       </button>

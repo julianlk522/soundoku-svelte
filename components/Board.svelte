@@ -12,17 +12,9 @@
     let solution: number[]
     let rows: (number | null)[][] = []
 
-    let selectedCell: number | null = null
-    selectedCellStore.subscribe(index => selectedCell = index)
-    selectedNumberStore.subscribe(val => handleGuess(val))
-
-    remainingCellsStore.subscribe(remaining => {
-      if (!remaining) {
-        stopAudio()
-        playArpeggio()
-        dispatch('win')
-      }
-    })
+    $: $selectedCellStore
+    $: $selectedNumberStore && handleGuess($selectedNumberStore)
+    $: $remainingCellsStore && checkForWin($remainingCellsStore)
 
     //  split board into groups of 9 and assign product to rows
     function setRows() {
@@ -38,7 +30,7 @@
         (val: number | null) => val !== null
       ).length;
 
-      const desiredFilledNumsCount = 80
+      const desiredFilledNumsCount = 50
       let n = desiredFilledNumsCount - filledNumsCount;
 
       const checkedIndices = [];
@@ -68,8 +60,8 @@
     }
 
     function handleGuess(num: number) {
-      if (selectedCell === null || board[selectedCell] !== null) return
-      if (solution[selectedCell] === num) {
+      if ($selectedCellStore === null || board[$selectedCellStore] !== null) return
+      if (solution[$selectedCellStore] === num) {
         return handleCorrectGuess()
       }
       dispatch('incorrect-guess')
@@ -77,11 +69,19 @@
 
     function handleCorrectGuess() {
       //  just for TS linting, even though this condition is impossible
-      if (selectedCell === null) return
+      if ($selectedCellStore === null) return
 
       remainingCellsStore.update(n => n - 1)
-      board.splice(selectedCell, 1, solution[selectedCell])
+      board.splice($selectedCellStore, 1, solution[$selectedCellStore])
       setRows()
+    }
+
+    function checkForWin(remaining: number) {
+      if (!remaining) {
+        stopAudio()
+        playArpeggio()
+        dispatch('win')
+      }
     }
 
     onMount(() => {
