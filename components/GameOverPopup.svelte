@@ -7,17 +7,16 @@
 </script>
 
 <div id='game-over'>
-    <h2 id="congratulationsText">Congratulations, you won!</h2>
-    <h3 id="victoryFlex">💪</h3>
+    <h2 id="congratulations">Congratulations, you won!</h2>
+    <h3 id="victory-flex">💪</h3>
     <h3>Your time was:
-        <span id="victoryTime">
+        <span id="victory-time">
             {victoryTime}
         </span>
     </h3>
-    <p>(with {errors} errors)</p>
+    <p id='errors'>(with {errors} errors)</p>
       <button
-        id="replayButton"
-        class="button"
+        id="replay"
         on:click={() => dispatch('new-game')}
       >
         Play Again?
@@ -26,8 +25,6 @@
 
 <style>
 #game-over {
-  font-size: 1.5rem;
-  z-index: 1;
   position: absolute;
   inset: 0;
   display: flex;
@@ -35,30 +32,34 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+  font-size: 1.5rem;
+  padding: 2rem;
+  z-index: 1;
 }
 
-#congratulationsText {
-  font-size: 4rem;
+#congratulations {
+  font-size: 2rem;
   color: var(--color-primary);
   text-shadow: 0px 2px 2px var(--color-secondary-soft);
 }
 
-#victoryTime {
+#victory-time {
   font-weight: 700;
   color: var(--color-accent);
-  text-shadow: 1px 1px 0px var(--color-primary);
+  text-shadow: 1px 1px 0px rgb(255 255 255 / 25%);
 }
 
-#victoryFlex {
+#victory-flex {
   font-size: 4rem;
   margin: 1rem 0;
 }
 
-#replayButton {
+#replay {
+  color: white;
+  margin-top: 2rem;
+  padding: 0.5rem 1rem;
   border: none;
   border-radius: 0.25rem;
-  color: white;
-  padding: 0.5rem 1rem;
   box-shadow: 0px 0px 4px rgb(0 0 0 / 25%);
   text-shadow: 1px 1px 0px var(--color-primary);
   background-image: linear-gradient(
@@ -74,6 +75,44 @@
     hsl(172deg 100% 36%) 94%,
     hsl(164deg 100% 36%) 100%
   );
+}
+
+#replay:hover {
+  transform: scale(1.1);
+}
+
+#replay:active {
+  transform: scale(0.95);
+}
+
+@media (min-width: 640px) {
+  #game-over {
+    padding: 4rem;
+  }
+
+  #congratulations {
+    font-size: 3rem;
+  }
+
+  #victory-flex {
+    margin: 2rem 0;
+  }
+
+  h3:has(#victory-time), 
+  #errors,
+  #replay {
+    font-size: 2rem;
+  }
+
+  #replay {
+    margin-top: 4rem;
+  }
+
+  @media (min-width: 896px) {
+    #congratulations {
+      font-size: 4rem;
+    }
+  }
 }
 
 </style>
