@@ -12,9 +12,11 @@
     let solution: number[]
     let rows: (number | null)[][] = []
 
+    selectedCellStore.set(null)
     $: $selectedCellStore
     $: $selectedNumberStore && handleGuess($selectedNumberStore)
-    $: $remainingCellsStore && checkForWin($remainingCellsStore)
+    remainingCellsStore.set(81)
+    $: Number.isInteger($remainingCellsStore) && checkForWin($remainingCellsStore)
 
     //  split board into groups of 9 and assign product to rows
     function setRows() {
