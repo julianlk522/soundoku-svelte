@@ -20,6 +20,7 @@
       if (!remaining) {
         stopAudio()
         playArpeggio()
+        dispatch('win')
       }
     })
 
@@ -37,7 +38,7 @@
         (val: number | null) => val !== null
       ).length;
 
-      const desiredFilledNumsCount = 50
+      const desiredFilledNumsCount = 80
       let n = desiredFilledNumsCount - filledNumsCount;
 
       const checkedIndices = [];

@@ -1,11 +1,13 @@
 <script lang="ts">
     import {onMount, onDestroy} from 'svelte'
-    import Board from "../components/Board.svelte"
+    import Board from '../components/Board.svelte'
 	import NumberSelect from "../components/NumberSelect.svelte"
+    import GameOverPopup from '../components/GameOverPopup.svelte';
 
     let time = 0
     let errors = 0
     let timer: NodeJS.Timeout
+    let gameOver = false
 
     function formatSeconds(totalSeconds: number) {
         const minutes = Math.floor(totalSeconds / 60);
@@ -13,6 +15,11 @@
         const seconds = remainder < 10 ? '0' + remainder : remainder;
 
         return `${minutes}: ${seconds}`;
+    }
+
+    function handleWin() {
+        clearInterval(timer)
+        gameOver = true
     }
 
     onMount(() => {
@@ -24,15 +31,25 @@
     onDestroy(() => clearInterval(timer))
 </script>
 
-<main>
+<main
+    class:game-over-fadeout={gameOver}
+>
     <Board
     on:incorrect-guess={() => errors++}
+    on:win={handleWin}
     />
     <NumberSelect
         time={formatSeconds(time)}
         {errors}
     />
 </main>
+
+{#if gameOver}
+    <GameOverPopup
+        victoryTime={formatSeconds(time)}
+        {errors}    
+    />
+{/if}
 
 <style>
     main {
@@ -58,10 +75,16 @@
         );
     }
 
+    .game-over-fadeout {
+        opacity: 0.1;
+        filter: blur(8px);
+    }
+
     @media (min-width: 896px) {
         main {
-        flex-direction: row;
-        justify-content: space-evenly;
+            flex-direction: row;
+            justify-content: space-evenly;
+        }
     }
 
     /* .svgBgWrapper {
@@ -70,5 +93,4 @@
         bottom: 0;
         opacity: 20%;
     } */
-}
 </style>
