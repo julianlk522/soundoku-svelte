@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {selectedCellStore} from '../src/stores'
+    import {selectedCellStore, selectedNumberStore} from '../src/stores'
     import {createEventDispatcher} from 'svelte'
     const dispatch = createEventDispatcher()
 
@@ -19,6 +19,12 @@
     function handleSelect() {
       dispatch('select', {index: rowIndex * 9 + indexInRow, value})
     }
+
+    function handleKeydown(event: KeyboardEvent) {
+      if (/\d/.test(event.key)) {
+        selectedNumberStore.set(+event.key)
+      }
+    }
 </script>
 
 <button
@@ -27,6 +33,7 @@
     class:selected
     class:rightEdgeOfLocalBox
     on:click={handleSelect}
+    on:keydown={handleKeydown}
 >
     {value !== null || completed ? value : ""}
 </button>
