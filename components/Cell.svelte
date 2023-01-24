@@ -7,7 +7,9 @@
 	export let value: number | null = 0
 	$: empty = value === null
 	export let rowIndex = 0
+	$: bottomEdgeOfLocalBox = rowIndex === 2 || rowIndex === 5
 	export let indexInRow = 0
+	$: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
 	export let completedCells: Set<number>
 	$: completed = value && completedCells.has(rowIndex * 9 + indexInRow)
 
@@ -28,7 +30,6 @@
 				//	same box cols
 				Math.floor((selectedCell % 9) / 3) ===
 					Math.floor(indexInRow / 3)))
-	$: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
 
 	function handleSelect() {
 		dispatch('select', { index: rowIndex * 9 + indexInRow, value })
@@ -52,6 +53,7 @@
 	class:completed
 	class:selected
 	class:related-to-selected={relatedToSelected}
+	class:bottom-edge-of-local-box={bottomEdgeOfLocalBox}
 	class:right-edge-of-local-box={rightEdgeOfLocalBox}
 	on:click={handleSelect}
 	on:keydown={handleKeydown}
@@ -93,6 +95,10 @@
 
 	.completed {
 		background-color: var(--color-secondary);
+	}
+
+	.bottom-edge-of-local-box {
+		border-bottom: 4px solid black;
 	}
 
 	.right-edge-of-local-box {
