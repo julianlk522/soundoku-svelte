@@ -15,6 +15,19 @@
 	selectedCellStore.subscribe((index) => (selectedCell = index))
 
 	$: selected = selectedCell === rowIndex * 9 + indexInRow
+	$: relatedToSelected =
+		selectedCell &&
+		!selected &&
+		//	same row
+		((selectedCell >= rowIndex * 9 && selectedCell < (rowIndex + 1) * 9) ||
+			// same col
+			selectedCell % 9 === indexInRow ||
+			//	same box
+			//	same box rows
+			(Math.floor(selectedCell / 27) === Math.floor(rowIndex / 3) &&
+				//	same box cols
+				Math.floor((selectedCell % 9) / 3) ===
+					Math.floor(indexInRow / 3)))
 	$: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
 
 	function handleSelect() {
@@ -38,7 +51,8 @@
 		: ''}"
 	class:completed
 	class:selected
-	class:rightEdgeOfLocalBox
+	class:related-to-selected={relatedToSelected}
+	class:right-edge-of-local-box={rightEdgeOfLocalBox}
 	on:click={handleSelect}
 	on:keydown={handleKeydown}
 	in:fade={{ duration: 200, delay: 10 * (rowIndex * 9 + indexInRow) }}
@@ -60,13 +74,13 @@
 		border: 2px solid #bbb;
 	}
 
-	.completed {
-		background-color: var(--color-secondary);
-	}
-
 	.selected {
 		background-color: var(--color-primary);
 		color: var(--color-text-light);
+	}
+
+	.related-to-selected {
+		background-color: var(--color-primary-ultrasoft);
 	}
 
 	.selected-empty {
@@ -77,7 +91,11 @@
 		background-color: var(--color-secondary-muted);
 	}
 
-	.rightEdgeOfLocalBox {
+	.completed {
+		background-color: var(--color-secondary);
+	}
+
+	.right-edge-of-local-box {
 		border-right: 4px solid black;
 	}
 
