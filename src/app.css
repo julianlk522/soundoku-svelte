@@ -11,6 +11,7 @@ https://www.joshwcomeau.com/css/custom-css-reset/ */
 	color-scheme: light dark;
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
+	color: var(--color-text);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;
@@ -22,6 +23,8 @@ https://www.joshwcomeau.com/css/custom-css-reset/ */
 	--color-secondary-soft: hsl(164deg, 100%, 36%, 50%);
 	--color-secondary-muted: hsl(164deg, 100%, 25%);
 	--color-accent: hsl(330deg, 100%, 50%);
+	--color-text: hsl(240deg, 50%, 10%);
+	--color-text-light: hsl(240deg, 100%, 95%);
 }
 html,
 body,
@@ -71,11 +74,6 @@ body,
 
 #app {
 	justify-content: center;
-}
-
-h1 {
-	font-size: 3.2em;
-	line-height: 1.1;
 }
 
 /* @media (prefers-color-scheme: light) {
