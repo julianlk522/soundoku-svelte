@@ -7,9 +7,11 @@
 	export let value: number | null = 0
 	$: empty = value === null
 	export let rowIndex = 0
-	$: bottomEdgeOfLocalBox = rowIndex === 2 || rowIndex === 5
+	$: aboveBoxDivider = rowIndex === 2 || rowIndex === 5
+	$: belowBoxDivider = rowIndex === 3 || rowIndex === 6
 	export let indexInRow = 0
-	$: rightEdgeOfLocalBox = indexInRow === 2 || indexInRow === 5
+	$: leftOfBoxDivider = indexInRow === 2 || indexInRow === 5
+	$: rightOfBoxDivider = indexInRow === 3 || indexInRow === 6
 	export let completedCells: Set<number>
 	$: completed = value && completedCells.has(rowIndex * 9 + indexInRow)
 
@@ -53,8 +55,10 @@
 	class:completed
 	class:selected
 	class:related-to-selected={relatedToSelected}
-	class:bottom-edge-of-local-box={bottomEdgeOfLocalBox}
-	class:right-edge-of-local-box={rightEdgeOfLocalBox}
+	class:above-box-divider={aboveBoxDivider}
+	class:below-box-divider={belowBoxDivider}
+	class:left-of-box-divider={leftOfBoxDivider}
+	class:right-of-box-divider={rightOfBoxDivider}
 	on:click={handleSelect}
 	on:keydown={handleKeydown}
 	in:fade={{ duration: 200, delay: 10 * (rowIndex * 9 + indexInRow) }}
@@ -71,9 +75,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background: #eee;
+		background-color: #eee;
 		font-weight: 700;
-		border: 2px solid #bbb;
+		border: 1px solid #aaa;
 	}
 
 	.selected {
@@ -97,12 +101,20 @@
 		background-color: var(--color-secondary);
 	}
 
-	.bottom-edge-of-local-box {
+	.above-box-divider {
 		border-bottom: 4px solid black;
 	}
 
-	.right-edge-of-local-box {
+	.below-box-divider {
+		border-top: none;
+	}
+
+	.left-of-box-divider {
 		border-right: 4px solid black;
+	}
+
+	.right-of-box-divider {
+		border-left: none;
 	}
 
 	@media (min-width: 640px) {

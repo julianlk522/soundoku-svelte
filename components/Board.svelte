@@ -122,7 +122,7 @@
 	#board {
 		width: min-content;
 		max-width: 90%;
-		border: 4px solid black;
+		border: 2px solid black;
 		margin-bottom: 2rem;
 		background-color: #eee;
 	}
