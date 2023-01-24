@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { selectedCellStore, selectedNumberStore } from '../src/stores'
+	import { fade } from 'svelte/transition'
 	import { createEventDispatcher } from 'svelte'
 	const dispatch = createEventDispatcher()
 
@@ -40,6 +41,7 @@
 	class:rightEdgeOfLocalBox
 	on:click={handleSelect}
 	on:keydown={handleKeydown}
+	in:fade={{ duration: 200, delay: 10 * (rowIndex * 9 + indexInRow) }}
 >
 	{value !== null || completed ? value : ''}
 </button>
