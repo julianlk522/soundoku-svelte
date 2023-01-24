@@ -48,8 +48,10 @@
 
 <style>
 	.cell {
-		height: calc(70vw / 9);
-		width: calc(70vw / 9);
+		height: clamp(1.75rem, 5vmax, 4rem);
+		width: clamp(1.75rem, 5vmax, 4rem);
+		max-height: 10vw;
+		max-width: 10vw;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -81,16 +83,7 @@
 
 	@media (min-width: 640px) {
 		.cell {
-			height: min(calc(60vw / 9), 75px);
-			width: min(calc(60vw / 9), 75px);
 			font-size: 1.5rem;
-		}
-	}
-
-	@media (min-width: 896px) {
-		.cell {
-			height: min(calc(45vw / 9), 75px);
-			width: min(calc(45vw / 9), 75px);
 		}
 	}
 </style>

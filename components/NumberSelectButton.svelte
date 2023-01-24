@@ -26,9 +26,8 @@
 		font-size: 1.5rem;
 		font-weight: 700;
 		display: flex;
-		height: 0.5rem;
-		width: 0.5rem;
-		padding: 1.5rem;
+		height: clamp(2.5rem, 5vmax, 6rem);
+		width: clamp(2.5rem, 5vmax, 6rem);
 		justify-content: center;
 		align-items: center;
 		background: #eee;
@@ -47,12 +46,6 @@
 	@media (min-width: 640px) {
 		.selectionButton {
 			padding: 2rem;
-		}
-	}
-
-	@media (min-width: 1280px) {
-		.selectionButton {
-			padding: 3rem;
 		}
 	}
 </style>
