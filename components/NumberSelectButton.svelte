@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { selectedNumberStore, remainingCellsStore } from '../src/stores'
+	import {
+		selectedNumberStore,
+		remainingCellsStore,
+		selectedCellFilledStore,
+	} from '../src/stores'
 	import { stopAudio, playAudio } from './audio'
 	export let value: number
 
@@ -7,7 +11,9 @@
 	remainingCellsStore.subscribe((remaining) => (cellsRemaining = remaining))
 
 	function handleNumberSelect(value: number) {
-		selectedNumberStore.set(value)
+		if (!$selectedCellFilledStore) {
+			selectedNumberStore.set(value)
+		}
 
 		if (cellsRemaining) {
 			stopAudio()
