@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { topLeftToBottomRightStagger } from './topLeftToBottomRightStagger'
 	import { selectedCellStore, selectedNumberStore } from '../src/stores'
 	import { fade } from 'svelte/transition'
+	import { sineIn } from 'svelte/easing'
 	import { createEventDispatcher } from 'svelte'
 	const dispatch = createEventDispatcher()
 
@@ -61,7 +63,12 @@
 	class:right-of-box-divider={rightOfBoxDivider}
 	on:click={handleSelect}
 	on:keydown={handleKeydown}
-	in:fade={{ duration: 200, delay: 10 * (rowIndex * 9 + indexInRow) }}
+	in:fade={{
+		duration: 200,
+		delay:
+			50 + 10 * topLeftToBottomRightStagger(rowIndex * 9 + indexInRow, 9),
+		easing: sineIn,
+	}}
 >
 	{value !== null || completed ? value : ''}
 </button>
