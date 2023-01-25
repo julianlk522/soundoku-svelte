@@ -1,28 +1,40 @@
 <script lang="ts">
-	import { topLeftToBottomRightStagger } from './topLeftToBottomRightStagger'
 	import { selectedCellStore, selectedNumberStore } from '../src/stores'
 	import { fade } from 'svelte/transition'
 	import { sineIn } from 'svelte/easing'
 	import { createEventDispatcher } from 'svelte'
+	import { keys } from './keyboardNavigation'
+	import { topLeftToBottomRightStagger } from './topLeftToBottomRightStagger'
 	const dispatch = createEventDispatcher()
+
+	let self: HTMLButtonElement
 
 	export let value: number | null = 0
 	$: empty = value === null
+
 	export let rowIndex = 0
 	$: aboveBoxDivider = rowIndex === 2 || rowIndex === 5
 	$: belowBoxDivider = rowIndex === 3 || rowIndex === 6
+
 	export let indexInRow = 0
 	$: leftOfBoxDivider = indexInRow === 2 || indexInRow === 5
 	$: rightOfBoxDivider = indexInRow === 3 || indexInRow === 6
+
 	export let completedCells: Set<number>
 	$: completed = value && completedCells.has(rowIndex * 9 + indexInRow)
 
 	let selectedCell: number | null
-	selectedCellStore.subscribe((index) => (selectedCell = index))
-
+	selectedCellStore.subscribe((index) => {
+		selectedCell = index
+		if (index === rowIndex * 9 + indexInRow) self?.focus()
+	})
 	$: selected = selectedCell === rowIndex * 9 + indexInRow
+	$: incorrect =
+		$selectedNumberStore &&
+		selectedCell === rowIndex * 9 + indexInRow &&
+		$selectedNumberStore !== value
 	$: relatedToSelected =
-		selectedCell &&
+		selectedCell !== null &&
 		!selected &&
 		//	same row
 		((selectedCell >= rowIndex * 9 && selectedCell < (rowIndex + 1) * 9) ||
@@ -36,10 +48,6 @@
 					Math.floor(indexInRow / 3)))
 	$: relatedToSelectedIncorrect =
 		relatedToSelected && value === $selectedNumberStore
-	$: incorrect =
-		$selectedNumberStore &&
-		selectedCell === rowIndex * 9 + indexInRow &&
-		$selectedNumberStore !== value
 
 	function handleSelect() {
 		selectedNumberStore.set(0)
@@ -47,9 +55,34 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (value) return
-		if (/\d/.test(event.key)) {
+		if (!value && /\d/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
+		} else if (keys.hasOwnProperty(event.key)) {
+			selectedNumberStore.set(0)
+			navigate(event.key)
+		}
+	}
+
+	function navigate(key: string) {
+		//	left edge
+		if (keys[key] === -1 && selectedCell! % 9 === 0) {
+			return selectedCellStore.set(selectedCell! + 8)
+		}
+		//	right edge
+		else if (keys[key] === 1 && selectedCell! % 9 === 8) {
+			return selectedCellStore.set(selectedCell! - 8)
+		}
+		//	top edge
+		else if (keys[key] === -9 && Math.floor(selectedCell! / 9) === 0) {
+			return selectedCellStore.set(selectedCell! + 81 + keys[key])
+		}
+		//	bottom edge
+		else if (keys[key] === 9 && Math.floor(selectedCell! / 9) === 8) {
+			return selectedCellStore.set(selectedCell! - 81 + keys[key])
+		}
+		//	not at an edge
+		else {
+			return selectedCellStore.set(selectedCell! + keys[key])
 		}
 	}
 </script>
@@ -71,7 +104,9 @@
 	class:below-box-divider={belowBoxDivider}
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
+	bind:this={self}
 	on:click={handleSelect}
+	on:focus={handleSelect}
 	on:keydown={handleKeydown}
 	in:fade={{
 		duration: 200,
