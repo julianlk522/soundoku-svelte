@@ -106,28 +106,28 @@
 		color: var(--color-text-light);
 	}
 
+	.selected-empty {
+		background-color: var(--color-primary-soft);
+	}
+
 	.related-to-selected {
 		background-color: var(--color-primary-ultrasoft);
 	}
 
-	.related-to-selected-incorrect {
-		background-color: var(--color-accent-soft);
-	}
-
-	.selected-empty {
-		background-color: var(--color-primary-soft);
+	.completed {
+		background-color: var(--color-secondary-soft);
 	}
 
 	.selected-completed {
 		background-color: var(--color-secondary-muted);
 	}
 
-	.incorrect {
-		background-color: var(--color-accent-muted);
+	.related-to-selected-incorrect {
+		background-color: var(--color-accent-soft);
 	}
 
-	.completed {
-		background-color: var(--color-secondary);
+	.incorrect {
+		background-color: var(--color-accent-muted);
 	}
 
 	.above-box-divider {
