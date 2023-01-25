@@ -3,6 +3,7 @@
 		selectedCellStore,
 		selectedNumberStore,
 		remainingCellsStore,
+		selectedCellFilledStore,
 	} from '../src/stores'
 	import { onMount, createEventDispatcher } from 'svelte'
 	import { makepuzzle, solvepuzzle } from 'sudoku'
@@ -57,6 +58,12 @@
 	function handleCellSelected(event: CustomEvent) {
 		selectedCellStore.set(event.detail.index)
 
+		if (board[event.detail.index] !== null) {
+			selectedCellFilledStore.set(true)
+		} else {
+			selectedCellFilledStore.set(false)
+		}
+
 		if (event.detail.value !== null) {
 			stopAudio()
 
@@ -79,6 +86,7 @@
 		if ($selectedCellStore === null) return
 
 		remainingCellsStore.update((n) => n - 1)
+		selectedCellFilledStore.set(true)
 		board.splice($selectedCellStore, 1, solution[$selectedCellStore])
 		setRows()
 		completedCells.add($selectedCellStore)

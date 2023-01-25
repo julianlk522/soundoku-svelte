@@ -21,9 +21,11 @@ https://www.joshwcomeau.com/css/custom-css-reset/ */
 	--color-primary-ultrasoft: hsl(240deg, 100%, 35%, 10%);
 	--color-primary-muted: hsl(225deg, 100%, 25%);
 	--color-secondary: hsl(164deg, 100%, 36%);
-	--color-secondary-soft: hsl(164deg, 100%, 36%, 50%);
+	--color-secondary-soft: hsl(164deg, 100%, 36%, 25%);
 	--color-secondary-muted: hsl(164deg, 100%, 25%);
 	--color-accent: hsl(330deg, 100%, 50%);
+	--color-accent-soft: hsl(330deg, 100%, 25%, 25%);
+	--color-accent-muted: hsl(330deg, 65%, 25%, 65%);
 	--color-text: hsl(240deg, 50%, 10%);
 	--color-text-light: hsl(240deg, 100%, 95%);
 }

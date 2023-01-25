@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
+	import { selectedCellStore } from './stores'
 	import Board from '../components/Board.svelte'
 	import NumberSelect from '../components/NumberSelect.svelte'
 	import GameOverPopup from '../components/GameOverPopup.svelte'
 	import Tutorial from '../components/Tutorial.svelte'
+	import { keys } from '../components/keyboardNavigation'
 
 	let tutorial = true
 	let time = 0
@@ -11,6 +13,20 @@
 	let timer: NodeJS.Timeout
 	let gameOver = false
 	let gameReset = false
+
+	function handleNewGame() {
+		time = 0
+		timer = setInterval(() => time++, 1000)
+		errors = 0
+		gameOver = false
+		gameReset = true
+		setTimeout(() => (gameReset = false), 0)
+	}
+
+	function handleWin() {
+		clearInterval(timer)
+		gameOver = true
+	}
 
 	function formatSeconds(totalSeconds: number) {
 		const minutes = Math.floor(totalSeconds / 60)
@@ -20,18 +36,9 @@
 		return `${minutes}: ${seconds}`
 	}
 
-	function handleWin() {
-		clearInterval(timer)
-		gameOver = true
-	}
-
-	function handleNewGame() {
-		time = 0
-		timer = setInterval(() => time++, 1000)
-		errors = 0
-		gameOver = false
-		gameReset = true
-		setTimeout(() => (gameReset = false), 0)
+	function initialNavigation(event: KeyboardEvent) {
+		if (keys.hasOwnProperty(event.key) && !$selectedCellStore)
+			selectedCellStore.set(0)
 	}
 
 	onMount(() => {
@@ -43,7 +50,9 @@
 	onDestroy(() => clearInterval(timer))
 </script>
 
-{#if !gameReset && !tutorial}
+<svelte:window on:keydown={initialNavigation} />
+
+{#if !tutorial && !gameReset}
 	<main class:game-over-fadeout={gameOver}>
 		<div class="leavesBg" />
 		<Board on:incorrect-guess={() => errors++} on:win={handleWin} />

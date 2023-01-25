@@ -1,28 +1,40 @@
 <script lang="ts">
-	import { topLeftToBottomRightStagger } from './topLeftToBottomRightStagger'
 	import { selectedCellStore, selectedNumberStore } from '../src/stores'
 	import { fade } from 'svelte/transition'
 	import { sineIn } from 'svelte/easing'
 	import { createEventDispatcher } from 'svelte'
+	import { keys } from './keyboardNavigation'
+	import { topLeftToBottomRightStagger } from './topLeftToBottomRightStagger'
 	const dispatch = createEventDispatcher()
+
+	let self: HTMLButtonElement
 
 	export let value: number | null = 0
 	$: empty = value === null
+
 	export let rowIndex = 0
 	$: aboveBoxDivider = rowIndex === 2 || rowIndex === 5
 	$: belowBoxDivider = rowIndex === 3 || rowIndex === 6
+
 	export let indexInRow = 0
 	$: leftOfBoxDivider = indexInRow === 2 || indexInRow === 5
 	$: rightOfBoxDivider = indexInRow === 3 || indexInRow === 6
+
 	export let completedCells: Set<number>
 	$: completed = value && completedCells.has(rowIndex * 9 + indexInRow)
 
 	let selectedCell: number | null
-	selectedCellStore.subscribe((index) => (selectedCell = index))
-
+	selectedCellStore.subscribe((index) => {
+		selectedCell = index
+		if (index === rowIndex * 9 + indexInRow) self?.focus()
+	})
 	$: selected = selectedCell === rowIndex * 9 + indexInRow
+	$: incorrect =
+		$selectedNumberStore &&
+		selectedCell === rowIndex * 9 + indexInRow &&
+		$selectedNumberStore !== value
 	$: relatedToSelected =
-		selectedCell &&
+		selectedCell !== null &&
 		!selected &&
 		//	same row
 		((selectedCell >= rowIndex * 9 && selectedCell < (rowIndex + 1) * 9) ||
@@ -34,14 +46,43 @@
 				//	same box cols
 				Math.floor((selectedCell % 9) / 3) ===
 					Math.floor(indexInRow / 3)))
+	$: relatedToSelectedIncorrect =
+		relatedToSelected && value === $selectedNumberStore
 
 	function handleSelect() {
+		selectedNumberStore.set(0)
 		dispatch('select', { index: rowIndex * 9 + indexInRow, value })
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (/\d/.test(event.key)) {
+		if (!value && /\d/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
+		} else if (keys.hasOwnProperty(event.key)) {
+			selectedNumberStore.set(0)
+			navigate(event.key)
+		}
+	}
+
+	function navigate(key: string) {
+		//	left edge
+		if (keys[key] === -1 && selectedCell! % 9 === 0) {
+			return selectedCellStore.set(selectedCell! + 8)
+		}
+		//	right edge
+		else if (keys[key] === 1 && selectedCell! % 9 === 8) {
+			return selectedCellStore.set(selectedCell! - 8)
+		}
+		//	top edge
+		else if (keys[key] === -9 && Math.floor(selectedCell! / 9) === 0) {
+			return selectedCellStore.set(selectedCell! + 81 + keys[key])
+		}
+		//	bottom edge
+		else if (keys[key] === 9 && Math.floor(selectedCell! / 9) === 8) {
+			return selectedCellStore.set(selectedCell! - 81 + keys[key])
+		}
+		//	not at an edge
+		else {
+			return selectedCellStore.set(selectedCell! + keys[key])
 		}
 	}
 </script>
@@ -55,13 +96,17 @@
 			: ''
 		: ''}"
 	class:completed
+	class:incorrect
 	class:selected
 	class:related-to-selected={relatedToSelected}
+	class:related-to-selected-incorrect={relatedToSelectedIncorrect}
 	class:above-box-divider={aboveBoxDivider}
 	class:below-box-divider={belowBoxDivider}
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
+	bind:this={self}
 	on:click={handleSelect}
+	on:focus={handleSelect}
 	on:keydown={handleKeydown}
 	in:fade={{
 		duration: 200,
@@ -70,7 +115,11 @@
 		easing: sineIn,
 	}}
 >
-	{value !== null || completed ? value : ''}
+	{value !== null || completed
+		? value
+		: incorrect
+		? $selectedNumberStore
+		: ''}
 </button>
 
 <style>
@@ -92,20 +141,28 @@
 		color: var(--color-text-light);
 	}
 
+	.selected-empty {
+		background-color: var(--color-primary-soft);
+	}
+
 	.related-to-selected {
 		background-color: var(--color-primary-ultrasoft);
 	}
 
-	.selected-empty {
-		background-color: var(--color-primary-soft);
+	.completed {
+		background-color: var(--color-secondary-soft);
 	}
 
 	.selected-completed {
 		background-color: var(--color-secondary-muted);
 	}
 
-	.completed {
-		background-color: var(--color-secondary);
+	.related-to-selected-incorrect {
+		background-color: var(--color-accent-soft);
+	}
+
+	.incorrect {
+		background-color: var(--color-accent-muted);
 	}
 
 	.above-box-divider {
