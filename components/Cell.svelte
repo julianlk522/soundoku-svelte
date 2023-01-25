@@ -34,12 +34,20 @@
 				//	same box cols
 				Math.floor((selectedCell % 9) / 3) ===
 					Math.floor(indexInRow / 3)))
+	$: relatedToSelectedIncorrect =
+		relatedToSelected && value === $selectedNumberStore
+	$: incorrect =
+		$selectedNumberStore &&
+		selectedCell === rowIndex * 9 + indexInRow &&
+		$selectedNumberStore !== value
 
 	function handleSelect() {
+		selectedNumberStore.set(0)
 		dispatch('select', { index: rowIndex * 9 + indexInRow, value })
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
+		if (value) return
 		if (/\d/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
 		}
@@ -55,8 +63,10 @@
 			: ''
 		: ''}"
 	class:completed
+	class:incorrect
 	class:selected
 	class:related-to-selected={relatedToSelected}
+	class:related-to-selected-incorrect={relatedToSelectedIncorrect}
 	class:above-box-divider={aboveBoxDivider}
 	class:below-box-divider={belowBoxDivider}
 	class:left-of-box-divider={leftOfBoxDivider}
@@ -70,7 +80,11 @@
 		easing: sineIn,
 	}}
 >
-	{value !== null || completed ? value : ''}
+	{value !== null || completed
+		? value
+		: incorrect
+		? $selectedNumberStore
+		: ''}
 </button>
 
 <style>
@@ -96,12 +110,20 @@
 		background-color: var(--color-primary-ultrasoft);
 	}
 
+	.related-to-selected-incorrect {
+		background-color: var(--color-accent-soft);
+	}
+
 	.selected-empty {
 		background-color: var(--color-primary-soft);
 	}
 
 	.selected-completed {
 		background-color: var(--color-secondary-muted);
+	}
+
+	.incorrect {
+		background-color: var(--color-accent-muted);
 	}
 
 	.completed {
