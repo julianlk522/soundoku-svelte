@@ -69,7 +69,7 @@
 {/if}
 
 {#if tutorial}
-	<Tutorial on:skip-tutorial={() => (tutorial = false)} />
+	<Tutorial on:end-tutorial={() => (tutorial = false)} />
 {/if}
 
 <style>
