@@ -7,7 +7,7 @@
 	} from '../src/stores'
 	import { onMount, createEventDispatcher } from 'svelte'
 	import { makepuzzle, solvepuzzle } from 'sudoku'
-	import { playAudio, stopAudio, playArpeggio } from './audio'
+	import { playAudio, stopAudio, playArpeggio } from './utils/audio'
 	import Row from './Row.svelte'
 
 	const dispatch = createEventDispatcher()

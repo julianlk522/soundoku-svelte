@@ -4,7 +4,7 @@
 		remainingCellsStore,
 		selectedCellFilledStore,
 	} from '../src/stores'
-	import { stopAudio, playAudio } from './audio'
+	import { stopAudio, playAudio } from './utils/audio'
 	export let value: number
 
 	let cellsRemaining = 81

@@ -4,8 +4,12 @@
 	import Board from '../components/Board.svelte'
 	import NumberSelect from '../components/NumberSelect.svelte'
 	import GameOverPopup from '../components/GameOverPopup.svelte'
+<<<<<<< HEAD
 	import Tutorial from '../components/Tutorial.svelte'
 	import { keys } from '../components/keyboardNavigation'
+=======
+	import { keys } from '../components/utils/keyboardNavigation'
+>>>>>>> main
 
 	let tutorial = true
 	let time = 0
