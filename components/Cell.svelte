@@ -3,8 +3,8 @@
 	import { fade } from 'svelte/transition'
 	import { sineIn } from 'svelte/easing'
 	import { createEventDispatcher } from 'svelte'
-	import { keys } from './keyboardNavigation'
-	import { topLeftToBottomRightStagger } from './topLeftToBottomRightStagger'
+	import { keys } from './utils/keyboardNavigation'
+	import { topLeftToBottomRightStagger } from './utils/topLeftToBottomRightStagger'
 	const dispatch = createEventDispatcher()
 
 	let self: HTMLButtonElement
@@ -128,9 +128,6 @@
 		width: clamp(1.75rem, 5vmax, 4rem);
 		max-height: 10vw;
 		max-width: 10vw;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		background-color: #eee;
 		font-weight: 700;
 		border: 1px solid #aaa;

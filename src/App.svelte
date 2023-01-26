@@ -4,7 +4,7 @@
 	import Board from '../components/Board.svelte'
 	import NumberSelect from '../components/NumberSelect.svelte'
 	import GameOverPopup from '../components/GameOverPopup.svelte'
-	import { keys } from '../components/keyboardNavigation'
+	import { keys } from '../components/utils/keyboardNavigation'
 
 	let time = 0
 	let errors = 0
