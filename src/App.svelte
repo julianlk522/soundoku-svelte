@@ -76,7 +76,6 @@
 	onMount(() => {
 		clearInterval(timer)
 		time = 0
-		timer = setInterval(() => time++, 1000)
 	})
 
 	onDestroy(() => clearInterval(timer))
@@ -101,7 +100,12 @@
 {/if}
 
 {#if tutorial}
-	<Tutorial on:end-tutorial={() => (tutorial = false)} />
+	<Tutorial
+		on:end-tutorial={() => {
+			tutorial = false
+			timer = setInterval(() => time++, 1000)
+		}}
+	/>
 {/if}
 
 <style>
