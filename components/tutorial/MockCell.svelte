@@ -18,11 +18,11 @@
 		if (!filled) return
 		self.style.setProperty(
 			'--flash-filled-delay',
-			randomlyFilledCells.indexOf(value) / 2
+			(randomlyFilledCells!.indexOf(value) / 2).toString()
 		)
 		self.style.setProperty(
 			'--flash-filled-duration',
-			randomlyFilledCells.length / 2
+			(randomlyFilledCells!.length / 2).toString()
 		)
 	})
 </script>

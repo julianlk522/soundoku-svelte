@@ -7,9 +7,11 @@
 	const cellsArray = Array.from(Array(9)).map((_, i) => i + 1)
 
 	export let randomlyFilled: boolean = false
-	$: randomlyFilledCells =
-		randomlyFilled &&
-		cellsArray.filter((val) => val > Math.floor(Math.random() + 0.5) * val)
+	$: randomlyFilledCells = randomlyFilled
+		? cellsArray.filter(
+				(val) => val > Math.floor(Math.random() + 0.5) * val
+		  )
+		: undefined
 </script>
 
 <div id="cells-grid">
