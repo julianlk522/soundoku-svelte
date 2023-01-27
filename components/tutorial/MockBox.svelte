@@ -5,6 +5,11 @@
 	export let cycles: number | undefined = undefined
 
 	const cellsArray = Array.from(Array(9)).map((_, i) => i + 1)
+
+	export let randomlyFilled: boolean = false
+	$: randomlyFilledCells =
+		randomlyFilled &&
+		cellsArray.filter((val) => val > Math.floor(Math.random() + 0.5) * val)
 </script>
 
 <div id="cells-grid">
@@ -13,6 +18,7 @@
 			{value}
 			active={Number.isInteger(index) ? i === index : undefined}
 			cycles={cycles ? cycles : undefined}
+			{randomlyFilledCells}
 		/>
 	{/each}
 </div>
