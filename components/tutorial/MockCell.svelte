@@ -29,6 +29,7 @@
 
 {#key Math.floor(cycles / 2)}
 	<button
+		tabindex="-1"
 		class="cell"
 		class:cell-hue-secondary={active}
 		class:cell-hue-tertiary={cellHueSecondary}

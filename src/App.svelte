@@ -49,24 +49,27 @@
 
 	function navigateCells(key: string) {
 		//	left edge
-		if (keys[key] === -1 && $selectedCellStore % 9 === 0) {
-			return selectedCellStore.update((cell) => cell + 8)
+		if (keys[key] === -1 && $selectedCellStore! % 9 === 0) {
+			return selectedCellStore.update((cell) => cell! + 8)
 		}
 		//	right edge
-		else if (keys[key] === 1 && $selectedCellStore % 9 === 8) {
-			return selectedCellStore.update((cell) => cell - 8)
+		else if (keys[key] === 1 && $selectedCellStore! % 9 === 8) {
+			return selectedCellStore.update((cell) => cell! - 8)
 		}
 		//	top edge
-		else if (keys[key] === -9 && Math.floor($selectedCellStore / 9) === 0) {
-			return selectedCellStore.update((cell) => cell + 81 + keys[key])
+		else if (
+			keys[key] === -9 &&
+			Math.floor($selectedCellStore! / 9) === 0
+		) {
+			return selectedCellStore.update((cell) => cell! + 81 + keys[key])
 		}
 		//	bottom edge
-		else if (keys[key] === 9 && Math.floor($selectedCellStore / 9) === 8) {
-			return selectedCellStore.update((cell) => cell - 81 + keys[key])
+		else if (keys[key] === 9 && Math.floor($selectedCellStore! / 9) === 8) {
+			return selectedCellStore.update((cell) => cell! - 81 + keys[key])
 		}
 		//	not at an edge
 		else {
-			return selectedCellStore.update((cell) => cell + keys[key])
+			return selectedCellStore.update((cell) => cell! + keys[key])
 		}
 	}
 
