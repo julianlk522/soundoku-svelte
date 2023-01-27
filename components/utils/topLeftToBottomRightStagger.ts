@@ -1,5 +1,4 @@
 export function topLeftToBottomRightStagger(index: number, sideLength: number) {
-	console.log(`checking index ${index} and sideLength ${sideLength}`)
 	if (index >= Math.pow(sideLength, 2)) return
 
 	if (index === 0) return 0

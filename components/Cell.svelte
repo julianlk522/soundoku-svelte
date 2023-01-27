@@ -105,7 +105,6 @@
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
 	bind:this={self}
-	on:click={handleSelect}
 	on:focus={handleSelect}
 	on:keydown={handleKeydown}
 	in:fade={{
@@ -115,7 +114,10 @@
 		easing: sineIn,
 	}}
 >
-	{value !== null || completed
+	{#if value && !completed}
+		<div class="filled {selected ? 'filled-selected' : ''}" />
+	{/if}
+	{value !== null && completed
 		? value
 		: incorrect
 		? $selectedNumberStore
@@ -124,6 +126,7 @@
 
 <style>
 	.cell {
+		position: relative;
 		height: clamp(1.75rem, 5vmax, 4rem);
 		width: clamp(1.75rem, 5vmax, 4rem);
 		max-height: 10vw;
@@ -133,6 +136,19 @@
 		border: 1px solid #aaa;
 	}
 
+	.filled {
+		height: 8px;
+		width: 8px;
+		position: absolute;
+		top: 4px;
+		left: 4px;
+		background-color: var(--color-secondary-soft);
+		border-radius: 5px;
+	}
+
+	.filled-selected {
+		background-color: var(--color-secondary);
+	}
 	.selected {
 		background-color: var(--color-primary);
 		color: var(--color-text-light);
