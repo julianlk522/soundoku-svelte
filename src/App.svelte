@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
-	import { selectedCellStore } from './stores'
+	import { selectedCellStore, selectedNumberStore } from './stores'
 	import Board from '../components/Board.svelte'
 	import NumberSelect from '../components/NumberSelect.svelte'
 	import GameOverPopup from '../components/GameOverPopup.svelte'
@@ -34,9 +34,38 @@
 		return `${minutes}: ${seconds}`
 	}
 
-	function initialNavigation(event: KeyboardEvent) {
-		if (keys.hasOwnProperty(event.key) && !$selectedCellStore)
-			selectedCellStore.set(0)
+	function handleKeydown(event: KeyboardEvent) {
+		if (keys.hasOwnProperty(event.key)) {
+			if ($selectedCellStore === null) {
+				selectedCellStore.set(0)
+			} else {
+				selectedNumberStore.set(null)
+				navigateCells(event.key)
+			}
+		}
+	}
+
+	function navigateCells(key: string) {
+		//	left edge
+		if (keys[key] === -1 && $selectedCellStore % 9 === 0) {
+			return selectedCellStore.update((cell) => cell + 8)
+		}
+		//	right edge
+		else if (keys[key] === 1 && $selectedCellStore % 9 === 8) {
+			return selectedCellStore.update((cell) => cell - 8)
+		}
+		//	top edge
+		else if (keys[key] === -9 && Math.floor($selectedCellStore / 9) === 0) {
+			return selectedCellStore.update((cell) => cell + 81 + keys[key])
+		}
+		//	bottom edge
+		else if (keys[key] === 9 && Math.floor($selectedCellStore / 9) === 8) {
+			return selectedCellStore.update((cell) => cell - 81 + keys[key])
+		}
+		//	not at an edge
+		else {
+			return selectedCellStore.update((cell) => cell + keys[key])
+		}
 	}
 
 	onMount(() => {
@@ -48,7 +77,7 @@
 	onDestroy(() => clearInterval(timer))
 </script>
 
-<svelte:window on:keydown={initialNavigation} />
+<svelte:window on:keydown={handleKeydown} />
 
 {#if !gameReset}
 	<main class:game-over-fadeout={gameOver}>

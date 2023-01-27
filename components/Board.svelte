@@ -1,14 +1,14 @@
 <script lang="ts">
+	import { makepuzzle, solvepuzzle } from 'sudoku'
+	import { onMount, createEventDispatcher } from 'svelte'
 	import {
 		selectedCellStore,
 		selectedNumberStore,
 		remainingCellsStore,
 		selectedCellFilledStore,
 	} from '../src/stores'
-	import { onMount, createEventDispatcher } from 'svelte'
-	import { makepuzzle, solvepuzzle } from 'sudoku'
-	import { playAudio, stopAudio, playArpeggio } from './utils/audio'
 	import Row from './Row.svelte'
+	import { playAudio, stopAudio, playArpeggio } from './utils/audio'
 
 	const dispatch = createEventDispatcher()
 

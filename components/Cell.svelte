@@ -50,39 +50,13 @@
 		relatedToSelected && completed && value === $selectedNumberStore
 
 	function handleSelect() {
-		selectedNumberStore.set(0)
+		selectedNumberStore.set(null)
 		dispatch('select', { index: rowIndex * 9 + indexInRow, value })
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (!value && /\d/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
-		} else if (keys.hasOwnProperty(event.key)) {
-			selectedNumberStore.set(0)
-			navigate(event.key)
-		}
-	}
-
-	function navigate(key: string) {
-		//	left edge
-		if (keys[key] === -1 && selectedCell! % 9 === 0) {
-			return selectedCellStore.set(selectedCell! + 8)
-		}
-		//	right edge
-		else if (keys[key] === 1 && selectedCell! % 9 === 8) {
-			return selectedCellStore.set(selectedCell! - 8)
-		}
-		//	top edge
-		else if (keys[key] === -9 && Math.floor(selectedCell! / 9) === 0) {
-			return selectedCellStore.set(selectedCell! + 81 + keys[key])
-		}
-		//	bottom edge
-		else if (keys[key] === 9 && Math.floor(selectedCell! / 9) === 8) {
-			return selectedCellStore.set(selectedCell! - 81 + keys[key])
-		}
-		//	not at an edge
-		else {
-			return selectedCellStore.set(selectedCell! + keys[key])
 		}
 	}
 </script>
