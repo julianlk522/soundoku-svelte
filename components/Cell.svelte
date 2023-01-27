@@ -47,42 +47,16 @@
 				Math.floor((selectedCell % 9) / 3) ===
 					Math.floor(indexInRow / 3)))
 	$: relatedToSelectedIncorrect =
-		relatedToSelected && value === $selectedNumberStore
+		relatedToSelected && completed && value === $selectedNumberStore
 
 	function handleSelect() {
-		selectedNumberStore.set(0)
+		selectedNumberStore.set(null)
 		dispatch('select', { index: rowIndex * 9 + indexInRow, value })
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (!value && /\d/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
-		} else if (keys.hasOwnProperty(event.key)) {
-			selectedNumberStore.set(0)
-			navigate(event.key)
-		}
-	}
-
-	function navigate(key: string) {
-		//	left edge
-		if (keys[key] === -1 && selectedCell! % 9 === 0) {
-			return selectedCellStore.set(selectedCell! + 8)
-		}
-		//	right edge
-		else if (keys[key] === 1 && selectedCell! % 9 === 8) {
-			return selectedCellStore.set(selectedCell! - 8)
-		}
-		//	top edge
-		else if (keys[key] === -9 && Math.floor(selectedCell! / 9) === 0) {
-			return selectedCellStore.set(selectedCell! + 81 + keys[key])
-		}
-		//	bottom edge
-		else if (keys[key] === 9 && Math.floor(selectedCell! / 9) === 8) {
-			return selectedCellStore.set(selectedCell! - 81 + keys[key])
-		}
-		//	not at an edge
-		else {
-			return selectedCellStore.set(selectedCell! + keys[key])
 		}
 	}
 </script>
@@ -105,7 +79,6 @@
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
 	bind:this={self}
-	on:click={handleSelect}
 	on:focus={handleSelect}
 	on:keydown={handleKeydown}
 	in:fade={{
@@ -115,7 +88,10 @@
 		easing: sineIn,
 	}}
 >
-	{value !== null || completed
+	{#if value && !completed}
+		<div class="filled {selected ? 'filled-selected' : ''}" />
+	{/if}
+	{value !== null && completed
 		? value
 		: incorrect
 		? $selectedNumberStore
@@ -124,6 +100,7 @@
 
 <style>
 	.cell {
+		position: relative;
 		height: clamp(1.75rem, 5vmax, 4rem);
 		width: clamp(1.75rem, 5vmax, 4rem);
 		max-height: 10vw;
@@ -133,6 +110,19 @@
 		border: 1px solid #aaa;
 	}
 
+	.filled {
+		height: 8px;
+		width: 8px;
+		position: absolute;
+		top: 4px;
+		left: 4px;
+		background-color: var(--color-secondary-soft);
+		border-radius: 5px;
+	}
+
+	.filled-selected {
+		background-color: var(--color-secondary);
+	}
 	.selected {
 		background-color: var(--color-primary);
 		color: var(--color-text-light);

@@ -20,6 +20,8 @@
 			playAudio(value - 1)
 		}
 	}
+
+	//	todo: add keydown event listener to allow switching between button clicks and number keys as guess initiators
 </script>
 
 <button class="selectionButton" on:click={() => handleNumberSelect(value)}
