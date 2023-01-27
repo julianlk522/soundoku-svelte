@@ -47,7 +47,7 @@
 				Math.floor((selectedCell % 9) / 3) ===
 					Math.floor(indexInRow / 3)))
 	$: relatedToSelectedIncorrect =
-		relatedToSelected && value === $selectedNumberStore
+		relatedToSelected && completed && value === $selectedNumberStore
 
 	function handleSelect() {
 		selectedNumberStore.set(0)
