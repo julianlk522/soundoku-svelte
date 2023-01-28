@@ -3,11 +3,12 @@
 	import Slide_1 from './Slide_1.svelte'
 	import Slide_2 from './Slide_2.svelte'
 	import Slide_3 from './Slide_3.svelte'
+	import Slide_4 from './Slide_4.svelte'
 	const dispatch = createEventDispatcher()
 
 	let firstButton: HTMLButtonElement
 
-	const slides = [Slide_1, Slide_2, Slide_3]
+	const slides = [Slide_1, Slide_2, Slide_3, Slide_4]
 	let currSlide = 0
 
 	function nextSlide() {
@@ -57,6 +58,7 @@
 		display: flex;
 		justify-content: space-evenly;
 		gap: 2rem;
+		margin-top: 2rem;
 	}
 
 	#tutorial-navigation-buttons button {
