@@ -10,6 +10,12 @@
 
 <MockBox randomlyFilled={true} selectableCells={true} />
 
+<h3>
+	Selecting a filled cell will play one of 9 tones; which tone you hear is
+	determined by the cell's (hidden) value, with 1 being the lowest in pitch
+	and 9 being the highest.
+</h3>
+
 <style>
 	h2,
 	h3 {

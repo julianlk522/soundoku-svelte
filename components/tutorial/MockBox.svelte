@@ -2,8 +2,18 @@
 	import MockCell from './MockCell.svelte'
 	import { tutorialSelectedCellStore } from '../../src/stores'
 	import { keys } from '../utils/keyboardNavigation'
+	import { playAudio, stopAudio } from '../utils/audio'
 
 	export let selectableCells: boolean = false
+	tutorialSelectedCellStore.subscribe((selectedCell) => {
+		if (
+			!selectableCells ||
+			randomlyFilledCells?.indexOf(selectedCell + 1) === -1
+		)
+			return
+		stopAudio()
+		playAudio(selectedCell)
+	})
 
 	export let index: number | undefined = undefined
 	export let cycles: number | undefined = undefined
