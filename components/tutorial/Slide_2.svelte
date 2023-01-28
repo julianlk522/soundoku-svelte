@@ -12,7 +12,7 @@
 	icon present at the top-left of those cells.
 </h3>
 
-<MockBox randomlyFilled={true} />
+<MockBox randomlyFilled={true} flashFilled={true} />
 
 <style>
 	h2,

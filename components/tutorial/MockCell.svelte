@@ -1,21 +1,24 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, afterUpdate } from 'svelte'
 	import { sineIn } from 'svelte/easing'
 	import { fade } from 'svelte/transition'
+	import { tutorialSelectedCellStore } from '../../src/stores'
 	import { topLeftToBottomRightStagger } from '../utils/topLeftToBottomRightStagger'
 
 	let self: HTMLButtonElement
 
 	export let value: number
+	export let selectable: boolean = false
 	export let active: boolean = false
 	export let cycles: number = 0
 	$: cellHueSecondary = active && cycles && Math.floor(cycles / 2) % 2 === 0
 	$: cellHueTertiary = active && cycles && Math.floor(cycles / 2) % 3 === 0
 	export let randomlyFilledCells: number[] | undefined
 	$: filled = randomlyFilledCells && randomlyFilledCells.indexOf(value) !== -1
+	export let flashFilled: boolean
 
 	onMount(() => {
-		if (!filled) return
+		if (!filled || !flashFilled) return
 		self.style.setProperty(
 			'--flash-filled-delay',
 			(randomlyFilledCells!.indexOf(value) / 2).toString()
@@ -25,16 +28,25 @@
 			(randomlyFilledCells!.length / 2).toString()
 		)
 	})
+
+	afterUpdate(() => {
+		selectable && $tutorialSelectedCellStore === value - 1 && self.focus()
+	})
 </script>
 
 {#key Math.floor(cycles / 2)}
 	<button
-		tabindex="-1"
+		tabindex={selectable ? 0 : -1}
 		class="cell"
+		class:cell-non-selectable={!selectable}
+		class:selected={selectable && $tutorialSelectedCellStore === value - 1}
 		class:cell-hue-secondary={active}
 		class:cell-hue-tertiary={cellHueSecondary}
 		class:cell-hue-quaternary={cellHueTertiary}
 		bind:this={self}
+		on:click={() => {
+			tutorialSelectedCellStore.set(value - 1)
+		}}
 		in:fade={{
 			duration: 200,
 			easing: sineIn,
@@ -42,7 +54,7 @@
 		}}
 	>
 		{#if filled}
-			<div class="filled" />
+			<div class="filled {flashFilled ? 'flash-filled' : ''}" />
 		{/if}
 		{!randomlyFilledCells ? value : ''}
 	</button>
@@ -57,6 +69,9 @@
 		font-size: 1.5rem;
 		font-weight: 700;
 		border: 1px solid #aaa;
+	}
+
+	.cell-non-selectable {
 		pointer-events: none;
 	}
 
@@ -66,8 +81,12 @@
 		top: 4px;
 		height: 8px;
 		width: 8px;
-		background-color: transparent;
+		background-color: var(--color-secondary-soft);
 		border-radius: 5px;
+	}
+
+	.flash-filled {
+		background-color: transparent;
 		animation: flash-filled calc(var(--flash-filled-duration) * 1s) linear
 			calc(var(--flash-filled-delay) * 1s) infinite;
 	}
@@ -84,6 +103,15 @@
 		50% {
 			background-color: var(--color-secondary);
 		}
+	}
+
+	.selected {
+		background-color: var(--color-primary);
+		color: var(--color-text-light);
+	}
+
+	.selected:focus {
+		outline: none;
 	}
 
 	.cell-hue-secondary {

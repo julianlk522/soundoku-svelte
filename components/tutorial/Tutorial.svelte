@@ -5,9 +5,10 @@
 	import Slide_3 from './Slide_3.svelte'
 	const dispatch = createEventDispatcher()
 
+	let firstButton: HTMLButtonElement
+
 	const slides = [Slide_1, Slide_2, Slide_3]
 	let currSlide = 0
-	let firstButton: HTMLButtonElement
 
 	function nextSlide() {
 		if (currSlide < slides.length - 1) currSlide++
@@ -15,7 +16,7 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (event.key.toLowerCase() === 's') {
+		if (event.key.toLowerCase() === 't') {
 			dispatch('end-tutorial')
 		} else if (event.key.toLowerCase() === 'c') {
 			nextSlide()
@@ -32,11 +33,11 @@
 		<button on:click={nextSlide} bind:this={firstButton}
 			>{currSlide < slides.length - 1
 				? 'Continue (C)'
-				: "I'm ready (C)"}</button
+				: "I'm ready! (C)"}</button
 		>
 		{#if currSlide < slides.length - 1}
 			<button on:click={() => dispatch('end-tutorial')}
-				>Skip tutorial (S)</button
+				>Skip tutorial (T)</button
 			>
 		{/if}
 	</div>

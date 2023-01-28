@@ -2,10 +2,13 @@
 	import MockBox from './MockBox.svelte'
 </script>
 
-<h2>Slide 3</h2>
-<h3>Hooray</h3>
+<h2>Getting Around</h2>
+<h3>
+	You can navigate the cells on the board using the arrows keys, WASD, or by
+	clicking each cell you wish to select.
+</h3>
 
-<MockBox randomlyFilled={true} />
+<MockBox randomlyFilled={true} selectableCells={true} />
 
 <style>
 	h2,

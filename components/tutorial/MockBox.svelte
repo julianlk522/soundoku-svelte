@@ -1,5 +1,9 @@
 <script lang="ts">
 	import MockCell from './MockCell.svelte'
+	import { tutorialSelectedCellStore } from '../../src/stores'
+	import { keys } from '../utils/keyboardNavigation'
+
+	export let selectableCells: boolean = false
 
 	export let index: number | undefined = undefined
 	export let cycles: number | undefined = undefined
@@ -12,15 +16,65 @@
 				(val) => val > Math.floor(Math.random() + 0.5) * val
 		  )
 		: undefined
+	export let flashFilled: boolean = false
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (!selectableCells) return
+
+		if (keys.hasOwnProperty(event.key)) {
+			navigateBox(event.key)
+		}
+	}
+
+	function navigateBox(key: string) {
+		//	left edge
+		if (keys[key] === -1 && $tutorialSelectedCellStore! % 3 === 0) {
+			tutorialSelectedCellStore.update((cell) => cell + 2)
+		}
+		//	right edge
+		else if (keys[key] === 1 && $tutorialSelectedCellStore! % 3 === 2) {
+			tutorialSelectedCellStore.update((cell) => cell - 2)
+		}
+		//	top edge
+		else if (
+			keys[key] === -9 &&
+			Math.floor($tutorialSelectedCellStore! / 3) === 0
+		) {
+			tutorialSelectedCellStore.update(
+				(cell) => cell + 9 + Math.ceil(keys[key] / 3)
+			)
+		}
+		//	bottom edge
+		else if (
+			keys[key] === 9 &&
+			Math.floor($tutorialSelectedCellStore! / 3) === 2
+		) {
+			tutorialSelectedCellStore.update(
+				(cell) => cell - 9 + Math.ceil(keys[key] / 3)
+			)
+		}
+		//	not at an edge
+		else if (keys[key] > 0) {
+			tutorialSelectedCellStore.update(
+				(cell) => cell + Math.ceil(keys[key] / 3)
+			)
+		} else {
+			tutorialSelectedCellStore.update(
+				(cell) => cell + Math.floor(keys[key] / 3)
+			)
+		}
+	}
 </script>
 
-<div id="cells-grid">
+<div id="cells-grid" on:keydown={handleKeydown}>
 	{#each cellsArray as value, i (i)}
 		<MockCell
 			{value}
+			selectable={selectableCells}
 			active={Number.isInteger(index) ? i === index : undefined}
 			cycles={cycles ? cycles : undefined}
 			{randomlyFilledCells}
+			{flashFilled}
 		/>
 	{/each}
 </div>
