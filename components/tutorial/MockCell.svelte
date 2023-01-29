@@ -32,6 +32,13 @@
 		playAudio(selectedCell)
 	})
 
+	function handleClick() {
+		if ($tutorialSelectedCellStore === value - 1) {
+			stopAudio()
+			playAudio(value - 1)
+		} else tutorialSelectedCellStore.set(value - 1)
+	}
+
 	onMount(() => {
 		if (!filled || !flashFilled) return
 		self.style.setProperty(
@@ -59,9 +66,7 @@
 		class:cell-hue-tertiary={cellHueSecondary}
 		class:cell-hue-quaternary={cellHueTertiary}
 		bind:this={self}
-		on:click={() => {
-			tutorialSelectedCellStore.set(value - 1)
-		}}
+		on:click={handleClick}
 		in:fade={{
 			duration: 200,
 			easing: sineIn,
