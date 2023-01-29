@@ -1,31 +1,26 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte'
 	import MockCell from './MockCell.svelte'
-	import { tutorialSelectedCellStore } from '../../src/stores'
+	import {
+		tutorialSelectedCellStore,
+		tutorialRandomlyFilledCellsStore,
+	} from '../../src/stores'
 	import { keys } from '../utils/keyboardNavigation'
-	import { playAudio, stopAudio } from '../utils/audio'
 
 	export let selectableCells: boolean = false
-	tutorialSelectedCellStore.subscribe((selectedCell) => {
-		if (
-			!selectableCells ||
-			randomlyFilledCells?.indexOf(selectedCell + 1) === -1
-		)
-			return
-		stopAudio()
-		playAudio(selectedCell)
-	})
-
 	export let index: number | undefined = undefined
 	export let cycles: number | undefined = undefined
 
 	const cellsArray = Array.from(Array(9)).map((_, i) => i + 1)
 
 	export let randomlyFilled: boolean = false
-	$: randomlyFilledCells = randomlyFilled
-		? cellsArray.filter(
+	$: randomlyFilled &&
+		tutorialRandomlyFilledCellsStore.set(
+			cellsArray.filter(
 				(val) => val > Math.floor(Math.random() + 0.5) * val
-		  )
-		: undefined
+			)
+		)
+
 	export let flashFilled: boolean = false
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -74,6 +69,14 @@
 			)
 		}
 	}
+
+	onMount(() => {
+		tutorialSelectedCellStore.set(0)
+	})
+
+	onDestroy(() => {
+		tutorialRandomlyFilledCellsStore.set([])
+	})
 </script>
 
 <div id="cells-grid" on:keydown={handleKeydown}>
@@ -83,7 +86,6 @@
 			selectable={selectableCells}
 			active={Number.isInteger(index) ? i === index : undefined}
 			cycles={cycles ? cycles : undefined}
-			{randomlyFilledCells}
 			{flashFilled}
 		/>
 	{/each}

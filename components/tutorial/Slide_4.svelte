@@ -15,7 +15,6 @@
 	cells.
 </h3>
 
-<MockBox randomlyFilled={true} selectableCells={true} />
 <MockNumberSelect />
 
 <style>

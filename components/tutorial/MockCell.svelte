@@ -2,8 +2,12 @@
 	import { onMount, afterUpdate } from 'svelte'
 	import { sineIn } from 'svelte/easing'
 	import { fade } from 'svelte/transition'
-	import { tutorialSelectedCellStore } from '../../src/stores'
+	import {
+		tutorialSelectedCellStore,
+		tutorialRandomlyFilledCellsStore,
+	} from '../../src/stores'
 	import { topLeftToBottomRightStagger } from '../utils/topLeftToBottomRightStagger'
+	import { playAudio, stopAudio } from '../utils/audio'
 
 	let self: HTMLButtonElement
 
@@ -13,19 +17,30 @@
 	export let cycles: number = 0
 	$: cellHueSecondary = active && cycles && Math.floor(cycles / 2) % 2 === 0
 	$: cellHueTertiary = active && cycles && Math.floor(cycles / 2) % 3 === 0
-	export let randomlyFilledCells: number[] | undefined
-	$: filled = randomlyFilledCells && randomlyFilledCells.indexOf(value) !== -1
+	$: filled =
+		$tutorialRandomlyFilledCellsStore &&
+		$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
 	export let flashFilled: boolean
+
+	tutorialSelectedCellStore.subscribe((selectedCell) => {
+		if (
+			!selectable ||
+			$tutorialRandomlyFilledCellsStore.indexOf(selectedCell + 1) === -1
+		)
+			return
+		stopAudio()
+		playAudio(selectedCell)
+	})
 
 	onMount(() => {
 		if (!filled || !flashFilled) return
 		self.style.setProperty(
 			'--flash-filled-delay',
-			(randomlyFilledCells!.indexOf(value) / 2).toString()
+			($tutorialRandomlyFilledCellsStore.indexOf(value) / 2).toString()
 		)
 		self.style.setProperty(
 			'--flash-filled-duration',
-			(randomlyFilledCells!.length / 2).toString()
+			($tutorialRandomlyFilledCellsStore.length / 2).toString()
 		)
 	})
 
@@ -56,7 +71,7 @@
 		{#if filled}
 			<div class="filled {flashFilled ? 'flash-filled' : ''}" />
 		{/if}
-		{!randomlyFilledCells ? value : ''}
+		{!$tutorialRandomlyFilledCellsStore.length ? value : ''}
 	</button>
 {/key}
 
