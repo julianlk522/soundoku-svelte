@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, afterUpdate } from 'svelte'
+	import { onMount, onDestroy, afterUpdate } from 'svelte'
 	import { sineIn } from 'svelte/easing'
 	import { fade } from 'svelte/transition'
 	import {
@@ -35,17 +35,20 @@
 		$selectedNumberStore &&
 		value !== $selectedNumberStore
 
-	tutorialSelectedCellStore.subscribe((selectedCell) => {
-		if (
-			!selectable ||
-			$tutorialRandomlyFilledCellsStore.indexOf(selectedCell + 1) === -1
-		)
-			return
-		stopAudio()
-		playAudio(selectedCell)
-	})
+	const unsubSelectedCellStore = tutorialSelectedCellStore.subscribe(
+		(selectedCell) => {
+			if (
+				!selectable ||
+				$tutorialRandomlyFilledCellsStore.indexOf(selectedCell + 1) ===
+					-1
+			)
+				return
+			stopAudio()
+			playAudio(selectedCell)
+		}
+	)
 
-	selectedNumberStore.subscribe((newNum) => {
+	const unsubSelectedNumberStore = selectedNumberStore.subscribe((newNum) => {
 		if (
 			!guessable ||
 			filled ||
@@ -87,6 +90,11 @@
 			'--flash-filled-duration',
 			($tutorialRandomlyFilledCellsStore.length / 2).toString()
 		)
+	})
+
+	onDestroy(() => {
+		unsubSelectedCellStore()
+		unsubSelectedNumberStore()
 	})
 
 	afterUpdate(() => {
