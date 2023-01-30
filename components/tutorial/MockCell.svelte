@@ -35,7 +35,10 @@
 	})
 
 	function handleClick() {
-		if ($tutorialSelectedCellStore === value - 1) {
+		if (
+			$tutorialSelectedCellStore === value - 1 &&
+			$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
+		) {
 			stopAudio()
 			playAudio(value - 1)
 		} else tutorialSelectedCellStore.set(value - 1)
