@@ -4,11 +4,12 @@
 	import Slide_2 from './Slide_2.svelte'
 	import Slide_3 from './Slide_3.svelte'
 	import Slide_4 from './Slide_4.svelte'
+	import Slide_5 from './Slide_5.svelte'
 	const dispatch = createEventDispatcher()
 
 	let firstButton: HTMLButtonElement
 
-	const slides = [Slide_1, Slide_2, Slide_3, Slide_4]
+	const slides = [Slide_1, Slide_2, Slide_3, Slide_4, Slide_5]
 	let currSlide = 0
 
 	function nextSlide() {
