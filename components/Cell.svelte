@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { selectedCellStore, selectedNumberStore } from '../src/stores'
+	import { onDestroy } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import { sineIn } from 'svelte/easing'
 	import { createEventDispatcher } from 'svelte'
-	import { keys } from './utils/keyboardNavigation'
 	import { topLeftToBottomRightStagger } from './utils/topLeftToBottomRightStagger'
 	const dispatch = createEventDispatcher()
 
@@ -24,7 +24,7 @@
 	$: completed = value && completedCells.has(rowIndex * 9 + indexInRow)
 
 	let selectedCell: number | null
-	selectedCellStore.subscribe((index) => {
+	const unsubSelectedCellStore = selectedCellStore.subscribe((index) => {
 		selectedCell = index
 		if (index === rowIndex * 9 + indexInRow) self?.focus()
 	})
@@ -59,6 +59,8 @@
 			selectedNumberStore.set(+event.key)
 		}
 	}
+
+	onDestroy(unsubSelectedCellStore)
 </script>
 
 <button
