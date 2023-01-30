@@ -11,16 +11,6 @@
 	a guess about that cell's value.
 </h3>
 
-<p>
-	If you are right, the cell will change to a green shade and reveal its value
-	permanently.
-</p>
-
-<p>
-	Otherwise, the cell will temporarily change to a red shade and your total
-	error count will be incremented.
-</p>
-
 <MockBox randomlyFilled={true} selectableCells={true} guessable={true} />
 <MockNumberSelect />
 <p>Errors: {$tutorialErrorsStore}</p>

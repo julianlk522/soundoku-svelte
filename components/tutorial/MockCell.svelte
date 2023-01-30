@@ -71,6 +71,12 @@
 		} else tutorialSelectedCellStore.set(value - 1)
 	}
 
+	function handleKeydown(event: KeyboardEvent) {
+		if (!filled && !correct && /\d/.test(event.key)) {
+			selectedNumberStore.set(+event.key)
+		}
+	}
+
 	onMount(() => {
 		if (!filled || !flashFilled) return
 		self.style.setProperty(
@@ -100,6 +106,7 @@
 		class:cell-hue-quaternary={cellHueQuaternary || correct}
 		bind:this={self}
 		on:click={handleClick}
+		on:keydown={handleKeydown}
 		in:fade={{
 			duration: 200,
 			easing: sineIn,

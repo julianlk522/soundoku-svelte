@@ -5,6 +5,7 @@
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
 		selectedNumberStore,
+		tutorialErrorsStore,
 	} from '../../src/stores'
 	import { keys } from '../utils/keyboardNavigation'
 
@@ -75,6 +76,7 @@
 
 	onMount(() => {
 		tutorialSelectedCellStore.set(0)
+		tutorialErrorsStore.set(0)
 	})
 
 	onDestroy(() => {
