@@ -6,8 +6,8 @@
 		tutorialRandomlyFilledCellsStore,
 		selectedNumberStore,
 		tutorialErrorsStore,
-	} from '../../src/stores'
-	import { keys } from '../utils/keyboardNavigation'
+	} from '../../../stores'
+	import { keys } from '../../utils/keyboardNavigation'
 
 	export let selectableCells: boolean = false
 	export let index: number | undefined = undefined

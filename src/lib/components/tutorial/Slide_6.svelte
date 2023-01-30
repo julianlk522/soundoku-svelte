@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tutorialErrorsStore } from '../../src/stores'
+	import { tutorialErrorsStore } from '../../../stores'
 	import MockBox from './MockBox.svelte'
 </script>
 

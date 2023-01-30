@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { selectedCellStore, selectedNumberStore } from '../src/stores'
+	import { selectedCellStore, selectedNumberStore } from '../../../src/stores'
 	import { onDestroy } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import { sineIn } from 'svelte/easing'
 	import { createEventDispatcher } from 'svelte'
-	import { topLeftToBottomRightStagger } from './utils/topLeftToBottomRightStagger'
+	import { topLeftToBottomRightStagger } from '../utils/topLeftToBottomRightStagger'
 	const dispatch = createEventDispatcher()
 
 	let self: HTMLButtonElement

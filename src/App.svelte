@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
 	import { selectedCellStore, selectedNumberStore } from './stores'
-	import Board from '../components/Board.svelte'
-	import NumberSelect from '../components/NumberSelect.svelte'
-	import GameOverPopup from '../components/GameOverPopup.svelte'
-	import Tutorial from '../components/tutorial/Tutorial.svelte'
-	import { keys } from '../components/utils/keyboardNavigation'
+	import Board from './lib/components/Board.svelte'
+	import NumberSelect from './lib/components/NumberSelect.svelte'
+	import GameOverPopup from './lib/components/GameOverPopup.svelte'
+	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
+	import { keys } from './lib/utils/keyboardNavigation'
 
 	let tutorial = true
 	let time = 0

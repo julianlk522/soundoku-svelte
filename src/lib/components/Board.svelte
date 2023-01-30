@@ -6,9 +6,9 @@
 		selectedNumberStore,
 		remainingCellsStore,
 		selectedCellFilledStore,
-	} from '../src/stores'
+	} from '../../../src/stores'
 	import Row from './Row.svelte'
-	import { playAudio, stopAudio, playArpeggio } from './utils/audio'
+	import { playAudio, stopAudio, playArpeggio } from '../utils/audio'
 
 	const dispatch = createEventDispatcher()
 

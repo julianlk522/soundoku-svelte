@@ -7,9 +7,9 @@
 		tutorialRandomlyFilledCellsStore,
 		tutorialErrorsStore,
 		selectedNumberStore,
-	} from '../../src/stores'
-	import { topLeftToBottomRightStagger } from '../utils/topLeftToBottomRightStagger'
-	import { playAudio, stopAudio } from '../utils/audio'
+	} from '../../../stores'
+	import { topLeftToBottomRightStagger } from '../../utils/topLeftToBottomRightStagger'
+	import { playAudio, stopAudio } from '../../utils/audio'
 
 	let self: HTMLButtonElement
 
