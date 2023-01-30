@@ -113,7 +113,7 @@
 		class:cell-hue-tertiary={cellHueTertiary || incorrect}
 		class:cell-hue-quaternary={cellHueQuaternary || correct}
 		bind:this={self}
-		on:click={handleClick}
+		on:click|stopPropagation={handleClick}
 		on:keydown={handleKeydown}
 		in:fade={{
 			duration: 200,

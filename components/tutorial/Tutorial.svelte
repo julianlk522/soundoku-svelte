@@ -25,6 +25,8 @@
 	function nextSlide() {
 		if (currSlide < slides.length - 1) currSlide++
 		else dispatch('end-tutorial')
+		//	todo: replace this ugly solution with a nicer one
+		if (currSlide === 3 || currSlide === 6) firstButton.focus()
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -38,7 +40,11 @@
 	onMount(() => firstButton.focus())
 </script>
 
-<div id="tutorial" on:keydown|stopPropagation={handleKeydown}>
+<div
+	id="tutorial"
+	on:keydown|stopPropagation={handleKeydown}
+	on:click={() => firstButton.focus()}
+>
 	<svelte:component this={slides[currSlide]} />
 
 	<div id="tutorial-navigation-buttons">

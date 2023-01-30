@@ -75,11 +75,11 @@
 	}
 
 	onMount(() => {
-		tutorialSelectedCellStore.set(0)
 		tutorialErrorsStore.set(0)
 	})
 
 	onDestroy(() => {
+		tutorialSelectedCellStore.set(0)
 		tutorialRandomlyFilledCellsStore.set([])
 	})
 </script>
