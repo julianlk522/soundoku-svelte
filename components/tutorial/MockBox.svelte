@@ -84,8 +84,10 @@
 		<MockCell
 			{value}
 			selectable={selectableCells}
-			active={Number.isInteger(index) ? i === index : undefined}
 			cycles={cycles ? cycles : undefined}
+			activeCellInCycle={Number.isInteger(index)
+				? i === index
+				: undefined}
 			{flashFilled}
 		/>
 	{/each}

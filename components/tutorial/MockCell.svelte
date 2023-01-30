@@ -13,10 +13,12 @@
 
 	export let value: number
 	export let selectable: boolean = false
-	export let active: boolean = false
 	export let cycles: number = 0
-	$: cellHueSecondary = active && cycles && Math.floor(cycles / 2) % 2 === 0
-	$: cellHueTertiary = active && cycles && Math.floor(cycles / 2) % 3 === 0
+	export let activeCellInCycle: boolean = false
+	$: cellHueSecondary =
+		cycles && activeCellInCycle && Math.floor(cycles / 2) % 2 === 0
+	$: cellHueTertiary =
+		cycles && activeCellInCycle && Math.floor(cycles / 2) % 3 === 0
 	$: filled =
 		$tutorialRandomlyFilledCellsStore &&
 		$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
@@ -62,7 +64,7 @@
 		class="cell"
 		class:cell-non-selectable={!selectable}
 		class:selected={selectable && $tutorialSelectedCellStore === value - 1}
-		class:cell-hue-secondary={active}
+		class:cell-hue-secondary={activeCellInCycle}
 		class:cell-hue-tertiary={cellHueSecondary}
 		class:cell-hue-quaternary={cellHueTertiary}
 		bind:this={self}
