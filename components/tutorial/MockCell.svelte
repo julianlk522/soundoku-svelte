@@ -5,6 +5,7 @@
 	import {
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
+		tutorialErrorsStore,
 		selectedNumberStore,
 	} from '../../src/stores'
 	import { topLeftToBottomRightStagger } from '../utils/topLeftToBottomRightStagger'
@@ -54,6 +55,8 @@
 			return
 		if (newNum === value) {
 			correct = true
+		} else {
+			tutorialErrorsStore.update((errors) => errors + 1)
 		}
 	})
 
@@ -110,7 +113,11 @@
 					: ''}"
 			/>
 		{/if}
-		{!$tutorialRandomlyFilledCellsStore.length || correct ? value : ''}
+		{!$tutorialRandomlyFilledCellsStore.length || correct
+			? value
+			: incorrect
+			? $selectedNumberStore
+			: ''}
 	</button>
 {/key}
 

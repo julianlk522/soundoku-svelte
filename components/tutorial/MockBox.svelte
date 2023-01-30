@@ -4,6 +4,7 @@
 	import {
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
+		selectedNumberStore,
 	} from '../../src/stores'
 	import { keys } from '../utils/keyboardNavigation'
 
@@ -33,6 +34,7 @@
 	}
 
 	function navigateBox(key: string) {
+		selectedNumberStore.set(null)
 		//	left edge
 		if (keys[key] === -1 && $tutorialSelectedCellStore! % 3 === 0) {
 			tutorialSelectedCellStore.update((cell) => cell + 2)
