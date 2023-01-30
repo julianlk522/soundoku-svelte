@@ -22,6 +22,7 @@
 		)
 
 	export let flashFilled: boolean = false
+	export let guessable: boolean = false
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (!selectableCells) return
@@ -83,12 +84,13 @@
 	{#each cellsArray as value, i (i)}
 		<MockCell
 			{value}
-			selectable={selectableCells}
 			cycles={cycles ? cycles : undefined}
 			activeCellInCycle={Number.isInteger(index)
 				? i === index
 				: undefined}
+			selectable={selectableCells}
 			{flashFilled}
+			{guessable}
 		/>
 	{/each}
 </div>
@@ -97,7 +99,7 @@
 	#cells-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		margin: 2rem 0;
+		margin-bottom: 1rem;
 		background-color: #eee;
 	}
 </style>

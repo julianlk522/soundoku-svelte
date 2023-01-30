@@ -5,6 +5,7 @@
 	import {
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
+		selectedNumberStore,
 	} from '../../src/stores'
 	import { topLeftToBottomRightStagger } from '../utils/topLeftToBottomRightStagger'
 	import { playAudio, stopAudio } from '../utils/audio'
@@ -13,16 +14,25 @@
 
 	export let value: number
 	export let selectable: boolean = false
+	$: selected = selectable && $tutorialSelectedCellStore === value - 1
 	export let cycles: number = 0
 	export let activeCellInCycle: boolean = false
-	$: cellHueSecondary =
-		cycles && activeCellInCycle && Math.floor(cycles / 2) % 2 === 0
 	$: cellHueTertiary =
+		cycles && activeCellInCycle && Math.floor(cycles / 2) % 2 === 0
+	$: cellHueQuaternary =
 		cycles && activeCellInCycle && Math.floor(cycles / 2) % 3 === 0
 	$: filled =
 		$tutorialRandomlyFilledCellsStore &&
 		$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
 	export let flashFilled: boolean
+	export let guessable: boolean = false
+	let correct = false
+	$: incorrect =
+		guessable &&
+		selected &&
+		!filled &&
+		$selectedNumberStore &&
+		value !== $selectedNumberStore
 
 	tutorialSelectedCellStore.subscribe((selectedCell) => {
 		if (
@@ -34,7 +44,21 @@
 		playAudio(selectedCell)
 	})
 
+	selectedNumberStore.subscribe((newNum) => {
+		if (
+			!guessable ||
+			filled ||
+			value !== $tutorialSelectedCellStore + 1 ||
+			newNum === null
+		)
+			return
+		if (newNum === value) {
+			correct = true
+		}
+	})
+
 	function handleClick() {
+		selectedNumberStore.set(null)
 		if (
 			$tutorialSelectedCellStore === value - 1 &&
 			$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
@@ -66,10 +90,11 @@
 		tabindex={selectable ? 0 : -1}
 		class="cell"
 		class:cell-non-selectable={!selectable}
-		class:selected={selectable && $tutorialSelectedCellStore === value - 1}
+		class:selected
+		class:selected-completed={selected && correct}
 		class:cell-hue-secondary={activeCellInCycle}
-		class:cell-hue-tertiary={cellHueSecondary}
-		class:cell-hue-quaternary={cellHueTertiary}
+		class:cell-hue-tertiary={cellHueTertiary || incorrect}
+		class:cell-hue-quaternary={cellHueQuaternary || correct}
 		bind:this={self}
 		on:click={handleClick}
 		in:fade={{
@@ -79,9 +104,13 @@
 		}}
 	>
 		{#if filled}
-			<div class="filled {flashFilled ? 'flash-filled' : ''}" />
+			<div
+				class="filled {selected ? 'filled-selected' : ''} {flashFilled
+					? 'flash-filled'
+					: ''}"
+			/>
 		{/if}
-		{!$tutorialRandomlyFilledCellsStore.length ? value : ''}
+		{!$tutorialRandomlyFilledCellsStore.length || correct ? value : ''}
 	</button>
 {/key}
 
@@ -108,6 +137,10 @@
 		width: 8px;
 		background-color: var(--color-secondary-soft);
 		border-radius: 5px;
+	}
+
+	.filled-selected {
+		background-color: var(--color-secondary);
 	}
 
 	.flash-filled {
@@ -151,6 +184,11 @@
 	.cell-hue-quaternary {
 		background-color: var(--color-secondary-soft);
 		color: var(--color-text);
+	}
+
+	.selected-completed {
+		background-color: var(--color-secondary-muted);
+		color: var(--color-text-light);
 	}
 
 	@media (min-width: 640px) {
