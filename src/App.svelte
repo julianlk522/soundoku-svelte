@@ -4,9 +4,9 @@
 	import type { Difficulty } from './lib/types'
 	import Board from './lib/components/Board.svelte'
 	import NumberSelect from './lib/components/NumberSelect.svelte'
-	import GameOverPopup from './lib/components/GameOverPopup.svelte'
-	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
+	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
+	import GameOverPopup from './lib/components/GameOverPopup.svelte'
 	import { keys } from './lib/utils/keyboardNavigation'
 
 	let tutorial = true

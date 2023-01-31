@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
+	import { difficulties } from '../types'
 
 	const dispatch = createEventDispatcher()
 
@@ -7,8 +8,6 @@
 		const targetButton = event.target as HTMLButtonElement
 		dispatch('difficulty-select', targetButton.innerText)
 	}
-
-	const difficulties = ['Very Easy', 'Easy', 'Medium', 'Hard', 'Very Hard']
 </script>
 
 {#each difficulties as difficultyLevel (difficultyLevel)}

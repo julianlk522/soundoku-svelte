@@ -1,3 +1,9 @@
-type Difficulty = 'Very Easy' | 'Easy' | 'Medium' | 'Hard' | 'Very Hard'
+export const difficulties = [
+	'Very Easy',
+	'Easy',
+	'Medium',
+	'Hard',
+	'Very Hard',
+] as const
 
-export type { Difficulty }
+export type Difficulty = (typeof difficulties)[number]
