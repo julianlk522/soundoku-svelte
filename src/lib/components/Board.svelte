@@ -7,19 +7,32 @@
 		remainingCellsStore,
 		selectedCellFilledStore,
 	} from '../../../src/stores'
+	import type { Difficulty } from '../types'
 	import Row from './Row.svelte'
 	import { playAudio, stopAudio, playArpeggio } from '../utils/audio'
 
 	const dispatch = createEventDispatcher()
 
+	export let difficulty: Difficulty = 'Very Easy'
+	$: desiredFilledNumsCount =
+		difficulty === 'Very Easy'
+			? 70
+			: difficulty === 'Easy'
+			? 60
+			: difficulty === 'Medium'
+			? 55
+			: difficulty === 'Hard'
+			? 50
+			: 40
 	let board: (number | null)[] = []
 	let solution: number[]
 	let rows: (number | null)[][] = []
 	let completedCells = new Set<number>()
 
 	selectedCellStore.set(null)
-	$: $selectedCellStore
-	$: $selectedNumberStore && handleGuess($selectedNumberStore)
+	$: $selectedCellStore &&
+		$selectedNumberStore &&
+		handleGuess($selectedNumberStore)
 	remainingCellsStore.set(81)
 	$: Number.isInteger($remainingCellsStore) &&
 		checkForWin($remainingCellsStore)
@@ -37,7 +50,6 @@
 			(val: number | null) => val !== null
 		).length
 
-		const desiredFilledNumsCount = 50
 		let n = desiredFilledNumsCount - filledNumsCount
 
 		const checkedIndices = []
@@ -82,14 +94,11 @@
 	}
 
 	function handleCorrectGuess() {
-		//  just for TS linting, even though this condition is impossible
-		if ($selectedCellStore === null) return
-
 		remainingCellsStore.update((n) => n - 1)
 		selectedCellFilledStore.set(true)
-		board.splice($selectedCellStore, 1, solution[$selectedCellStore])
+		board.splice($selectedCellStore!, 1, solution[$selectedCellStore!])
 		setRows()
-		completedCells.add($selectedCellStore)
+		completedCells.add($selectedCellStore!)
 	}
 
 	function checkForWin(remaining: number) {

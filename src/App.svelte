@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
 	import { selectedCellStore, selectedNumberStore } from './stores'
+	import type { Difficulty } from './lib/types'
 	import Board from './lib/components/Board.svelte'
 	import NumberSelect from './lib/components/NumberSelect.svelte'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
+	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import { keys } from './lib/utils/keyboardNavigation'
 
 	let tutorial = true
+	let difficulty: Difficulty | undefined = undefined
 	let time = 0
-	let errors = 0
 	let timer: NodeJS.Timeout
+	let errors = 0
 	let gameOver = false
 	let gameReset = false
 
@@ -83,20 +86,16 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if !tutorial && !gameReset}
+{#if !tutorial && !gameReset && difficulty}
 	<main class:game-over-fadeout={gameOver}>
 		<div class="leavesBg" />
-		<Board on:incorrect-guess={() => errors++} on:win={handleWin} />
+		<Board
+			{difficulty}
+			on:incorrect-guess={() => errors++}
+			on:win={handleWin}
+		/>
 		<NumberSelect time={formatSeconds(time)} {errors} />
 	</main>
-{/if}
-
-{#if gameOver}
-	<GameOverPopup
-		victoryTime={formatSeconds(time)}
-		{errors}
-		on:new-game={handleNewGame}
-	/>
 {/if}
 
 {#if tutorial}
@@ -105,6 +104,20 @@
 			tutorial = false
 			timer = setInterval(() => time++, 1000)
 		}}
+	/>
+{/if}
+
+{#if !tutorial && !difficulty}
+	<DifficultySelect
+		on:difficulty-select={(event) => (difficulty = event.detail)}
+	/>
+{/if}
+
+{#if gameOver}
+	<GameOverPopup
+		victoryTime={formatSeconds(time)}
+		{errors}
+		on:new-game={handleNewGame}
 	/>
 {/if}
 
