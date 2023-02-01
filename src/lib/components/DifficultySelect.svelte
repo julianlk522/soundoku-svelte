@@ -1,37 +1,73 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { createEventDispatcher } from 'svelte'
 	import { difficulties } from '../types'
 
 	const dispatch = createEventDispatcher()
 
+	let deviceType: 'mobile' | 'tablet' | 'desktop' = 'mobile'
+	$: canUseHoverAnimations = deviceType === 'desktop'
 	let hovered: number | undefined = undefined
 
 	function handleDifficultySelect(event: MouseEvent) {
 		const targetButton = event.target as HTMLButtonElement
 		dispatch('difficulty-select', targetButton.innerText)
 	}
+
+	//	Big thanks to https://abdessalam.dev/blog/detect-device-type-javascript/ for this function
+	function getDeviceType() {
+		const ua = navigator.userAgent
+		if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+			return 'tablet'
+		}
+		if (
+			/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+				ua
+			)
+		) {
+			return 'mobile'
+		}
+		return 'desktop'
+	}
+
+	onMount(() => {
+		deviceType = getDeviceType()
+	})
 </script>
 
 <div id="difficulty-select-container">
-	<h2>Select your desired difficulty</h2>
+	<div id="difficulty-select-header-text">
+		<h2>Select your desired difficulty</h2>
+		{#if canUseHoverAnimations}
+			<p>(Hover the bubbles to reveal available difficulties)</p>
+		{/if}
+	</div>
 
 	<div id="button-container-grid">
 		{#each difficulties as difficultyLevel (difficultyLevel)}
 			<button
 				id={difficultyLevel.toLowerCase().replace(' ', '-')}
-				class:hovered={hovered ===
-					difficulties.indexOf(difficultyLevel)}
+				class:can-use-hover-animations={canUseHoverAnimations}
+				class:hovered={canUseHoverAnimations &&
+					hovered === difficulties.indexOf(difficultyLevel)}
 				on:click={handleDifficultySelect}
-				on:mouseenter={() =>
-					(hovered = difficulties.indexOf(difficultyLevel))}
-				on:mouseleave={() => (hovered = undefined)}
+				on:mouseenter={() => {
+					if (!canUseHoverAnimations) return
+					hovered = difficulties.indexOf(difficultyLevel)
+				}}
+				on:mouseleave={() => {
+					if (!canUseHoverAnimations) return
+					hovered = undefined
+				}}
 			>
 				<span
 					class="button-text"
-					class:button-text-hovered={hovered ===
-						difficulties.indexOf(difficultyLevel)}
+					class:can-use-hover-animations={canUseHoverAnimations}
+					class:button-text-hovered={canUseHoverAnimations &&
+						hovered === difficulties.indexOf(difficultyLevel)}
 				>
-					{hovered === difficulties.indexOf(difficultyLevel)
+					{!canUseHoverAnimations ||
+					hovered === difficulties.indexOf(difficultyLevel)
 						? difficultyLevel
 						: ''}</span
 				>
@@ -58,7 +94,14 @@
 		width: 100%;
 	}
 
-	h2 {
+	#difficulty-select-header-text {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	h2,
+	p {
 		color: var(--color-text-light);
 	}
 
@@ -68,6 +111,7 @@
 		width: 80%;
 		place-items: center;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-rows: repeat(3, minmax(0, 1fr));
 		grid-template-areas:
 			'very-easy . easy'
 			'. medium .'
@@ -76,30 +120,40 @@
 
 	button {
 		color: var(--color-text);
+		border: none;
+		border-radius: 4px;
+	}
+
+	button:is(.can-use-hover-animations) {
 		height: 2rem;
 		width: 2rem;
-		margin: 0 1rem;
-		border: none;
 		border-radius: 100%;
 		transition: none 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 		transition-property: height, width, border-radius;
 	}
 
-	.hovered {
+	button:not(.can-use-hover-animations) {
+		padding: 0.5rem;
+		font-size: 0.875rem;
+		width: 5rem;
+	}
+
+	button:is(.hovered) {
 		width: 6rem;
 		border-radius: 4px;
 	}
 
-	.button-text {
+	span:is(.can-use-hover-animations) {
 		display: inline-block;
 		opacity: 0;
 		transform: translateY(-5px);
 		transition-duration: 0.75s, 0.5s;
+		transition-delay: 0.15s;
 		transition-timing-function: ease-out;
 		transition-property: opacity, transform;
 	}
 
-	.button-text-hovered {
+	span:is(.button-text-hovered) {
 		opacity: 1;
 		transform: translateY(0);
 	}
@@ -127,5 +181,26 @@
 	#very-hard {
 		background-color: var(--color-difficulty-very-hard);
 		grid-area: very-hard;
+	}
+
+	@media (min-width: 640px) {
+		h2 {
+			font-size: 2rem;
+		}
+
+		button:is(.can-use-hover-animations),
+		button:not(.can-use-hover-animations),
+		.hovered {
+			width: 8rem;
+		}
+
+		button:is(.can-use-hover-animations):not(.hovered) {
+			height: 3rem;
+			width: 3rem;
+		}
+
+		.button-text {
+			font-size: 1.25rem;
+		}
 	}
 </style>
