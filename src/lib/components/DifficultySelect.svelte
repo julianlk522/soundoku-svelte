@@ -12,25 +12,33 @@
 	}
 </script>
 
-{#each difficulties as difficultyLevel (difficultyLevel)}
-	<button
-		id={difficultyLevel.toLowerCase().replace(' ', '-')}
-		class:hovered={hovered === difficulties.indexOf(difficultyLevel)}
-		on:click={handleDifficultySelect}
-		on:mouseenter={() => (hovered = difficulties.indexOf(difficultyLevel))}
-		on:mouseleave={() => (hovered = undefined)}
-	>
-		<span
-			class="button-text"
-			class:button-text-hovered={hovered ===
-				difficulties.indexOf(difficultyLevel)}
-		>
-			{hovered === difficulties.indexOf(difficultyLevel)
-				? difficultyLevel
-				: ''}</span
-		>
-	</button>
-{/each}
+<div id="difficulty-select-container">
+	<h2>Select your desired difficulty</h2>
+
+	<div id="button-container-grid">
+		{#each difficulties as difficultyLevel (difficultyLevel)}
+			<button
+				id={difficultyLevel.toLowerCase().replace(' ', '-')}
+				class:hovered={hovered ===
+					difficulties.indexOf(difficultyLevel)}
+				on:click={handleDifficultySelect}
+				on:mouseenter={() =>
+					(hovered = difficulties.indexOf(difficultyLevel))}
+				on:mouseleave={() => (hovered = undefined)}
+			>
+				<span
+					class="button-text"
+					class:button-text-hovered={hovered ===
+						difficulties.indexOf(difficultyLevel)}
+				>
+					{hovered === difficulties.indexOf(difficultyLevel)
+						? difficultyLevel
+						: ''}</span
+				>
+			</button>
+		{/each}
+	</div>
+</div>
 
 <style>
 	* {
@@ -39,6 +47,31 @@
 		--color-difficulty-medium: hsl(40deg, 70%, 50%);
 		--color-difficulty-hard: hsl(20deg, 80%, 45%);
 		--color-difficulty-very-hard: hsl(0, 90%, 40%);
+	}
+
+	#difficulty-select-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-evenly;
+		align-items: center;
+		height: 100%;
+		width: 100%;
+	}
+
+	h2 {
+		color: var(--color-text-light);
+	}
+
+	#button-container-grid {
+		display: grid;
+		height: 60%;
+		width: 80%;
+		place-items: center;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-areas:
+			'very-easy . easy'
+			'. medium .'
+			'hard . very-hard';
 	}
 
 	button {
@@ -73,21 +106,26 @@
 
 	#very-easy {
 		background-color: var(--color-difficulty-very-easy);
+		grid-area: very-easy;
 	}
 
 	#easy {
 		background-color: var(--color-difficulty-easy);
+		grid-area: easy;
 	}
 
 	#medium {
 		background-color: var(--color-difficulty-medium);
+		grid-area: medium;
 	}
 
 	#hard {
 		background-color: var(--color-difficulty-hard);
+		grid-area: hard;
 	}
 
 	#very-hard {
 		background-color: var(--color-difficulty-very-hard);
+		grid-area: very-hard;
 	}
 </style>
