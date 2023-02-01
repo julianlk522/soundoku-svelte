@@ -1,22 +1,28 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { createEventDispatcher } from 'svelte'
+	import type { Difficulty } from '../types'
 	import { difficulties } from '../types'
 
 	const dispatch = createEventDispatcher()
 
 	let deviceType: 'mobile' | 'tablet' | 'desktop' = 'mobile'
 	$: canUseHoverAnimations = deviceType === 'desktop'
-	let hovered: number | undefined = undefined
+	let currentlyHovered: Difficulty | undefined = undefined
 
 	function handleDifficultySelect(event: MouseEvent) {
 		const targetButton = event.target as HTMLButtonElement
 		dispatch('difficulty-select', targetButton.innerText)
 	}
 
+	function setCurrentlyHovered(difficultyLevel: Difficulty | undefined) {
+		if (!canUseHoverAnimations) return
+		currentlyHovered = difficultyLevel
+	}
+
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key !== 'Tab') return
-		if (hovered === 4) {
+		if (currentlyHovered === 'Very Hard') {
 			if (event.shiftKey) return
 			event.preventDefault()
 			document.getElementById('very-easy')?.focus()
@@ -61,30 +67,21 @@
 				id={difficultyLevel.toLowerCase().replace(' ', '-')}
 				class:can-use-hover-animations={canUseHoverAnimations}
 				class:hovered={canUseHoverAnimations &&
-					hovered === difficulties.indexOf(difficultyLevel)}
+					currentlyHovered === difficultyLevel}
 				on:click={handleDifficultySelect}
 				on:keydown={handleKeydown}
-				on:focus={() => {
-					if (!canUseHoverAnimations) return
-					hovered = difficulties.indexOf(difficultyLevel)
-				}}
-				on:mouseenter={() => {
-					if (!canUseHoverAnimations) return
-					hovered = difficulties.indexOf(difficultyLevel)
-				}}
-				on:mouseleave={() => {
-					if (!canUseHoverAnimations) return
-					hovered = undefined
-				}}
+				on:focus={() => setCurrentlyHovered(difficultyLevel)}
+				on:mouseenter={() => setCurrentlyHovered(difficultyLevel)}
+				on:mouseleave={() => setCurrentlyHovered(undefined)}
 			>
 				<span
 					class="button-text"
 					class:can-use-hover-animations={canUseHoverAnimations}
 					class:button-text-hovered={canUseHoverAnimations &&
-						hovered === difficulties.indexOf(difficultyLevel)}
+						currentlyHovered === difficultyLevel}
 				>
 					{!canUseHoverAnimations ||
-					hovered === difficulties.indexOf(difficultyLevel)
+					currentlyHovered === difficultyLevel
 						? difficultyLevel
 						: ''}</span
 				>
