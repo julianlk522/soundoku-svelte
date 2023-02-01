@@ -9,6 +9,8 @@
 	let deviceType: 'mobile' | 'tablet' | 'desktop' = 'mobile'
 	$: canUseHoverAnimations = deviceType === 'desktop'
 	let currentlyHovered: Difficulty | undefined = undefined
+	let buttonText: Difficulty | '' = ''
+	$: if (!currentlyHovered) setTimeout(() => (buttonText = ''), 250)
 
 	function handleDifficultySelect(event: MouseEvent) {
 		const targetButton = event.target as HTMLButtonElement
@@ -18,6 +20,7 @@
 	function setCurrentlyHovered(difficultyLevel: Difficulty | undefined) {
 		if (!canUseHoverAnimations) return
 		currentlyHovered = difficultyLevel
+		if (difficultyLevel) buttonText = difficultyLevel
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -80,10 +83,11 @@
 					class:button-text-hovered={canUseHoverAnimations &&
 						currentlyHovered === difficultyLevel}
 				>
-					{!canUseHoverAnimations ||
-					currentlyHovered === difficultyLevel
-						? difficultyLevel
-						: ''}</span
+					{canUseHoverAnimations
+						? buttonText
+							? difficultyLevel
+							: buttonText
+						: difficultyLevel}</span
 				>
 			</button>
 		{/each}
@@ -146,8 +150,8 @@
 		height: 2rem;
 		width: 2rem;
 		border-radius: 100%;
-		transition: none 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-		transition-property: height, width, border-radius;
+		transition: none 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
+		transition-property: border-radius, height, width;
 	}
 
 	button:not(.can-use-hover-animations) {
@@ -159,21 +163,23 @@
 	button:is(.hovered) {
 		width: 6rem;
 		border-radius: 4px;
+		transition-duration: 0.5s;
+		transition-delay: 0s, 0.1s, 0.1s;
 	}
 
 	span:is(.can-use-hover-animations) {
 		display: inline-block;
 		opacity: 0;
 		transform: translateY(-5px);
-		transition-duration: 0.75s, 0.5s;
-		transition-delay: 0.15s;
-		transition-timing-function: ease-out;
+		transition: none 0.05s ease-out 0.15s;
 		transition-property: opacity, transform;
 	}
 
 	span:is(.button-text-hovered) {
 		opacity: 1;
 		transform: translateY(0);
+		transition-duration: 0.25s;
+		transition-delay: 0.25s;
 	}
 
 	#very-easy {
