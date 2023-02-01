@@ -14,6 +14,15 @@
 		dispatch('difficulty-select', targetButton.innerText)
 	}
 
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key !== 'Tab') return
+		if (hovered === 4) {
+			if (event.shiftKey) return
+			event.preventDefault()
+			document.getElementById('very-easy')?.focus()
+		}
+	}
+
 	//	Big thanks to https://abdessalam.dev/blog/detect-device-type-javascript/ for this function
 	function getDeviceType() {
 		const ua = navigator.userAgent
@@ -39,7 +48,10 @@
 	<div id="difficulty-select-header-text">
 		<h2>Select your desired difficulty</h2>
 		{#if canUseHoverAnimations}
-			<p>(Hover the bubbles to reveal available difficulties)</p>
+			<p>
+				(Hover the bubbles or navigate with Tab key to reveal available
+				difficulties)
+			</p>
 		{/if}
 	</div>
 
@@ -51,6 +63,11 @@
 				class:hovered={canUseHoverAnimations &&
 					hovered === difficulties.indexOf(difficultyLevel)}
 				on:click={handleDifficultySelect}
+				on:keydown={handleKeydown}
+				on:focus={() => {
+					if (!canUseHoverAnimations) return
+					hovered = difficulties.indexOf(difficultyLevel)
+				}}
 				on:mouseenter={() => {
 					if (!canUseHoverAnimations) return
 					hovered = difficulties.indexOf(difficultyLevel)
@@ -122,6 +139,10 @@
 		color: var(--color-text);
 		border: none;
 		border-radius: 4px;
+	}
+
+	button:focus {
+		outline: none;
 	}
 
 	button:is(.can-use-hover-animations) {
