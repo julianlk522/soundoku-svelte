@@ -17,6 +17,11 @@
 	let gameOver = false
 	let gameReset = false
 
+	function handleDifficultySelect(event: CustomEvent) {
+		difficulty = event.detail
+		timer = setInterval(() => time++, 1000)
+	}
+
 	function handleNewGame() {
 		time = 0
 		timer = setInterval(() => time++, 1000)
@@ -102,15 +107,12 @@
 	<Tutorial
 		on:end-tutorial={() => {
 			tutorial = false
-			timer = setInterval(() => time++, 1000)
 		}}
 	/>
 {/if}
 
 {#if !tutorial && !difficulty}
-	<DifficultySelect
-		on:difficulty-select={(event) => (difficulty = event.detail)}
-	/>
+	<DifficultySelect on:difficulty-select={handleDifficultySelect} />
 {/if}
 
 {#if gameOver}
