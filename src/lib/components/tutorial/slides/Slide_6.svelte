@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { tutorialErrorsStore } from '../../../stores'
-	import MockBox from './MockBox.svelte'
+	import { tutorialErrorsStore } from '../../../../stores'
+	import MockBox from '../MockBox.svelte'
 </script>
 
 <h2>Making Progress (continued)</h2>

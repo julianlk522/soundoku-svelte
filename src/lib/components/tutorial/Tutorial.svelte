@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte'
-	import Slide_1 from './Slide_1.svelte'
-	import Slide_2 from './Slide_2.svelte'
-	import Slide_3 from './Slide_3.svelte'
-	import Slide_4 from './Slide_4.svelte'
-	import Slide_5 from './Slide_5.svelte'
-	import Slide_6 from './Slide_6.svelte'
-	import Slide_7 from './Slide_7.svelte'
+	import Slide_1 from './slides/Slide_1.svelte'
+	import Slide_2 from './slides/Slide_2.svelte'
+	import Slide_3 from './slides/Slide_3.svelte'
+	import Slide_4 from './slides/Slide_4.svelte'
+	import Slide_5 from './slides/Slide_5.svelte'
+	import Slide_6 from './slides/Slide_6.svelte'
+	import Slide_7 from './slides/Slide_7.svelte'
 	const dispatch = createEventDispatcher()
 
 	let firstButton: HTMLButtonElement

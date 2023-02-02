@@ -1,6 +1,6 @@
 <script lang="ts">
-	import MockBox from './MockBox.svelte'
-	import MockNumberSelect from './MockNumberSelect.svelte'
+	import MockBox from '../MockBox.svelte'
+	import MockNumberSelect from '../MockNumberSelect.svelte'
 </script>
 
 <h2>Making Progress</h2>

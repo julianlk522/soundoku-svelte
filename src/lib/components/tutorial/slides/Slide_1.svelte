@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
-	import MockBox from './MockBox.svelte'
+	import MockBox from '../MockBox.svelte'
 
 	let cycleInterval: NodeJS.Timeout
 	let ascending = true

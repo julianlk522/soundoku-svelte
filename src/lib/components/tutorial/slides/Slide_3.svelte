@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MockBox from './MockBox.svelte'
+	import MockBox from '../MockBox.svelte'
 </script>
 
 <h2>Getting Around</h2>
