@@ -10,7 +10,10 @@
 	$: canUseHoverAnimations = deviceType === 'desktop'
 	let currentlyHovered: Difficulty | undefined = undefined
 	let buttonText: Difficulty | '' = ''
-	$: if (!currentlyHovered) setTimeout(() => (buttonText = ''), 250)
+	let buttonTextDisappearTimeout: NodeJS.Timeout
+	$: if (!currentlyHovered) {
+		buttonTextDisappearTimeout = setTimeout(() => (buttonText = ''), 750)
+	} else clearTimeout(buttonTextDisappearTimeout)
 
 	function handleDifficultySelect(event: MouseEvent) {
 		const targetButton = event.target as HTMLButtonElement
