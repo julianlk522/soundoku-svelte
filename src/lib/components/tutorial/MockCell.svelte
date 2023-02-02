@@ -12,10 +12,10 @@
 	import { playAudio, stopAudio } from '../../utils/audio'
 
 	let self: HTMLButtonElement
-
 	export let value: number
+	$: index = value - 1
 	export let selectable: boolean = false
-	$: selected = selectable && $tutorialSelectedCellStore === value - 1
+	$: selected = selectable && $tutorialSelectedCellStore === index
 	export let cycles: number = 0
 	export let activeCellInCycle: boolean = false
 	$: cellHueTertiary =
@@ -66,12 +66,12 @@
 	function handleClick() {
 		selectedNumberStore.set(null)
 		if (
-			$tutorialSelectedCellStore === value - 1 &&
+			$tutorialSelectedCellStore === index &&
 			$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
 		) {
 			stopAudio()
-			playAudio(value - 1)
-		} else tutorialSelectedCellStore.set(value - 1)
+			playAudio(index)
+		} else tutorialSelectedCellStore.set(index)
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -98,7 +98,7 @@
 	})
 
 	afterUpdate(() => {
-		selectable && $tutorialSelectedCellStore === value - 1 && self.focus()
+		selectable && $tutorialSelectedCellStore === index && self.focus()
 	})
 </script>
 
@@ -118,7 +118,7 @@
 		in:fade={{
 			duration: 200,
 			easing: sineIn,
-			delay: 50 + 10 * topLeftToBottomRightStagger(value - 1, 3),
+			delay: 50 + 10 * topLeftToBottomRightStagger(index, 3),
 		}}
 	>
 		{#if filled}
