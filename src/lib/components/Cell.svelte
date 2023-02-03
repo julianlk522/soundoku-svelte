@@ -20,18 +20,22 @@
 	$: leftOfBoxDivider = indexInRow === 2 || indexInRow === 5
 	$: rightOfBoxDivider = indexInRow === 3 || indexInRow === 6
 
+	$: overallIndex = rowIndex * 9 + indexInRow
+
 	export let completedCells: Set<number>
-	$: completed = value && completedCells.has(rowIndex * 9 + indexInRow)
+	$: completed = value && completedCells.has(overallIndex)
 
 	let selectedCell: number | null
-	const unsubSelectedCellStore = selectedCellStore.subscribe((index) => {
-		selectedCell = index
-		if (index === rowIndex * 9 + indexInRow) self?.focus()
-	})
-	$: selected = selectedCell === rowIndex * 9 + indexInRow
+	const unsubSelectedCellStore = selectedCellStore.subscribe(
+		(selectedCellIndex) => {
+			selectedCell = selectedCellIndex
+			if (selectedCellIndex === overallIndex) self?.focus()
+		}
+	)
+	$: selected = selectedCell === overallIndex
 	$: incorrect =
 		$selectedNumberStore &&
-		selectedCell === rowIndex * 9 + indexInRow &&
+		selectedCell === overallIndex &&
 		$selectedNumberStore !== value
 	$: relatedToSelected =
 		selectedCell !== null &&
@@ -51,7 +55,7 @@
 
 	function handleSelect() {
 		selectedNumberStore.set(null)
-		dispatch('select', { index: rowIndex * 9 + indexInRow, value })
+		dispatch('select', { index: overallIndex, value })
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -81,12 +85,17 @@
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
 	bind:this={self}
-	on:focus={handleSelect}
+	on:click={handleSelect}
+	on:focus={() => {
+		//	true when navigating via keys, false when navigating via mouse
+		//	therefore will not overlap with on:click event function but will still play cell tones when using keys
+		if ($selectedCellStore !== overallIndex) return
+		handleSelect()
+	}}
 	on:keydown={handleKeydown}
 	in:fade={{
 		duration: 200,
-		delay:
-			50 + 10 * topLeftToBottomRightStagger(rowIndex * 9 + indexInRow, 9),
+		delay: 50 + 10 * topLeftToBottomRightStagger(overallIndex, 9),
 		easing: sineIn,
 	}}
 >
@@ -128,6 +137,11 @@
 	.selected {
 		background-color: var(--color-primary);
 		color: var(--color-text-light);
+	}
+
+	.selected:focus,
+	.selected:focus-visible {
+		outline: none;
 	}
 
 	.selected-empty {
