@@ -1,5 +1,4 @@
 <script lang="ts">
-	import MockBox from '../MockBox.svelte'
 	import MockNumberSelect from '../MockNumberSelect.svelte'
 </script>
 
