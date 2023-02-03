@@ -47,6 +47,7 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (!difficulty || gameOver) return
+		if (/\d/.test(event.key)) playCellTone(parseInt(event.key) - 1)
 		if (keys.hasOwnProperty(event.key)) {
 			if ($selectedCellStore === null) {
 				selectedCellStore.set(0)
@@ -106,7 +107,11 @@
 			on:incorrect-guess={() => errors++}
 			on:win={handleWin}
 		/>
-		<NumberSelect time={formatSeconds(time)} {errors} />
+		<NumberSelect
+			time={formatSeconds(time)}
+			{errors}
+			on:play-audio={(event) => playCellTone(event.detail)}
+		/>
 	</main>
 {/if}
 
