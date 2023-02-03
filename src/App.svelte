@@ -45,13 +45,14 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
+		if (!difficulty || gameOver) return
 		if (keys.hasOwnProperty(event.key)) {
 			if ($selectedCellStore === null) {
 				selectedCellStore.set(0)
-			} else {
-				selectedNumberStore.set(null)
-				navigateCells(event.key)
+				return
 			}
+			selectedNumberStore.set(null)
+			navigateCells(event.key)
 		}
 	}
 

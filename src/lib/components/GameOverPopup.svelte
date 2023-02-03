@@ -1,9 +1,14 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte'
+	import { onMount, createEventDispatcher } from 'svelte'
+
 	const dispatch = createEventDispatcher()
 
 	export let victoryTime = '0: 00'
 	export let errors = 0
+
+	let replayButton: HTMLButtonElement
+
+	onMount(() => replayButton.focus())
 </script>
 
 <div id="game-over">
@@ -16,7 +21,11 @@
 		</span>
 	</h3>
 	<p id="errors">(with {errors} errors)</p>
-	<button id="replay" on:click={() => dispatch('new-game')}>
+	<button
+		id="replay"
+		bind:this={replayButton}
+		on:click={() => dispatch('new-game')}
+	>
 		Play Again?
 	</button>
 </div>
@@ -81,8 +90,13 @@
 		transition-property: transform;
 	}
 
-	#replay:hover {
+	#replay:hover,
+	#replay:focus {
 		transform: scale(1.1);
+	}
+
+	#replay:focus {
+		outline: 2px solid var(--color-text-light);
 	}
 
 	#replay:active {
