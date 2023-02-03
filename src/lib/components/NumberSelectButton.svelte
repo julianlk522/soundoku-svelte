@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte'
+	import { onDestroy, createEventDispatcher } from 'svelte'
 	import {
-		selectedNumberStore,
 		remainingCellsStore,
 		selectedCellFilledStore,
+		selectedNumberStore,
 	} from '../../stores'
-	import { stopAudio, playAudio } from '../utils/audio'
+
+	const dispatch = createEventDispatcher()
+
 	export let value: number
 
 	let cellsRemaining = 81
@@ -17,16 +19,10 @@
 		if (!$selectedCellFilledStore) {
 			selectedNumberStore.set(value)
 		}
-
-		if (cellsRemaining) {
-			stopAudio()
-			playAudio(value - 1)
-		}
+		if (cellsRemaining) dispatch('play-audio', value - 1)
 	}
 
 	onDestroy(unsubRemainingCellStore)
-
-	//	todo: add keydown event listener to allow switching between button clicks and number keys as guess initiators
 </script>
 
 <button class="selectionButton" on:click={() => handleNumberSelect(value)}

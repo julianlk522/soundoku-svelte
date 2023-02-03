@@ -12,7 +12,7 @@
 </h3>
 
 <MockBox randomlyFilled={true} selectableCells={true} guessable={true} />
-<MockNumberSelect />
+<MockNumberSelect on:play-audio />
 <p>Errors: {$tutorialErrorsStore}</p>
 
 <style>

@@ -30,6 +30,9 @@
 	const indexesOfSlidesWithMockBoxes = slidesWithMockBoxes.map(
 		(slide) => slide - 1
 	)
+	const slidesWithMockNumberSelects = [3, 4]
+	const indexesOfSlidesWithMockNumberSelects =
+		slidesWithMockNumberSelects.map((slide) => slide - 1)
 
 	function nextSlide() {
 		if (currSlide < slides.length - 1) currSlide++
@@ -39,17 +42,20 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (event.key.toLowerCase() === 't') {
-			dispatch('end-tutorial')
-		} else if (event.key.toLowerCase() === 'c') {
-			nextSlide()
-		}
 		if (
 			keys.hasOwnProperty(event.key) &&
 			indexesOfSlidesWithMockBoxes.indexOf(currSlide) !== -1
 		) {
-			navigateBox(event.key)
+			return navigateBox(event.key)
 		}
+		if (
+			/\d/.test(event.key) &&
+			indexesOfSlidesWithMockNumberSelects.indexOf(currSlide) !== -1
+		) {
+			return dispatch('play-audio', parseInt(event.key) - 1)
+		}
+		if (event.key.toLowerCase() === 't') return dispatch('end-tutorial')
+		if (event.key.toLowerCase() === 'c') return nextSlide()
 	}
 
 	function navigateBox(key: string) {
@@ -100,7 +106,7 @@
 	on:keydown|stopPropagation={handleKeydown}
 	on:click={() => firstButton.focus()}
 >
-	<svelte:component this={slides[currSlide]} />
+	<svelte:component this={slides[currSlide]} on:play-audio />
 
 	<div id="tutorial-navigation-buttons">
 		<button on:click={nextSlide} bind:this={firstButton}

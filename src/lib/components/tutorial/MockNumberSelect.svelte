@@ -10,7 +10,7 @@
 <div class="flex-column">
 	<div id="selection-grid">
 		{#each nums as num (num)}
-			<NumberSelectButton value={num} />
+			<NumberSelectButton value={num} on:play-audio />
 		{/each}
 	</div>
 	{#if showErrors}

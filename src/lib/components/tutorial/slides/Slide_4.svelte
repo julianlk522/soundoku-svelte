@@ -14,7 +14,7 @@
 	cells.
 </h3>
 
-<MockNumberSelect />
+<MockNumberSelect on:play-audio />
 
 <style>
 	h2,

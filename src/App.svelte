@@ -7,6 +7,7 @@
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
+	import { playAudio, stopAudio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
 
 	let tutorial = true
@@ -82,6 +83,11 @@
 		}
 	}
 
+	function playCellTone(value: number) {
+		stopAudio()
+		playAudio(value)
+	}
+
 	onMount(() => {
 		clearInterval(timer)
 		time = 0
@@ -109,6 +115,7 @@
 		on:end-tutorial={() => {
 			tutorial = false
 		}}
+		on:play-audio={(event) => playCellTone(event.detail)}
 	/>
 {/if}
 
