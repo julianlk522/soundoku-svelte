@@ -17,7 +17,13 @@
 	> shade and your total error count will be incremented.
 </p>
 
-<MockBox randomlyFilled={true} selectableCells={true} guessable={true} />
+<MockBox
+	randomlyFilled={true}
+	selectableCells={true}
+	guessable={true}
+	on:play-audio
+/>
+
 <p>Errors: {$tutorialErrorsStore}</p>
 
 <style>

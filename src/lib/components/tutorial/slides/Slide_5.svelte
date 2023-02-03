@@ -11,7 +11,12 @@
 	a guess about that cell's value.
 </h3>
 
-<MockBox randomlyFilled={true} selectableCells={true} guessable={true} />
+<MockBox
+	randomlyFilled={true}
+	selectableCells={true}
+	guessable={true}
+	on:play-audio
+/>
 <MockNumberSelect on:play-audio />
 <p>Errors: {$tutorialErrorsStore}</p>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte'
+	import { onMount, onDestroy, createEventDispatcher } from 'svelte'
 	import MockCell from './MockCell.svelte'
 	import {
 		tutorialSelectedCellStore,
@@ -8,9 +8,11 @@
 		tutorialErrorsStore,
 	} from '../../../stores'
 
+	const dispatch = createEventDispatcher()
+
 	export let selectableCells: boolean = false
-	export let index: number | undefined = undefined
 	export let cycles: number | undefined = undefined
+	export let currentCycleIndex: number | undefined = undefined
 
 	const cellsArray = Array.from(Array(9)).map((_, i) => i + 1)
 
@@ -25,6 +27,18 @@
 	export let flashFilled: boolean = false
 	export let guessable: boolean = false
 
+	const unsubSelectedCellStore = tutorialSelectedCellStore.subscribe(
+		(selectedCell) => {
+			if (
+				!selectableCells ||
+				$tutorialRandomlyFilledCellsStore.indexOf(selectedCell + 1) ===
+					-1
+			)
+				return
+			dispatch('play-audio', selectedCell)
+		}
+	)
+
 	onMount(() => {
 		selectedNumberStore.set(null)
 		tutorialSelectedCellStore.set(0)
@@ -33,6 +47,7 @@
 
 	onDestroy(() => {
 		tutorialRandomlyFilledCellsStore.set([])
+		unsubSelectedCellStore()
 	})
 </script>
 
@@ -41,12 +56,13 @@
 		<MockCell
 			{value}
 			cycles={cycles ? cycles : undefined}
-			activeCellInCycle={Number.isInteger(index)
-				? i === index
+			activeCellInCycle={Number.isInteger(currentCycleIndex)
+				? i === currentCycleIndex
 				: undefined}
 			selectable={selectableCells}
 			{flashFilled}
 			{guessable}
+			on:play-audio
 		/>
 	{/each}
 </div>

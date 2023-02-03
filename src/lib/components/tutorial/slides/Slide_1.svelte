@@ -4,36 +4,36 @@
 
 	let cycleInterval: NodeJS.Timeout
 	let ascending = true
-	let index = 0
+	let currentCycleIndex = 0
 	let cycles = 0
 
 	onMount(() => {
 		cycleInterval = setInterval(() => {
 			if (cycles % 2 === 0) {
-				if (ascending && index === 8) {
+				if (ascending && currentCycleIndex === 8) {
 					ascending = false
-					index--
-				} else if (!ascending && !index) {
+					currentCycleIndex--
+				} else if (!ascending && !currentCycleIndex) {
 					ascending = true
 					cycles++
 				} else if (ascending) {
-					index++
-				} else index--
+					currentCycleIndex++
+				} else currentCycleIndex--
 			} else {
-				if (ascending && index === 8) {
+				if (ascending && currentCycleIndex === 8) {
 					ascending = false
-					index -= 3
-				} else if (!ascending && index === 0) {
+					currentCycleIndex -= 3
+				} else if (!ascending && currentCycleIndex === 0) {
 					ascending = true
 					cycles++
-				} else if (ascending && index === 5) {
-					index += 3
-				} else if (!ascending && index - 3 < 0) {
-					index = index + 8 - 3
+				} else if (ascending && currentCycleIndex === 5) {
+					currentCycleIndex += 3
+				} else if (!ascending && currentCycleIndex - 3 < 0) {
+					currentCycleIndex = currentCycleIndex + 8 - 3
 				} else if (ascending) {
-					index = (index + 3) % 8
+					currentCycleIndex = (currentCycleIndex + 3) % 8
 				} else {
-					index -= 3
+					currentCycleIndex -= 3
 				}
 			}
 		}, 200)
@@ -50,7 +50,7 @@
 	play the game.
 </h3>
 
-<MockBox {index} {cycles} />
+<MockBox {currentCycleIndex} {cycles} />
 
 <style>
 	h2,

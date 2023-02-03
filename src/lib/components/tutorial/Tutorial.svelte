@@ -30,7 +30,7 @@
 	const indexesOfSlidesWithMockBoxes = slidesWithMockBoxes.map(
 		(slide) => slide - 1
 	)
-	const slidesWithMockNumberSelects = [3, 4]
+	const slidesWithMockNumberSelects = [4, 5]
 	const indexesOfSlidesWithMockNumberSelects =
 		slidesWithMockNumberSelects.map((slide) => slide - 1)
 
@@ -52,7 +52,7 @@
 			/\d/.test(event.key) &&
 			indexesOfSlidesWithMockNumberSelects.indexOf(currSlide) !== -1
 		) {
-			return dispatch('play-audio', parseInt(event.key) - 1)
+			return dispatch('play-audio', +event.key - 1)
 		}
 		if (event.key.toLowerCase() === 't') return dispatch('end-tutorial')
 		if (event.key.toLowerCase() === 'c') return nextSlide()

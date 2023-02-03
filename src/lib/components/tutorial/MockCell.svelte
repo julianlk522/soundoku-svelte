@@ -1,15 +1,21 @@
 <script lang="ts">
-	import { onMount, onDestroy, afterUpdate } from 'svelte'
-	import { sineIn } from 'svelte/easing'
-	import { fade } from 'svelte/transition'
+	import {
+		onMount,
+		onDestroy,
+		afterUpdate,
+		createEventDispatcher,
+	} from 'svelte'
 	import {
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
 		tutorialErrorsStore,
 		selectedNumberStore,
 	} from '../../../stores'
+	import { sineIn } from 'svelte/easing'
+	import { fade } from 'svelte/transition'
 	import { topLeftToBottomRightStagger } from '../../utils/topLeftToBottomRightStagger'
-	import { playAudio, stopAudio } from '../../utils/audio'
+
+	const dispatch = createEventDispatcher()
 
 	let self: HTMLButtonElement
 	export let value: number
@@ -35,42 +41,15 @@
 		$selectedNumberStore &&
 		value !== $selectedNumberStore
 
-	const unsubSelectedCellStore = tutorialSelectedCellStore.subscribe(
-		(selectedCell) => {
-			if (
-				!selectable ||
-				$tutorialRandomlyFilledCellsStore.indexOf(selectedCell + 1) ===
-					-1
-			)
-				return
-			stopAudio()
-			playAudio(selectedCell)
-		}
-	)
-
-	const unsubSelectedNumberStore = selectedNumberStore.subscribe((newNum) => {
-		if (
-			!guessable ||
-			filled ||
-			value !== $tutorialSelectedCellStore + 1 ||
-			newNum === null
-		)
-			return
-		if (newNum === value) {
-			correct = true
-		} else {
-			tutorialErrorsStore.update((errors) => errors + 1)
-		}
-	})
-
 	function handleClick() {
 		selectedNumberStore.set(null)
+		//	play tone only if cell is filled
 		if (
 			$tutorialSelectedCellStore === index &&
 			$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
 		) {
-			stopAudio()
-			playAudio(index)
+			dispatch('play-audio', index)
+			// else select the cell but play no tone
 		} else tutorialSelectedCellStore.set(index)
 	}
 
@@ -79,6 +58,12 @@
 			selectedNumberStore.set(+event.key)
 		}
 	}
+
+	const unsubSelectedNumberStore = selectedNumberStore.subscribe((newNum) => {
+		if (!guessable || !selected || filled || newNum === null) return
+		if (newNum === value) return (correct = true)
+		tutorialErrorsStore.update((errors) => errors + 1)
+	})
 
 	onMount(() => {
 		if (!filled || !flashFilled) return
@@ -92,10 +77,7 @@
 		)
 	})
 
-	onDestroy(() => {
-		unsubSelectedCellStore()
-		unsubSelectedNumberStore()
-	})
+	onDestroy(unsubSelectedNumberStore)
 
 	afterUpdate(() => {
 		selectable && $tutorialSelectedCellStore === index && self.focus()
