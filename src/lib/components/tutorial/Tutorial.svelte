@@ -34,6 +34,10 @@
 	const indexesOfSlidesWithMockNumberSelects =
 		slidesWithMockNumberSelects.map((slide) => slide - 1)
 
+	const slidesWithGuessableMockBoxes = [5, 6]
+	const indexesOfSlidesWithGuessableMockBoxes =
+		slidesWithGuessableMockBoxes.map((slide) => slide - 1)
+
 	function nextSlide() {
 		if (currSlide < slides.length - 1) currSlide++
 		else dispatch('end-tutorial')
@@ -50,7 +54,8 @@
 		}
 		if (
 			/\d/.test(event.key) &&
-			indexesOfSlidesWithMockNumberSelects.indexOf(currSlide) !== -1
+			(indexesOfSlidesWithMockNumberSelects.indexOf(currSlide) !== -1 ||
+				indexesOfSlidesWithGuessableMockBoxes.indexOf(currSlide) !== -1)
 		) {
 			return dispatch('play-audio', +event.key - 1)
 		}
