@@ -1,4 +1,4 @@
-export const notes = [
+const notes = [
 	{
 		name: 'C',
 		frequency: 261.63,
@@ -37,46 +37,55 @@ export const notes = [
 	},
 ]
 
-let audioCtx: AudioContext
+let audioCtx = new AudioContext()
+let oscillator: OscillatorNode
+let gainNode: GainNode
+let currentTimeAtLastNote: number
 
-const attackTime = 0.25
-const decayTime = 0.25
-const sustainLevel = 0.01
-const releaseTime = 0.25
+const attackTime = 0.1
+const decayTime = 0.05
+const releaseVolume = 0.15
+const releaseTime = 0.5
+const noteDuration = attackTime + decayTime + releaseTime
+
+function init() {
+	oscillator = audioCtx.createOscillator()
+	gainNode = audioCtx.createGain()
+
+	oscillator.connect(gainNode)
+	gainNode.connect(audioCtx.destination)
+}
 
 export function playAudio(
 	toneIndex: number,
 	panning?: number,
 	intonation?: undefined | 'staccato'
 ) {
-	audioCtx = new AudioContext()
-
-	const oscillator = audioCtx.createOscillator()
-	oscillator.type = 'sine'
-
-	const gainNode = audioCtx.createGain()
-
+	init()
 	const now = audioCtx.currentTime
-	const duration = intonation === 'staccato' ? 0.5 : 1
+	const duration = intonation === 'staccato' ? noteDuration / 2 : noteDuration
+	const peakVolume = intonation === 'staccato' ? 0.75 : 0.5
 
-	gainNode.gain.setValueAtTime(0, 0)
-	gainNode.gain.linearRampToValueAtTime(
-		intonation === 'staccato' ? 0.75 : 0.5,
+	oscillator.frequency.value = notes[toneIndex].frequency
+
+	//	silence tone immediately then fade in to prevent jumbled tones when rapidly playing notes
+	gainNode.gain.exponentialRampToValueAtTime(0.00001, now)
+
+	//	ramp to peakVolume over attackTime
+	gainNode.gain.exponentialRampToValueAtTime(
+		peakVolume,
 		now + (intonation === 'staccato' ? attackTime / 2 : attackTime)
 	)
-	gainNode.gain.linearRampToValueAtTime(
-		sustainLevel,
+	//	drop to releaseVolume over decayTime
+	gainNode.gain.exponentialRampToValueAtTime(
+		releaseVolume,
 		now +
-			(intonation === 'staccato' ? attackTime / 2 : attackTime) +
-			(intonation === 'staccato' ? decayTime / 2 : decayTime)
+			(intonation === 'staccato'
+				? (attackTime + decayTime) / 2
+				: attackTime + decayTime)
 	)
-	gainNode.gain.setValueAtTime(
-		sustainLevel,
-		now +
-			duration -
-			(intonation === 'staccato' ? releaseTime / 2 : releaseTime)
-	)
-	gainNode.gain.linearRampToValueAtTime(0, now + duration)
+	//	fade out over releaseTime
+	gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration)
 
 	const panner = new StereoPannerNode(audioCtx, {
 		pan: panning ? panning : undefined,
@@ -84,15 +93,20 @@ export function playAudio(
 
 	oscillator.connect(gainNode).connect(panner).connect(audioCtx.destination)
 
-	oscillator.frequency.value = notes[toneIndex].frequency
 	oscillator.start(now)
 	oscillator.stop(now + duration)
 }
 
 export function stopAudio() {
-	if (audioCtx?.state === 'running') {
-		audioCtx.close()
+	if (!oscillator) return
+	//	prevent flickering from stops when playAudio is called rapidly
+	if (
+		currentTimeAtLastNote &&
+		audioCtx.currentTime - currentTimeAtLastNote < attackTime
+	) {
+		oscillator.stop(audioCtx.currentTime + 0.01)
 	}
+	currentTimeAtLastNote = audioCtx.currentTime
 }
 
 export function playArpeggio() {
