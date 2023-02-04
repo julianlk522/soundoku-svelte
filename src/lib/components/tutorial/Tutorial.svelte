@@ -14,7 +14,7 @@
 	import { keys } from '../../utils/keyboardNavigation'
 	const dispatch = createEventDispatcher()
 
-	let firstButton: HTMLButtonElement
+	let continueButton: HTMLButtonElement
 
 	const slides = [
 		Slide_1,
@@ -42,7 +42,7 @@
 		if (currSlide < slides.length - 1) currSlide++
 		else dispatch('end-tutorial')
 		//	todo: replace this ugly solution with a nicer one
-		if (currSlide === 3 || currSlide === 6) firstButton.focus()
+		if (currSlide === 3 || currSlide === 6) continueButton.focus()
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -103,18 +103,18 @@
 		}
 	}
 
-	onMount(() => firstButton.focus())
+	onMount(() => continueButton.focus())
 </script>
 
 <div
 	id="tutorial"
 	on:keydown|stopPropagation={handleKeydown}
-	on:click={() => firstButton.focus()}
+	on:click={() => continueButton.focus()}
 >
 	<svelte:component this={slides[currSlide]} on:play-audio />
 
 	<div id="tutorial-navigation-buttons">
-		<button on:click={nextSlide} bind:this={firstButton}
+		<button on:click={nextSlide} bind:this={continueButton}
 			>{currSlide < slides.length - 1
 				? 'Continue (C)'
 				: "I'm ready! (C)"}</button
