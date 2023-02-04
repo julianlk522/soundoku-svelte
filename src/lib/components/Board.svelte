@@ -7,9 +7,8 @@
 		remainingCellsStore,
 		selectedCellFilledStore,
 	} from '../../../src/stores'
-	import type { Difficulty } from '../types'
 	import Row from './Row.svelte'
-	import { playAudio, stopAudio, playArpeggio } from '../utils/audio'
+	import type { Difficulty } from '../types'
 
 	const dispatch = createEventDispatcher()
 
@@ -77,10 +76,8 @@
 		}
 
 		if (event.detail.value !== null) {
-			stopAudio()
-
 			const panning = (event.detail.index % 9) / 4 - 1
-			playAudio(event.detail.value - 1, panning)
+			dispatch('play-audio', { index: event.detail.value - 1, panning })
 		}
 	}
 
@@ -103,8 +100,6 @@
 
 	function checkForWin(remaining: number) {
 		if (!remaining) {
-			stopAudio()
-			playArpeggio()
 			dispatch('win')
 		}
 	}

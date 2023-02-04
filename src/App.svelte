@@ -7,7 +7,7 @@
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
-	import { playAudio, stopAudio } from './lib/utils/audio'
+	import { playAudio, stopAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
 
 	let tutorial = true
@@ -34,6 +34,8 @@
 
 	function handleWin() {
 		clearInterval(timer)
+		stopAudio()
+		playArpeggio()
 		gameOver = true
 	}
 
@@ -84,8 +86,9 @@
 		}
 	}
 
-	function playCellTone(value: number) {
+	function playCellTone(value: number, panning?: number) {
 		stopAudio()
+		if (panning) return playAudio(value, panning)
 		playAudio(value)
 	}
 
@@ -104,6 +107,8 @@
 		<div class="leavesBg" />
 		<Board
 			{difficulty}
+			on:play-audio={(event) =>
+				playCellTone(event.detail.index, event.detail.panning)}
 			on:incorrect-guess={() => errors++}
 			on:win={handleWin}
 		/>
