@@ -86,10 +86,10 @@
 		}
 	}
 
-	function playCellTone(value: number, panning?: number) {
+	function playCellTone(toneIndex: number, panning?: number) {
 		stopAudio()
-		if (panning) return playAudio(value, panning)
-		playAudio(value)
+		if (panning) return playAudio(toneIndex, panning)
+		playAudio(toneIndex)
 	}
 
 	onMount(() => {
@@ -108,7 +108,7 @@
 		<Board
 			{difficulty}
 			on:play-audio={(event) =>
-				playCellTone(event.detail.index, event.detail.panning)}
+				playCellTone(event.detail.toneIndex, event.detail.panning)}
 			on:incorrect-guess={() => errors++}
 			on:win={handleWin}
 		/>

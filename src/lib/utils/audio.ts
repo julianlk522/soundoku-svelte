@@ -45,7 +45,7 @@ const sustainLevel = 0.01
 const releaseTime = 0.25
 
 export function playAudio(
-	index: number,
+	toneIndex: number,
 	panning?: number,
 	intonation?: undefined | 'staccato'
 ) {
@@ -84,7 +84,7 @@ export function playAudio(
 
 	oscillator.connect(gainNode).connect(panner).connect(audioCtx.destination)
 
-	oscillator.frequency.value = notes[index].frequency
+	oscillator.frequency.value = notes[toneIndex].frequency
 	oscillator.start(now)
 	oscillator.stop(now + duration)
 }

@@ -77,7 +77,10 @@
 
 		if (event.detail.toneIndex !== undefined) {
 			const panning = (event.detail.overallIndex % 9) / 4 - 1
-			dispatch('play-audio', { index: event.detail.toneIndex, panning })
+			dispatch('play-audio', {
+				toneIndex: event.detail.toneIndex,
+				panning,
+			})
 		}
 	}
 
