@@ -25,8 +25,9 @@
 	onDestroy(unsubRemainingCellStore)
 </script>
 
-<button class="selectionButton" on:click={() => handleNumberSelect(value)}
-	>{value}</button
+<button
+	class="selectionButton"
+	on:click|stopPropagation={() => handleNumberSelect(value)}>{value}</button
 >
 
 <style>
