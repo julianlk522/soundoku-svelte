@@ -55,7 +55,10 @@
 
 	function handleSelect() {
 		selectedNumberStore.set(null)
-		dispatch('select', { index: overallIndex, value })
+		dispatch('select', {
+			overallIndex,
+			toneIndex: value ? value - 1 : undefined,
+		})
 	}
 
 	function handleKeydown(event: KeyboardEvent) {

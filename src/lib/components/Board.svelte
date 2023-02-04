@@ -67,17 +67,17 @@
 	}
 
 	function handleCellSelected(event: CustomEvent) {
-		selectedCellStore.set(event.detail.index)
+		selectedCellStore.set(event.detail.overallIndex)
 
-		if (board[event.detail.index] !== null) {
+		if (board[event.detail.overallIndex] !== null) {
 			selectedCellFilledStore.set(true)
 		} else {
 			selectedCellFilledStore.set(false)
 		}
 
-		if (event.detail.value !== null) {
-			const panning = (event.detail.index % 9) / 4 - 1
-			dispatch('play-audio', { index: event.detail.value - 1, panning })
+		if (event.detail.toneIndex !== undefined) {
+			const panning = (event.detail.overallIndex % 9) / 4 - 1
+			dispatch('play-audio', { index: event.detail.toneIndex, panning })
 		}
 	}
 
