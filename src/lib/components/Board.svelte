@@ -29,7 +29,7 @@
 	let completedCells = new Set<number>()
 
 	selectedCellStore.set(null)
-	$: $selectedCellStore &&
+	$: $selectedCellStore !== null &&
 		$selectedNumberStore &&
 		handleGuess($selectedNumberStore)
 	remainingCellsStore.set(81)
