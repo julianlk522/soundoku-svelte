@@ -7,7 +7,7 @@
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
-	import { playAudio, stopAudio, playArpeggio } from './lib/utils/audio'
+	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
 
 	let tutorial = true
@@ -34,7 +34,6 @@
 
 	function handleWin() {
 		clearInterval(timer)
-		stopAudio()
 		playArpeggio()
 		gameOver = true
 	}
@@ -87,7 +86,6 @@
 	}
 
 	function playCellTone(toneIndex: number, panning?: number) {
-		stopAudio()
 		if (panning) return playAudio(toneIndex, panning)
 		playAudio(toneIndex)
 	}

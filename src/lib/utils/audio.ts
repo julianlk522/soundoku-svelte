@@ -40,28 +40,28 @@ const notes = [
 let audioCtx = new AudioContext()
 let oscillator: OscillatorNode
 let gainNode: GainNode
-let currentTimeAtLastNote: number
+let currentTimeAtLastNote = 0
+let waitTime = 0
 
-const attackTime = 0.1
-const decayTime = 0.05
-const releaseVolume = 0.15
-const releaseTime = 0.5
+const minimumTimeDeltaBeforeThrottlingAttack = 0.1
+const minAttackTime = 0.01
+const maxAttackTime = 0.2
+let attackTime = minAttackTime
+const decayTime = 0.1
+const releaseVolume = 0.25
+const releaseTime = 1.5
 const noteDuration = attackTime + decayTime + releaseTime
-
-function init() {
-	oscillator = audioCtx.createOscillator()
-	gainNode = audioCtx.createGain()
-
-	oscillator.connect(gainNode)
-	gainNode.connect(audioCtx.destination)
-}
 
 export function playAudio(
 	toneIndex: number,
 	panning?: number,
 	intonation?: undefined | 'staccato'
 ) {
+	if (waitTime && waitTime < minimumTimeDeltaBeforeThrottlingAttack) {
+		stopAudio()
+	}
 	init()
+
 	const now = audioCtx.currentTime
 	const duration = intonation === 'staccato' ? noteDuration / 2 : noteDuration
 	const peakVolume = intonation === 'staccato' ? 0.75 : 0.5
@@ -77,7 +77,7 @@ export function playAudio(
 		now + (intonation === 'staccato' ? attackTime / 2 : attackTime)
 	)
 	//	drop to releaseVolume over decayTime
-	gainNode.gain.exponentialRampToValueAtTime(
+	gainNode.gain.linearRampToValueAtTime(
 		releaseVolume,
 		now +
 			(intonation === 'staccato'
@@ -91,22 +91,56 @@ export function playAudio(
 		pan: panning ? panning : undefined,
 	})
 
-	oscillator.connect(gainNode).connect(panner).connect(audioCtx.destination)
+	// fix this
+	oscillator.connect(panner)
 
 	oscillator.start(now)
 	oscillator.stop(now + duration)
 }
 
-export function stopAudio() {
+function init() {
+	oscillator = audioCtx.createOscillator()
+	gainNode = audioCtx.createGain()
+
+	oscillator.connect(gainNode)
+	gainNode.connect(audioCtx.destination)
+
+	if (currentTimeAtLastNote) {
+		waitTime = audioCtx.currentTime - currentTimeAtLastNote
+		getNewAttackTime()
+	}
+
+	currentTimeAtLastNote = audioCtx.currentTime
+}
+
+function stopAudio() {
 	if (!oscillator) return
-	//	prevent flickering from stops when playAudio is called rapidly
+
 	if (
 		currentTimeAtLastNote &&
-		audioCtx.currentTime - currentTimeAtLastNote < attackTime
+		audioCtx.currentTime - currentTimeAtLastNote <
+			minimumTimeDeltaBeforeThrottlingAttack
 	) {
-		oscillator.stop(audioCtx.currentTime + 0.01)
+		gainNode.gain.exponentialRampToValueAtTime(
+			0.00001,
+			audioCtx.currentTime + minAttackTime
+		)
+		oscillator.stop(audioCtx.currentTime + minAttackTime)
 	}
-	currentTimeAtLastNote = audioCtx.currentTime
+}
+
+function getNewAttackTime() {
+	if (waitTime && waitTime < minimumTimeDeltaBeforeThrottlingAttack) {
+		attackTime = Math.min(
+			attackTime + 0.5 * (maxAttackTime - attackTime),
+			maxAttackTime
+		)
+	} else {
+		attackTime = Math.max(
+			attackTime - 0.5 * (attackTime - minAttackTime),
+			minAttackTime
+		)
+	}
 }
 
 export function playArpeggio() {
