@@ -60,7 +60,7 @@ export function playAudio(
 	if (waitTime && waitTime < minimumTimeDeltaBeforeThrottlingAttack) {
 		stopAudio()
 	}
-	init()
+	init(panning)
 
 	const now = audioCtx.currentTime
 	const duration = intonation === 'staccato' ? noteDuration / 2 : noteDuration
@@ -87,24 +87,26 @@ export function playAudio(
 	//	fade out over releaseTime
 	gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration)
 
-	const panner = new StereoPannerNode(audioCtx, {
-		pan: panning ? panning : undefined,
-	})
-
-	// fix this
-	oscillator.connect(panner)
-
 	oscillator.start(now)
 	oscillator.stop(now + duration)
 }
 
-function init() {
+function init(panning?: number) {
 	oscillator = audioCtx.createOscillator()
 	gainNode = audioCtx.createGain()
 
-	oscillator.connect(gainNode)
+	if (panning) {
+		const panner = new StereoPannerNode(audioCtx, {
+			pan: panning,
+		})
+		oscillator.connect(panner)
+		panner.connect(gainNode)
+	} else {
+		oscillator.connect(gainNode)
+	}
 	gainNode.connect(audioCtx.destination)
 
+	//	analyze waitTime, set next attackTime accordingly
 	if (currentTimeAtLastNote) {
 		waitTime = audioCtx.currentTime - currentTimeAtLastNote
 		getNewAttackTime()
@@ -130,7 +132,7 @@ function stopAudio() {
 }
 
 function getNewAttackTime() {
-	if (waitTime && waitTime < minimumTimeDeltaBeforeThrottlingAttack) {
+	if (waitTime < minimumTimeDeltaBeforeThrottlingAttack) {
 		attackTime = Math.min(
 			attackTime + 0.5 * (maxAttackTime - attackTime),
 			maxAttackTime
