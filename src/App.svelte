@@ -86,6 +86,7 @@
 	}
 
 	function playCellTone(toneIndex: number, panning?: number) {
+		if (toneIndex < 0) return
 		if (panning) return playAudio(toneIndex, panning)
 		playAudio(toneIndex)
 	}
