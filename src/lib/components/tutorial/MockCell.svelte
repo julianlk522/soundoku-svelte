@@ -9,7 +9,7 @@
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
 		tutorialErrorsStore,
-		selectedNumberStore,
+		tutorialSelectedNumberStore,
 	} from '../../../stores'
 	import { sineIn } from 'svelte/easing'
 	import { fade } from 'svelte/transition'
@@ -38,11 +38,10 @@
 		guessable &&
 		selected &&
 		!filled &&
-		$selectedNumberStore &&
-		value !== $selectedNumberStore
+		$tutorialSelectedNumberStore &&
+		value !== $tutorialSelectedNumberStore
 
 	function handleClick() {
-		selectedNumberStore.set(null)
 		//	play tone only if cell is filled
 		if (
 			$tutorialSelectedCellStore === index &&
@@ -55,15 +54,16 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (!filled && !correct && /\d/.test(event.key)) {
-			selectedNumberStore.set(+event.key)
+			tutorialSelectedNumberStore.set(+event.key)
 		}
 	}
 
-	const unsubSelectedNumberStore = selectedNumberStore.subscribe((newNum) => {
-		if (!guessable || !selected || filled || newNum === null) return
-		if (newNum === value) return (correct = true)
-		tutorialErrorsStore.update((errors) => errors + 1)
-	})
+	const unsubTutorialSelectedNumberStore =
+		tutorialSelectedNumberStore.subscribe((newNum) => {
+			if (!guessable || !selected || filled || newNum === null) return
+			if (newNum === value) return (correct = true)
+			tutorialErrorsStore.update((errors) => errors + 1)
+		})
 
 	onMount(() => {
 		if (!filled || !flashFilled) return
@@ -77,7 +77,7 @@
 		)
 	})
 
-	onDestroy(unsubSelectedNumberStore)
+	onDestroy(unsubTutorialSelectedNumberStore)
 
 	afterUpdate(() => {
 		selectable && $tutorialSelectedCellStore === index && self.focus()
@@ -113,7 +113,7 @@
 		{!$tutorialRandomlyFilledCellsStore.length || correct
 			? value
 			: incorrect
-			? $selectedNumberStore
+			? $tutorialSelectedNumberStore
 			: ''}
 	</button>
 {/key}

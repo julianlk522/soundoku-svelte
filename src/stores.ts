@@ -7,4 +7,7 @@ export const selectedNumberStore = writable<null | number>(null)
 
 export const tutorialSelectedCellStore = writable(0)
 export const tutorialRandomlyFilledCellsStore = writable<number[]>([])
+export const tutorialSelectedNumberStore = writable<number | undefined>(
+	undefined
+)
 export const tutorialErrorsStore = writable(0)

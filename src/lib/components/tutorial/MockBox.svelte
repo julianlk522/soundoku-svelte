@@ -4,7 +4,7 @@
 	import {
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
-		selectedNumberStore,
+		tutorialSelectedNumberStore,
 		tutorialErrorsStore,
 	} from '../../../stores'
 
@@ -40,7 +40,7 @@
 	)
 
 	onMount(() => {
-		selectedNumberStore.set(null)
+		tutorialSelectedNumberStore.set(undefined)
 		tutorialSelectedCellStore.set(0)
 		tutorialErrorsStore.set(0)
 	})

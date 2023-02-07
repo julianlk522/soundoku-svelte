@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte'
-	import {
-		selectedNumberStore,
-		tutorialSelectedCellStore,
-	} from '../../../stores'
+	import { tutorialSelectedCellStore } from '../../../stores'
 	import Slide_1 from './slides/Slide_1.svelte'
 	import Slide_2 from './slides/Slide_2.svelte'
 	import Slide_3 from './slides/Slide_3.svelte'
@@ -64,7 +61,6 @@
 	}
 
 	function navigateBox(key: string) {
-		selectedNumberStore.set(null)
 		//	left edge
 		if (keys[key] === -1 && $tutorialSelectedCellStore! % 3 === 0) {
 			tutorialSelectedCellStore.update((cell) => cell + 2)
