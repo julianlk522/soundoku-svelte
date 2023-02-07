@@ -41,15 +41,17 @@
 		$tutorialSelectedNumberStore &&
 		value !== $tutorialSelectedNumberStore
 
-	function handleClick() {
+	function handleSelect() {
 		//	play tone only if cell is filled
 		if (
-			$tutorialSelectedCellStore === index &&
-			$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1
+			$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1 ||
+			correct
 		) {
 			dispatch('play-audio', index)
-			// else select the cell but play no tone
-		} else tutorialSelectedCellStore.set(index)
+		}
+		//	select the cell if it is not selected
+		if (index !== $tutorialSelectedCellStore)
+			tutorialSelectedCellStore.set(index)
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -95,7 +97,13 @@
 		class:cell-hue-tertiary={cellHueTertiary || incorrect}
 		class:cell-hue-quaternary={cellHueQuaternary || correct}
 		bind:this={self}
-		on:click|stopPropagation={handleClick}
+		on:click|stopPropagation={handleSelect}
+		on:focus={() => {
+			//	true when navigating via keys, false when navigating via mouse
+			//	therefore will not overlap with on:click event function but will still play cell tones when using keys
+			if ($tutorialSelectedCellStore !== index) return
+			handleSelect()
+		}}
 		on:keydown={handleKeydown}
 		in:fade={{
 			duration: 200,

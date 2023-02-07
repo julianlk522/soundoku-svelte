@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy, createEventDispatcher } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import MockCell from './MockCell.svelte'
 	import {
 		tutorialSelectedCellStore,
@@ -7,8 +7,6 @@
 		tutorialSelectedNumberStore,
 		tutorialErrorsStore,
 	} from '../../../stores'
-
-	const dispatch = createEventDispatcher()
 
 	export let selectableCells: boolean = false
 	export let cycles: number | undefined = undefined
@@ -27,18 +25,6 @@
 	export let flashFilled: boolean = false
 	export let guessable: boolean = false
 
-	const unsubSelectedCellStore = tutorialSelectedCellStore.subscribe(
-		(selectedCell) => {
-			if (
-				!selectableCells ||
-				$tutorialRandomlyFilledCellsStore.indexOf(selectedCell + 1) ===
-					-1
-			)
-				return
-			dispatch('play-audio', selectedCell)
-		}
-	)
-
 	onMount(() => {
 		tutorialSelectedNumberStore.set(undefined)
 		tutorialSelectedCellStore.set(0)
@@ -47,7 +33,6 @@
 
 	onDestroy(() => {
 		tutorialRandomlyFilledCellsStore.set([])
-		unsubSelectedCellStore()
 	})
 </script>
 
