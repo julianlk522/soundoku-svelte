@@ -16,6 +16,7 @@
 	)
 
 	function handleNumberSelect(value: number) {
+		//	todo: don't run this during tutorial
 		if (!$selectedCellFilledStore) {
 			selectedNumberStore.set(value)
 		}

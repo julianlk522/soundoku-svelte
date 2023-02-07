@@ -42,6 +42,8 @@
 		value !== $tutorialSelectedNumberStore
 
 	function handleSelect() {
+		//	reset tutorialSelectedNumberStore after each new cell selected (prevent applying incorrect class after navigation)
+		tutorialSelectedNumberStore.set(undefined)
 		//	play tone only if cell is filled
 		if (
 			$tutorialRandomlyFilledCellsStore.indexOf(value) !== -1 ||

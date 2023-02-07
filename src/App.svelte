@@ -54,7 +54,6 @@
 				selectedCellStore.set(0)
 				return
 			}
-			selectedNumberStore.set(null)
 			navigateCells(event.key)
 		}
 	}

@@ -1,9 +1,6 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount, onDestroy } from 'svelte'
-	import {
-		tutorialSelectedCellStore,
-		tutorialSelectedNumberStore,
-	} from '../../../stores'
+	import { createEventDispatcher, onMount } from 'svelte'
+	import { tutorialSelectedCellStore } from '../../../stores'
 	import Slide_1 from './slides/Slide_1.svelte'
 	import Slide_2 from './slides/Slide_2.svelte'
 	import Slide_3 from './slides/Slide_3.svelte'
@@ -102,13 +99,7 @@
 		}
 	}
 
-	//	reset tutorialSelectedNumberStore after each change to tutorialSelectedCellStore (prevents applying incorrect class to MockCells after navigation)
-	const unsubTutorialSelectedCellStore = tutorialSelectedCellStore.subscribe(
-		() => tutorialSelectedNumberStore.set(undefined)
-	)
-
 	onMount(() => continueButton.focus())
-	onDestroy(unsubTutorialSelectedCellStore)
 </script>
 
 <div

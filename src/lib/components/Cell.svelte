@@ -54,7 +54,7 @@
 		relatedToSelected && completed && value === $selectedNumberStore
 
 	function handleSelect() {
-		selectedNumberStore.set(null)
+		selectedNumberStore.set(undefined)
 		dispatch('select', {
 			overallIndex,
 			toneIndex: value ? value - 1 : undefined,
