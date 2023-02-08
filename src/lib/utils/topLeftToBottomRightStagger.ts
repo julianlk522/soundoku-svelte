@@ -1,6 +1,7 @@
-export function topLeftToBottomRightStagger(index: number, sideLength: number) {
-	if (index >= Math.pow(sideLength, 2)) return
-
+export function topLeftToBottomRightStagger(
+	index: number,
+	sideLength: number
+): number {
 	if (index === 0) return 0
 	else if (index === 1) return 2
 	else if (index < sideLength) {
