@@ -37,7 +37,7 @@
 
 	function nextSlide() {
 		if (currSlide < slides.length - 1) currSlide++
-		else dispatch('end-tutorial')
+		else return dispatch('end-tutorial')
 		focusContinueButtonIfNeeded()
 	}
 	function prevSlide() {
@@ -120,7 +120,7 @@
 	<svelte:component this={slides[currSlide]} on:play-audio />
 
 	<div id="tutorial-navigation-buttons">
-		{#if currSlide > 0}
+		{#if currSlide}
 			<button
 				class="has-arrow"
 				on:click={() => {
@@ -170,12 +170,17 @@
 		transition-property: background-color, border-radius;
 	}
 
-	#tutorial-navigation-buttons .has-arrow:before {
+	#tutorial-navigation-buttons .has-arrow:not(.flipped):before,
+	#tutorial-navigation-buttons .has-arrow:is(.flipped):after {
 		content: url('../../../assets/left-arrow.svg');
+	}
+
+	#tutorial-navigation-buttons .has-arrow:not(.flipped):before {
 		margin-right: 4px;
 	}
 
-	#tutorial-navigation-buttons .flipped:before {
+	#tutorial-navigation-buttons .has-arrow:is(.flipped):after {
+		margin-left: 4px;
 		display: inline-block;
 		transform: rotate(180deg);
 	}
@@ -184,7 +189,8 @@
 		color: var(--color-text-light);
 	}
 
-	#tutorial-navigation-buttons .has-arrow:focus:not(button:hover):before {
+	#tutorial-navigation-buttons .has-arrow:focus:not(button:hover):before,
+	#tutorial-navigation-buttons .has-arrow:focus:not(button:hover):after {
 		filter: invert(1);
 	}
 
