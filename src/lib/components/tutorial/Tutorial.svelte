@@ -122,16 +122,21 @@
 	<div id="tutorial-navigation-buttons">
 		{#if currSlide > 0}
 			<button
+				class="has-arrow"
 				on:click={() => {
 					currSlide--
 					focusContinueButtonIfNeeded()
-				}}>Previous slide (P)</button
+				}}
 			>
+				(P)
+			</button>
 		{/if}
-		<button on:click={nextSlide} bind:this={continueButton}
-			>{currSlide < slides.length - 1
-				? 'Continue (C)'
-				: "I'm ready! (C)"}</button
+		<button
+			class:has-arrow={currSlide < slides.length - 1}
+			class="flipped"
+			on:click={nextSlide}
+			bind:this={continueButton}
+			>{currSlide < slides.length - 1 ? '(C)' : "I'm ready! (C)"}</button
 		>
 		{#if currSlide < slides.length - 1}
 			<button on:click={() => dispatch('end-tutorial')}
@@ -164,6 +169,18 @@
 		border-radius: 2px;
 		transition: none 0.18s ease-in-out;
 		transition-property: background-color, border-radius;
+	}
+
+	#tutorial-navigation-buttons .has-arrow:before {
+		content: url('../../../assets/left-arrow.svg');
+		display: inline-block;
+		/* oddly 50% 50% (center) causes shifting when flipped */
+		transform-origin: 50% 48%;
+		margin-right: 4px;
+	}
+
+	#tutorial-navigation-buttons .flipped:before {
+		transform: rotate(180deg);
 	}
 
 	#tutorial-navigation-buttons button:hover {
