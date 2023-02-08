@@ -131,6 +131,11 @@
 				(P)
 			</button>
 		{/if}
+		{#if currSlide < slides.length - 1}
+			<button on:click={() => dispatch('end-tutorial')}
+				>Skip tutorial (T)</button
+			>
+		{/if}
 		<button
 			class:has-arrow={currSlide < slides.length - 1}
 			class="flipped"
@@ -138,11 +143,6 @@
 			bind:this={continueButton}
 			>{currSlide < slides.length - 1 ? '(C)' : "I'm ready! (C)"}</button
 		>
-		{#if currSlide < slides.length - 1}
-			<button on:click={() => dispatch('end-tutorial')}
-				>Skip tutorial (T)</button
-			>
-		{/if}
 	</div>
 </div>
 
@@ -158,8 +158,7 @@
 
 	#tutorial-navigation-buttons {
 		display: flex;
-		justify-content: space-evenly;
-		gap: 2rem;
+		gap: 1rem;
 		margin-top: 2rem;
 	}
 
@@ -173,14 +172,20 @@
 
 	#tutorial-navigation-buttons .has-arrow:before {
 		content: url('../../../assets/left-arrow.svg');
-		display: inline-block;
-		/* oddly 50% 50% (center) causes shifting when flipped */
-		transform-origin: 50% 48%;
 		margin-right: 4px;
 	}
 
 	#tutorial-navigation-buttons .flipped:before {
+		display: inline-block;
 		transform: rotate(180deg);
+	}
+
+	#tutorial-navigation-buttons button:focus:not(button:hover) {
+		color: var(--color-text-light);
+	}
+
+	#tutorial-navigation-buttons .has-arrow:focus:not(button:hover):before {
+		filter: invert(1);
 	}
 
 	#tutorial-navigation-buttons button:hover {
@@ -188,7 +193,10 @@
 		border-radius: 0;
 	}
 
-	#tutorial-navigation-buttons button:focus:not(button:hover) {
-		color: var(--color-text-light);
+	@media (min-width: 640px) {
+		#tutorial-navigation-buttons {
+			gap: 2rem;
+			font-size: 1.25rem;
+		}
 	}
 </style>
