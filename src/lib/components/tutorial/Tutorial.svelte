@@ -156,13 +156,7 @@
 		padding: 2rem;
 	}
 
-	#tutorial-navigation-buttons {
-		display: flex;
-		gap: 1rem;
-		margin-top: 2rem;
-	}
-
-	#tutorial-navigation-buttons button {
+	button {
 		color: var(--color-text);
 		border: none;
 		border-radius: 2px;
@@ -170,33 +164,39 @@
 		transition-property: background-color, border-radius;
 	}
 
-	#tutorial-navigation-buttons .has-arrow:not(.flipped):before,
-	#tutorial-navigation-buttons .has-arrow:is(.flipped):after {
+	button:hover {
+		background-color: var(--color-text-light);
+		border-radius: 0;
+	}
+
+	button:focus:not(button:hover) {
+		color: var(--color-text-light);
+	}
+
+	#tutorial-navigation-buttons {
+		display: flex;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+
+	.has-arrow:not(.flipped):before,
+	.has-arrow:is(.flipped):after {
 		content: url('../../../assets/left-arrow.svg');
 	}
 
-	#tutorial-navigation-buttons .has-arrow:not(.flipped):before {
+	.has-arrow:not(.flipped):before {
 		margin-right: 4px;
 	}
 
-	#tutorial-navigation-buttons .has-arrow:is(.flipped):after {
+	.has-arrow:is(.flipped):after {
 		margin-left: 4px;
 		display: inline-block;
 		transform: rotate(180deg);
 	}
 
-	#tutorial-navigation-buttons button:focus:not(button:hover) {
-		color: var(--color-text-light);
-	}
-
-	#tutorial-navigation-buttons .has-arrow:focus:not(button:hover):before,
-	#tutorial-navigation-buttons .has-arrow:focus:not(button:hover):after {
+	.has-arrow:focus:not(button:hover):before,
+	.has-arrow:focus:not(button:hover):after {
 		filter: invert(1);
-	}
-
-	#tutorial-navigation-buttons button:hover {
-		background-color: var(--color-text-light);
-		border-radius: 0;
 	}
 
 	@media (min-width: 640px) {
