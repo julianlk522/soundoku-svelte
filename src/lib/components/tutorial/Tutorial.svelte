@@ -38,8 +38,17 @@
 	function nextSlide() {
 		if (currSlide < slides.length - 1) currSlide++
 		else dispatch('end-tutorial')
+		focusContinueButtonIfNeeded()
+	}
+	function prevSlide() {
+		currSlide--
+		focusContinueButtonIfNeeded()
+	}
+
+	function focusContinueButtonIfNeeded() {
 		//	todo: replace this ugly solution with a nicer one
-		if (currSlide === 3 || currSlide === 6) continueButton.focus()
+		if (currSlide === 1 || currSlide === 3 || currSlide === 6)
+			continueButton.focus()
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -58,6 +67,7 @@
 		}
 		if (event.key.toLowerCase() === 't') return dispatch('end-tutorial')
 		if (event.key.toLowerCase() === 'c') return nextSlide()
+		if (event.key.toLowerCase() === 'p' && currSlide) return prevSlide()
 	}
 
 	function navigateBox(key: string) {
@@ -110,6 +120,14 @@
 	<svelte:component this={slides[currSlide]} on:play-audio />
 
 	<div id="tutorial-navigation-buttons">
+		{#if currSlide > 0}
+			<button
+				on:click={() => {
+					currSlide--
+					focusContinueButtonIfNeeded()
+				}}>Previous slide (P)</button
+			>
+		{/if}
 		<button on:click={nextSlide} bind:this={continueButton}
 			>{currSlide < slides.length - 1
 				? 'Continue (C)'
