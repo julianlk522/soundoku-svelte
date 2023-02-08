@@ -23,13 +23,13 @@
 			: difficulty === 'Hard'
 			? 50
 			: 40
-	let board: (number | null)[] = []
+	let board: (number | undefined)[] = []
 	let solution: number[]
-	let rows: (number | null)[][] = []
+	let rows: (number | undefined)[][] = []
 	let completedCells = new Set<number>()
 
-	selectedCellStore.set(null)
-	$: $selectedCellStore !== null &&
+	selectedCellStore.set(undefined)
+	$: $selectedCellStore !== undefined &&
 		$selectedNumberStore &&
 		handleGuess($selectedNumberStore)
 	remainingCellsStore.set(81)
@@ -46,7 +46,7 @@
 
 	function fillCellsToDecreaseDifficulty() {
 		let filledNumsCount = board.filter(
-			(val: number | null) => val !== null
+			(val: number | undefined) => val !== undefined
 		).length
 
 		let n = desiredFilledNumsCount - filledNumsCount
@@ -56,7 +56,7 @@
 			const randomIndex = Math.floor(Math.random() * 81)
 			if (
 				checkedIndices.indexOf(randomIndex) === -1 &&
-				board[randomIndex] === null
+				board[randomIndex] === undefined
 			) {
 				board.splice(randomIndex, 1, solution[randomIndex])
 				n--
@@ -69,7 +69,7 @@
 	function handleCellSelected(event: CustomEvent) {
 		selectedCellStore.set(event.detail.overallIndex)
 
-		if (board[event.detail.overallIndex] !== null) {
+		if (board[event.detail.overallIndex] !== undefined) {
 			selectedCellFilledStore.set(true)
 		} else {
 			selectedCellFilledStore.set(false)
@@ -85,7 +85,10 @@
 	}
 
 	function handleGuess(num: number) {
-		if ($selectedCellStore === null || board[$selectedCellStore] !== null)
+		if (
+			$selectedCellStore === undefined ||
+			board[$selectedCellStore] !== undefined
+		)
 			return
 		if (solution[$selectedCellStore] === num) {
 			return handleCorrectGuess()
@@ -113,8 +116,8 @@
 		//  solvepuzzle() relies on a range of 0-8 so it must be run before mapping values to 1-9
 		solution = solvepuzzle(board).map((num: number) => num + 1)
 
-		board = board.map((num: number | null) =>
-			num != null ? num + 1 : null
+		board = board.map((num: number | undefined) =>
+			num != undefined ? num + 1 : undefined
 		)
 		fillCellsToDecreaseDifficulty()
 

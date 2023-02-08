@@ -50,7 +50,7 @@
 		if (!difficulty || gameOver) return
 		if (/\d/.test(event.key)) playCellTone(parseInt(event.key) - 1)
 		if (keys.hasOwnProperty(event.key)) {
-			if ($selectedCellStore === null) {
+			if ($selectedCellStore === undefined) {
 				selectedCellStore.set(0)
 				return
 			}

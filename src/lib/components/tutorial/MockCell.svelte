@@ -64,7 +64,8 @@
 
 	const unsubTutorialSelectedNumberStore =
 		tutorialSelectedNumberStore.subscribe((newNum) => {
-			if (!guessable || !selected || filled || newNum === null) return
+			if (!guessable || !selected || filled || newNum === undefined)
+				return
 			if (newNum === value) return (correct = true)
 			tutorialErrorsStore.update((errors) => errors + 1)
 		})

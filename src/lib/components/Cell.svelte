@@ -9,8 +9,8 @@
 
 	let self: HTMLButtonElement
 
-	export let value: number | null = 0
-	$: empty = value === null
+	export let value: number | undefined = 0
+	$: empty = value === undefined
 
 	export let rowIndex = 0
 	$: aboveBoxDivider = rowIndex === 2 || rowIndex === 5
@@ -25,7 +25,7 @@
 	export let completedCells: Set<number>
 	$: completed = value && completedCells.has(overallIndex)
 
-	let selectedCell: number | null
+	let selectedCell: number | undefined
 	const unsubSelectedCellStore = selectedCellStore.subscribe(
 		(selectedCellIndex) => {
 			selectedCell = selectedCellIndex
@@ -38,7 +38,7 @@
 		selectedCell === overallIndex &&
 		$selectedNumberStore !== value
 	$: relatedToSelected =
-		selectedCell !== null &&
+		selectedCell !== undefined &&
 		!selected &&
 		//	same row
 		((selectedCell >= rowIndex * 9 && selectedCell < (rowIndex + 1) * 9) ||
@@ -105,7 +105,7 @@
 	{#if value && !completed}
 		<div class="filled {selected ? 'filled-selected' : ''}" />
 	{/if}
-	{value !== null && completed
+	{value !== undefined && completed
 		? value
 		: incorrect
 		? $selectedNumberStore
