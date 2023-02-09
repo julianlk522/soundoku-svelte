@@ -1,10 +1,5 @@
 <script lang="ts">
-	import {
-		onMount,
-		onDestroy,
-		afterUpdate,
-		createEventDispatcher,
-	} from 'svelte'
+	import { onMount, onDestroy, createEventDispatcher } from 'svelte'
 	import {
 		tutorialSelectedCellStore,
 		tutorialRandomlyFilledCellsStore,
@@ -22,6 +17,7 @@
 	$: index = value - 1
 	export let selectable: boolean = false
 	$: selected = selectable && $tutorialSelectedCellStore === index
+	$: selected && self?.focus()
 	export let cycles: number = 0
 	export let activeCellInCycle: boolean = false
 	$: cellHueTertiary =
@@ -83,10 +79,6 @@
 	})
 
 	onDestroy(unsubTutorialSelectedNumberStore)
-
-	afterUpdate(() => {
-		selectable && $tutorialSelectedCellStore === index && self.focus()
-	})
 </script>
 
 {#key Math.floor(cycles / 2)}
