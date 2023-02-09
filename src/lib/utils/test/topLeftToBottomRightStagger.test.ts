@@ -4,8 +4,8 @@ import { topLeftToBottomRightStagger } from '../topLeftToBottomRightStagger'
 //	# rows and columns
 const sideLength = 9
 
-//	calculated indexes for 9x9 grid
-const output = Array.from(Array(81)).map((_, i) =>
+//	calculated indexes for sideLength x sideLength grid
+const output = Array.from(Array(Math.pow(sideLength, 2))).map((_, i) =>
 	topLeftToBottomRightStagger(i, sideLength)
 )
 
@@ -15,8 +15,9 @@ test('should return a number', () => {
 	}
 })
 
-test('should always return a number greater than members of a lesser or equal column and a lesser or equal row (except at an equal column and equal row)', () => {
-	//	generate random column and row over (sideLength / 2) for sufficient coverage
+//	note: this test fails if sideLength === 1. Investigate?
+test('should always return a number greater than all members of a lesser or equal column and a lesser or equal row (except at an equal column and equal row)', () => {
+	//	generate random column and row >= (sideLength / 2) for sufficient coverage
 	let c = Math.floor(
 		Math.floor(sideLength / 2) + Math.random() * Math.ceil(sideLength / 2)
 	) // 4-8 for sideLength 9
@@ -28,7 +29,7 @@ test('should always return a number greater than members of a lesser or equal co
 	//  skip testing f(i) < f(i), so decrement c once
 	c--
 
-	//	flow of test indexes, assuming i = 40:
+	//	flow of test indexes, assuming i = 40 and sideLength = 9:
 
 	//	(40) -> 39 -> 38 -> 37 -> 36
 	//	31 -> 30 -> 29 -> 28 -> 27
@@ -47,11 +48,13 @@ test('should always return a number greater than members of a lesser or equal co
 	}
 })
 
-test('should always return a number greater than members of a lesser column and greater row ', () => {
-	//	middle index in 9x9 grid
-	const i = 40
+//	note: this test fails if (sideLength % 2) === 0. Investigate?
+test('should always return a number greater than all members of a lesser column and greater row', () => {
+	//	middle index
+	const i = Math.floor(Math.pow(sideLength, 2) / 2)
 	let c = i % sideLength
 	let r = Math.floor(i / sideLength)
+
 	//  skip testing f(i) < f(i), so decrement c once
 	c--
 
@@ -71,5 +74,25 @@ test('should always return a number greater than members of a lesser column and 
 			continue
 		}
 		c--
+	}
+})
+
+test('should always output x + 1 for the index graphically 1 unit above and to the right of the index producing output x', () => {
+	//	generate random column <= (sideLength / 2) and random row >= (sideLength / 2) for sufficient coverage
+	let c = Math.floor(Math.random() * Math.ceil(sideLength / 2)) // 0-4 for sideLength 9
+	let r = Math.floor(
+		Math.floor(sideLength / 2) + Math.random() * Math.ceil(sideLength / 2)
+	) // 4-8 for sideLength 9
+	let i = sideLength * r + c
+
+	//	flow of test indexes, assuming i = 40 and sideLength = 9:
+
+	//	(40) -> 32 -> 24 -> 16 -> 8
+
+	while (c < sideLength - 1 && r) {
+		expect(output[sideLength * (r - 1) + (c + 1)]).toEqual(output[i] + 1)
+		i = sideLength * (r - 1) + (c + 1)
+		c++
+		r--
 	}
 })
