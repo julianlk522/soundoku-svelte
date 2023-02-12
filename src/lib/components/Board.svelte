@@ -3,6 +3,7 @@
 	import { onMount, createEventDispatcher } from 'svelte'
 	import {
 		selectedCellStore,
+		selectedCellWithNavigationStore,
 		selectedNumberStore,
 		remainingCellsStore,
 		selectedCellFilledStore,
@@ -77,6 +78,7 @@
 			const panning = (event.detail.overallIndex % 9) / 4 - 1
 			dispatch('play-audio', {
 				toneIndex: event.detail.toneIndex,
+				triggeredByNavigation: $selectedCellWithNavigationStore,
 				panning,
 			})
 		}

@@ -40,14 +40,15 @@ const notes = [
 let audioCtx = new AudioContext()
 let oscillator: OscillatorNode
 let gainNode: GainNode
+
 let currentTimeAtLastNote = 0
-let lastToneIndex: number | undefined = undefined
 let waitTime = 0
 
 const minimumTimeDeltaBeforeThrottlingAttack = 0.15
 const minAttackTime = 0.01
 const maxAttackTime = 0.2
 const attackTimeRateOfChange = 0.5
+
 let attackTime = minAttackTime
 const decayTime = 0.1
 const releaseVolume = 0.25
@@ -56,16 +57,22 @@ const noteDuration = attackTime + decayTime + releaseTime
 
 export function playAudio(
 	toneIndex: number,
+	triggeredByNavigation: boolean = false,
 	panning?: number,
 	intonation?: undefined | 'staccato'
 ) {
-	//	let notes play their full duration by default, only cancel them prematurely if they are played rapidly
-	if (waitTime && waitTime < minimumTimeDeltaBeforeThrottlingAttack) {
+	//	let notes play their full duration by default, only cancel them prematurely if triggeredByNavigation AND they are played rapidly
+	if (
+		triggeredByNavigation &&
+		waitTime &&
+		waitTime < minimumTimeDeltaBeforeThrottlingAttack
+	) {
 		stopAudio()
 	}
-	//	skip getNewAttackTime() if same note being played successively... causes some flickering from rapid/start stop but better than hearing nothing when clicking a cell quickly I think
-	const needNewAttackTime = toneIndex !== lastToneIndex
-	init(panning, needNewAttackTime)
+	//	get new attack time only if audio triggered by navigation
+	//	prevents cacophony from holding down one of the navigation buttons and triggering new notes at max speed
+	init(panning, triggeredByNavigation)
+
 	oscillator.frequency.value = notes[toneIndex].frequency
 
 	const now = audioCtx.currentTime
@@ -95,10 +102,9 @@ export function playAudio(
 	oscillator.stop(now + duration)
 
 	currentTimeAtLastNote = audioCtx.currentTime
-	lastToneIndex = toneIndex
 }
 
-function init(panning?: number, needNewAttackTime?: boolean) {
+function init(panning?: number, triggeredByNavigation?: boolean) {
 	oscillator = audioCtx.createOscillator()
 	gainNode = audioCtx.createGain()
 
@@ -117,7 +123,7 @@ function init(panning?: number, needNewAttackTime?: boolean) {
 	//	analyze waitTime, set next attackTime accordingly
 	if (currentTimeAtLastNote) {
 		waitTime = audioCtx.currentTime - currentTimeAtLastNote
-		if (needNewAttackTime) getNewAttackTime()
+		if (triggeredByNavigation) getNewAttackTime()
 	}
 }
 
@@ -152,7 +158,7 @@ export function playArpeggio() {
 	let ascending = true
 
 	const arpeggioInterval = setInterval(() => {
-		playAudio(arpeggioNotes[curr] - 1, undefined, 'staccato')
+		playAudio(arpeggioNotes[curr] - 1, undefined, undefined, 'staccato')
 
 		if (ascending) {
 			if (curr < arpeggioNotes.length - 1) {

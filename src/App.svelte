@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
-	import { selectedCellStore, selectedNumberStore } from './stores'
+	import {
+		selectedCellStore,
+		selectedCellWithNavigationStore,
+	} from './stores'
 	import type { Difficulty } from './lib/types'
 	import Board from './lib/components/Board.svelte'
 	import NumberSelect from './lib/components/NumberSelect.svelte'
@@ -48,7 +51,10 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (!difficulty || gameOver) return
-		if (/\d/.test(event.key)) playCellTone(parseInt(event.key) - 1)
+		if (/\d/.test(event.key)) {
+			selectedCellWithNavigationStore.set(false)
+			playCellTone(parseInt(event.key) - 1)
+		}
 		if (keys.hasOwnProperty(event.key)) {
 			if ($selectedCellStore === undefined) {
 				selectedCellStore.set(0)
@@ -59,6 +65,7 @@
 	}
 
 	function navigateCells(key: string) {
+		selectedCellWithNavigationStore.set(true)
 		//	left edge
 		if (keys[key] === -1 && $selectedCellStore! % 9 === 0) {
 			return selectedCellStore.update((cell) => cell! + 8)
@@ -84,10 +91,14 @@
 		}
 	}
 
-	function playCellTone(toneIndex: number, panning?: number) {
+	function playCellTone(
+		toneIndex: number,
+		triggeredByNavigation: boolean = false,
+		panning?: number
+	) {
 		if (toneIndex < 0) return
-		if (panning) return playAudio(toneIndex, panning)
-		playAudio(toneIndex)
+		if (panning) return playAudio(toneIndex, triggeredByNavigation, panning)
+		playAudio(toneIndex, triggeredByNavigation)
 	}
 
 	onMount(() => {
@@ -106,7 +117,11 @@
 		<Board
 			{difficulty}
 			on:play-audio={(event) =>
-				playCellTone(event.detail.toneIndex, event.detail.panning)}
+				playCellTone(
+					event.detail.toneIndex,
+					event.detail.panning,
+					event.detail.triggeredByNavigation
+				)}
 			on:incorrect-guess={() => errors++}
 			on:win={handleWin}
 		/>

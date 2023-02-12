@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { selectedCellStore, selectedNumberStore } from '../../../src/stores'
+	import {
+		selectedCellStore,
+		selectedCellWithNavigationStore,
+		selectedNumberStore,
+	} from '../../../src/stores'
 	import { onDestroy } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import { sineIn } from 'svelte/easing'
@@ -63,6 +67,7 @@
 	}
 
 	function handleClick() {
+		selectedCellWithNavigationStore.set(false)
 		if ($selectedCellStore === overallIndex) {
 			return handleSelect()
 		}
