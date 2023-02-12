@@ -33,6 +33,7 @@
 		}
 	)
 	$: selected = selectedCell === overallIndex
+	$: selected && handleSelect()
 	$: incorrect =
 		$selectedNumberStore &&
 		selectedCell === overallIndex &&
@@ -59,6 +60,13 @@
 			overallIndex,
 			toneIndex: value ? value - 1 : undefined,
 		})
+	}
+
+	function handleClick() {
+		if ($selectedCellStore === overallIndex) {
+			return handleSelect()
+		}
+		selectedCellStore.set(overallIndex)
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -88,13 +96,7 @@
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
 	bind:this={self}
-	on:click={handleSelect}
-	on:focus={() => {
-		//	true when navigating via keys, false when navigating via mouse
-		//	therefore will not overlap with on:click event function but will still play cell tones when using keys
-		if ($selectedCellStore !== overallIndex) return
-		handleSelect()
-	}}
+	on:click={handleClick}
 	on:keydown={handleKeydown}
 	in:fade={{
 		duration: 200,

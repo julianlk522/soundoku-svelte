@@ -67,8 +67,6 @@
 	}
 
 	function handleCellSelected(event: CustomEvent) {
-		selectedCellStore.set(event.detail.overallIndex)
-
 		if (board[event.detail.overallIndex] !== undefined) {
 			selectedCellFilledStore.set(true)
 		} else {
