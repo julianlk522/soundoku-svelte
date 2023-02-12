@@ -17,7 +17,7 @@
 	$: index = value - 1
 	export let selectable: boolean = false
 	$: selected = selectable && $tutorialSelectedCellStore === index
-	$: selected && self?.focus()
+	$: selected && handleSelect()
 	export let cycles: number = 0
 	export let activeCellInCycle: boolean = false
 	$: cellHueTertiary =
@@ -47,9 +47,6 @@
 		) {
 			dispatch('play-audio', index)
 		}
-		//	select the cell if it is not selected
-		if (index !== $tutorialSelectedCellStore)
-			tutorialSelectedCellStore.set(index)
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -57,6 +54,19 @@
 			tutorialSelectedNumberStore.set(+event.key)
 		}
 	}
+
+	function handleClick() {
+		if ($tutorialSelectedCellStore === index) {
+			return handleSelect()
+		}
+		tutorialSelectedCellStore.set(index)
+	}
+
+	const unsubTutorialSelectedCellStore = tutorialSelectedCellStore.subscribe(
+		(selectedCellIndex) => {
+			if (selectedCellIndex === index) self?.focus()
+		}
+	)
 
 	const unsubTutorialSelectedNumberStore =
 		tutorialSelectedNumberStore.subscribe((newNum) => {
@@ -78,7 +88,10 @@
 		)
 	})
 
-	onDestroy(unsubTutorialSelectedNumberStore)
+	onDestroy(() => {
+		unsubTutorialSelectedCellStore()
+		unsubTutorialSelectedNumberStore()
+	})
 </script>
 
 {#key Math.floor(cycles / 2)}
@@ -92,13 +105,7 @@
 		class:cell-hue-tertiary={cellHueTertiary || incorrect}
 		class:cell-hue-quaternary={cellHueQuaternary || correct}
 		bind:this={self}
-		on:click|stopPropagation={handleSelect}
-		on:focus={() => {
-			//	true when navigating via keys, false when navigating via mouse
-			//	therefore will not overlap with on:click event function but will still play cell tones when using keys
-			if ($tutorialSelectedCellStore !== index) return
-			handleSelect()
-		}}
+		on:click|stopPropagation={handleClick}
 		on:keydown={handleKeydown}
 		in:fade={{
 			duration: 200,
