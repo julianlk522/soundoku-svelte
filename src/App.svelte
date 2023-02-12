@@ -119,8 +119,8 @@
 			on:play-audio={(event) =>
 				playCellTone(
 					event.detail.toneIndex,
-					event.detail.panning,
-					event.detail.triggeredByNavigation
+					event.detail.triggeredByNavigation,
+					event.detail.panning
 				)}
 			on:incorrect-guess={() => errors++}
 			on:win={handleWin}
@@ -138,7 +138,12 @@
 		on:end-tutorial={() => {
 			tutorial = false
 		}}
-		on:play-audio={(event) => playCellTone(event.detail)}
+		on:play-audio={(event) =>
+			playCellTone(
+				event.detail.toneIndex,
+				event.detail.triggeredByNavigation,
+				event.detail.panning
+			)}
 	/>
 {/if}
 

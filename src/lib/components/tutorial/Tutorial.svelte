@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte'
-	import { tutorialSelectedCellStore } from '../../../stores'
+	import {
+		selectedCellWithNavigationStore,
+		tutorialSelectedCellStore,
+	} from '../../../stores'
 	import Slide_1 from './slides/Slide_1.svelte'
 	import Slide_2 from './slides/Slide_2.svelte'
 	import Slide_3 from './slides/Slide_3.svelte'
@@ -63,7 +66,8 @@
 			(indexesOfSlidesWithMockNumberSelects.indexOf(currSlide) !== -1 ||
 				indexesOfSlidesWithGuessableMockBoxes.indexOf(currSlide) !== -1)
 		) {
-			return dispatch('play-audio', +event.key - 1)
+			selectedCellWithNavigationStore.set(false)
+			return dispatch('play-audio', { toneIndex: +event.key - 1 })
 		}
 		if (event.key.toLowerCase() === 't') return dispatch('end-tutorial')
 		if (event.key.toLowerCase() === 'c') return nextSlide()
@@ -71,6 +75,7 @@
 	}
 
 	function navigateBox(key: string) {
+		selectedCellWithNavigationStore.set(true)
 		//	left edge
 		if (keys[key] === -1 && $tutorialSelectedCellStore! % 3 === 0) {
 			tutorialSelectedCellStore.update((cell) => cell + 2)
@@ -117,7 +122,19 @@
 	on:keydown|stopPropagation={handleKeydown}
 	on:click={() => continueButton.focus()}
 >
-	<svelte:component this={slides[currSlide]} on:play-audio />
+	<svelte:component
+		this={slides[currSlide]}
+		on:play-audio={(event) => {
+			const panning = (event.detail % 3) - 1
+			const triggeredByNavigation = $selectedCellWithNavigationStore
+
+			dispatch('play-audio', {
+				toneIndex: event.detail,
+				triggeredByNavigation,
+				panning,
+			})
+		}}
+	/>
 
 	<div id="tutorial-navigation-buttons">
 		{#if currSlide}

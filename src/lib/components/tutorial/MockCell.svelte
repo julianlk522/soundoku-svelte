@@ -5,6 +5,7 @@
 		tutorialRandomlyFilledCellsStore,
 		tutorialErrorsStore,
 		tutorialSelectedNumberStore,
+		selectedCellWithNavigationStore,
 	} from '../../../stores'
 	import { sineIn } from 'svelte/easing'
 	import { fade } from 'svelte/transition'
@@ -56,6 +57,7 @@
 	}
 
 	function handleClick() {
+		selectedCellWithNavigationStore.set(false)
 		if ($tutorialSelectedCellStore === index) {
 			return handleSelect()
 		}
