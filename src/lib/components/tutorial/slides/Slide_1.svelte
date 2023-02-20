@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
+	import { sineIn } from 'svelte/easing'
+	import { fade } from 'svelte/transition'
+	import { create_in_transition } from 'svelte/internal'
 	import MockBox from '../MockBox.svelte'
 
 	let cycleInterval: NodeJS.Timeout
 	let ascending = true
 	let currentCycleIndex = 0
 	let cycles = 0
+	let text1: HTMLElement
+	let text2: HTMLElement
 
 	onMount(() => {
 		cycleInterval = setInterval(() => {
@@ -39,17 +44,28 @@
 		}, 200)
 	})
 
+	onMount(() => {
+		create_in_transition(text1, fade, {
+			duration: 1000,
+			easing: sineIn,
+		}).start()
+		create_in_transition(text2, fade, {
+			duration: 1000,
+			delay: 1000,
+			easing: sineIn,
+		}).start()
+	})
+
 	onDestroy(() => {
 		clearInterval(cycleInterval)
 	})
 </script>
 
-<h2>Hey! Thanks for checking out Soundoku.</h2>
-<h3>
+<h2 bind:this={text1}>Hey! Thanks for checking out Soundoku.</h2>
+<h3 bind:this={text2}>
 	This is a brief, optional interactive tutorial to walk you through how to
 	play the game.
 </h3>
-
 <MockBox {currentCycleIndex} {cycles} />
 
 <style>
