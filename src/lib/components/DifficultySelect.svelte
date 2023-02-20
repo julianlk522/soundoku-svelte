@@ -8,12 +8,10 @@
 
 	let deviceType: 'mobile' | 'tablet' | 'desktop' = 'mobile'
 	$: canUseHoverAnimations = deviceType === 'desktop'
+
 	let currentlyHovered: Difficulty | undefined = undefined
+
 	let buttonText: Difficulty | '' = ''
-	let buttonTextDisappearTimeout: NodeJS.Timeout
-	$: if (!currentlyHovered) {
-		buttonTextDisappearTimeout = setTimeout(() => (buttonText = ''), 750)
-	} else clearTimeout(buttonTextDisappearTimeout)
 
 	function handleDifficultySelect(event: MouseEvent) {
 		const targetButton = event.target as HTMLButtonElement
@@ -111,8 +109,10 @@
 		flex-direction: column;
 		justify-content: space-evenly;
 		align-items: center;
+		text-align: center;
 		height: 100%;
 		width: 100%;
+		padding: 0 2rem;
 	}
 
 	#difficulty-select-header-text {
@@ -124,6 +124,14 @@
 	h2,
 	p {
 		color: var(--color-text-light);
+	}
+
+	h2 {
+		margin-bottom: 1rem;
+	}
+
+	p {
+		font-size: 0.75rem;
 	}
 
 	#button-container-grid {
@@ -140,9 +148,11 @@
 	}
 
 	button {
+		position: relative;
 		color: var(--color-text);
 		border: none;
 		border-radius: 4px;
+		cursor: pointer;
 	}
 
 	button:focus {
@@ -154,7 +164,7 @@
 		width: 2rem;
 		border-radius: 100%;
 		transition: none 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
-		transition-property: border-radius, height, width;
+		transition-property: border-radius, height, width, transform;
 	}
 
 	button:not(.can-use-hover-animations) {
@@ -166,23 +176,23 @@
 	button:is(.hovered) {
 		width: 6rem;
 		border-radius: 4px;
-		transition-duration: 0.5s;
-		transition-delay: 0s, 0.1s, 0.1s;
+		transform: scale(2);
+		transition-duration: 0.35s;
+		transition-delay: 0s, 0.1s, 0.1s, 0.1s;
 	}
 
 	span:is(.can-use-hover-animations) {
 		display: inline-block;
+		position: absolute;
+		inset: 0;
 		opacity: 0;
-		transform: translateY(-5px);
-		transition: none 0.05s ease-out 0.15s;
-		transition-property: opacity, transform;
+		transition: opacity 0.25s;
 	}
 
 	span:is(.button-text-hovered) {
 		opacity: 1;
-		transform: translateY(0);
-		transition-duration: 0.25s;
-		transition-delay: 0.25s;
+		transition-duration: 0.45s;
+		transition-delay: 0.05s;
 	}
 
 	#very-easy {
@@ -210,11 +220,17 @@
 		grid-area: very-hard;
 	}
 
-	@media (min-width: 640px) {
+	@media (min-width: 500px) {
 		h2 {
 			font-size: 2rem;
 		}
 
+		p {
+			font-size: 1rem;
+		}
+	}
+
+	@media (min-width: 640px) {
 		button:is(.can-use-hover-animations),
 		button:not(.can-use-hover-animations),
 		.hovered {
