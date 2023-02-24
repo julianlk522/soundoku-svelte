@@ -1,7 +1,0 @@
--fix button infinite hover once and for all
-
--navigate tutorial buttons with keys
-
--:focus state outline transition for buttons
-
--merge tutorial slides into one component
