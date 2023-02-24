@@ -19,7 +19,7 @@ app.use(cors())
 app.use(errorHandler)
 
 //  routes
-// import userRoutes from './routes/userRoutes'
-// app.use('/users', userRoutes)
+import userRoutes from './routes/userRoutes'
+app.use('/users', userRoutes)
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
