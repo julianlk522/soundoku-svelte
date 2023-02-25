@@ -22,4 +22,7 @@ app.use(errorHandler)
 import userRoutes from './routes/userRoutes'
 app.use('/users', userRoutes)
 
+import winRoutes from './routes/winRoutes'
+app.use('/wins', winRoutes)
+
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
