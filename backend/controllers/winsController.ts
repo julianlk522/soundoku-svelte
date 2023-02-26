@@ -12,9 +12,9 @@ export const getWins = asyncHandler(async (req, res) => {
 })
 
 export const addWin = asyncHandler(async (req, res) => {
-	const { name, difficulty, duration, hash: clientHash } = req.body
+	const { name, difficulty, duration, errors, hash: clientHash } = req.body
 
-	if (!name || !difficulty || !duration || !clientHash) {
+	if (!name || !difficulty || !duration || !errors || !clientHash) {
 		res.status(400)
 		throw new Error('Not all fields provided')
 	}
@@ -23,7 +23,7 @@ export const addWin = asyncHandler(async (req, res) => {
 		throw new Error('Could not access hash secret')
 	}
 
-	const unserializedWin = { name, difficulty, duration }
+	const unserializedWin = { name, difficulty, duration, errors }
 
 	const serverHash = createHmac('sha256', process.env.WIN_SECRET)
 		.update(JSON.stringify(unserializedWin))
@@ -37,8 +37,19 @@ export const addWin = asyncHandler(async (req, res) => {
 	//	todo: calculate score based on duration and errors
 	let score = 1
 
-	const insertWinData = `INSERT INTO wins (name, difficulty, duration, score) VALUES ('${name}', '${difficulty}', '${duration}', '${score}');`
-	await asyncPool.query(insertWinData)
+	const insertWinData = `INSERT INTO wins (name, difficulty, duration, errors, score) VALUES ('${name}', '${difficulty}', '${duration}', '${errors}', '${score}');`
 
-	res.status(201).json({ name, difficulty, duration, score })
+	const updateTotalScore = `UPDATE users SET total_score = total_score + ${score} WHERE name = '${name}'`
+
+	try {
+		await asyncPool.query(insertWinData)
+		await asyncPool.query(updateTotalScore)
+	} catch {
+		res.status(400)
+		throw new Error(
+			'Could not insert data. Supplied name probably is not a real user'
+		)
+	}
+
+	res.status(201).json({ name, difficulty, duration, errors, score })
 })
