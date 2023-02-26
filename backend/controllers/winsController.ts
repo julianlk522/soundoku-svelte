@@ -1,6 +1,8 @@
 import asyncHandler from 'express-async-handler'
 import pool from '../config/db'
 import { createHmac } from 'crypto'
+import { difficultyLevels } from './types'
+import { getWinScore } from './util/getWinScore'
 
 const asyncPool = pool.promise()
 
@@ -19,6 +21,11 @@ export const addWin = asyncHandler(async (req, res) => {
 		throw new Error('Not all fields provided')
 	}
 
+	if (!difficultyLevels.includes(difficulty)) {
+		res.status(400)
+		throw new Error('Invalid difficulty level supplied')
+	}
+
 	if (!process.env.WIN_SECRET) {
 		throw new Error('Could not access hash secret')
 	}
@@ -34,8 +41,7 @@ export const addWin = asyncHandler(async (req, res) => {
 		throw new Error('Failed hash check')
 	}
 
-	//	todo: calculate score based on duration and errors
-	let score = 1
+	const score = getWinScore(difficulty, duration, errors)
 
 	const insertWinData = `INSERT INTO wins (name, difficulty, duration, errors, score) VALUES ('${name}', '${difficulty}', '${duration}', '${errors}', '${score}');`
 
