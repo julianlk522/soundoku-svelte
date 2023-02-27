@@ -41,10 +41,10 @@ export const addUser = asyncHandler(async (req, res) => {
 	//  return new user data
 	const select = `SELECT * FROM users WHERE name = '${name}';`
 	const newUserData = await asyncPool.query(select)
-	const { user_id } = newUserData[0][0]
+	const { user_id, hashed_pass, total_score, ...userData } = newUserData[0][0]
 	const token = generateToken(user_id)
 
-	res.status(200).json({ user_id, name, token })
+	res.status(200).json({ ...userData, token })
 })
 
 export const loginUser = asyncHandler(async (req, res) => {
@@ -82,10 +82,38 @@ export const loginUser = asyncHandler(async (req, res) => {
 	const rawUserData = await asyncPool.query(
 		`SELECT * FROM users WHERE name = '${name}';`
 	)
-	const { user_id, hashed_pass, ...userData } = rawUserData[0][0]
+	const { user_id, hashed_pass, total_score, ...userData } = rawUserData[0][0]
 	const token = generateToken(user_id)
 
 	res.status(200).json({ ...userData, token })
+})
+
+export const getUserScore = asyncHandler(async (req, res) => {
+	const { name } = req.params
+
+	if (!name) {
+		res.status(400)
+		throw new Error('Name not supplied')
+	}
+
+	//	check if user exists
+	const userExists = await asyncPool.query(
+		`SELECT EXISTS (SELECT name FROM users WHERE name = \'${name}\');`
+	)
+
+	//  abort if user does not exist
+	if (!Object.values(userExists[0][0])[0]) {
+		res.status(400)
+		throw new Error('user does not exist')
+	}
+
+	//  return user data
+	const rawScoreData = await asyncPool.query(
+		`SELECT total_score FROM users WHERE name = '${name}';`
+	)
+	const { total_score } = rawScoreData[0][0]
+
+	res.status(200).json(total_score)
 })
 
 function generateToken(id: string) {
