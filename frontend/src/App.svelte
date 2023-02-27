@@ -4,14 +4,19 @@
 		selectedCellStore,
 		selectedCellWithNavigationStore,
 	} from './stores'
-	import type { Difficulty } from './lib/types'
 	import Board from './lib/components/Board.svelte'
 	import NumberSelect from './lib/components/NumberSelect.svelte'
-	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
+	import DifficultySelect from './lib/components/DifficultySelect.svelte'
+	import type { Difficulty } from './lib/types'
+	import LoginPrompt from './lib/components/LoginPrompt.svelte'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
 	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
+
+	let loggedIn = localStorage.getItem('token') !== null
+	let playingLocally = false
+	$: canProceedToDifficultySelect = loggedIn || playingLocally
 
 	let tutorial = true
 	let difficulty: Difficulty | undefined = undefined
@@ -20,6 +25,11 @@
 	let errors = 0
 	let gameOver = false
 	let gameReset = false
+
+	function loginUser(event: CustomEvent) {
+		localStorage.setItem('token', event.detail.token)
+		loggedIn = true
+	}
 
 	function handleDifficultySelect(event: CustomEvent) {
 		difficulty = event.detail
@@ -111,27 +121,27 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if !tutorial && !gameReset && difficulty}
-	<main class:game-over-fadeout={gameOver}>
-		<div class="leavesBg" />
-		<Board
-			{difficulty}
-			on:play-audio={(event) =>
-				playCellTone(
-					event.detail.toneIndex,
-					event.detail.triggeredByNavigation,
-					event.detail.panning
-				)}
-			on:incorrect-guess={() => errors++}
-			on:win={handleWin}
-		/>
-		<NumberSelect
-			time={formatSeconds(time)}
-			{errors}
-			on:play-audio={(event) => playCellTone(event.detail)}
-		/>
-	</main>
-{/if}
+{#if !tutorial && difficulty && !gameReset}
+		<main class:game-over-fadeout={gameOver}>
+			<div class="leavesBg" />
+			<Board
+				{difficulty}
+				on:play-audio={(event) =>
+					playCellTone(
+						event.detail.toneIndex,
+						event.detail.triggeredByNavigation,
+						event.detail.panning
+					)}
+				on:incorrect-guess={() => errors++}
+				on:win={handleWin}
+			/>
+			<NumberSelect
+				time={formatSeconds(time)}
+				{errors}
+				on:play-audio={(event) => playCellTone(event.detail)}
+			/>
+		</main>
+	{/if}
 
 {#if tutorial}
 	<Tutorial
@@ -147,8 +157,15 @@
 	/>
 {/if}
 
-{#if !tutorial && !difficulty}
+{#if !tutorial && !difficulty && canProceedToDifficultySelect}
 	<DifficultySelect on:difficulty-select={handleDifficultySelect} />
+{/if}
+
+{#if !tutorial && !canProceedToDifficultySelect}
+<LoginPrompt
+	on:enable-local-play={() => playingLocally = true}
+	on:login={loginUser}
+/>
 {/if}
 
 {#if gameOver}
