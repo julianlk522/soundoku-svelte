@@ -125,13 +125,11 @@
 	<svelte:component
 		this={slides[currSlide]}
 		on:play-audio={(event) => {
-			const panning = (event.detail % 3) - 1
 			const triggeredByNavigation = $selectedCellWithNavigationStore
 
 			dispatch('play-audio', {
 				toneIndex: event.detail,
 				triggeredByNavigation,
-				panning,
 			})
 		}}
 	/>
