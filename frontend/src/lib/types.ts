@@ -12,7 +12,12 @@ export type Difficulty = (typeof difficulties)[number]
 
 //	API requests:
 
-export type AuthData = {
+export type FormData = {
 	name: string
 	pass: string
+}
+
+export type AuthData = {
+	name: string
+	token: string
 }
