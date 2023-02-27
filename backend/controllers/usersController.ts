@@ -27,9 +27,7 @@ export const addUser = asyncHandler(async (req, res) => {
 
 	//  abort if user exists
 	if (Object.values(userExists[0][0])[0] === 1) {
-		res.status(400).json({
-			error: 'name taken',
-		})
+		res.status(400)
 		throw new Error('name taken')
 	}
 
@@ -47,6 +45,47 @@ export const addUser = asyncHandler(async (req, res) => {
 	const token = generateToken(user_id)
 
 	res.status(200).json({ user_id, name, token })
+})
+
+export const loginUser = asyncHandler(async (req, res) => {
+	const { name, pass } = req.body
+
+	if (!name || !pass) {
+		res.status(400)
+		throw new Error('Name or password not supplied')
+	}
+
+	//	check if user exists
+	const userExists = await asyncPool.query(
+		`SELECT EXISTS (SELECT name FROM users WHERE name = \'${name}\');`
+	)
+
+	//  abort if user does not exist
+	if (!Object.values(userExists[0][0])[0]) {
+		res.status(400)
+		throw new Error('user does not exist')
+	}
+
+	//	check if pass matches
+	const rawUserPassData = await asyncPool.query(
+		`SELECT hashed_pass FROM users WHERE name = '${name}'`
+	)
+	const hashedPass = rawUserPassData[0][0].hashed_pass
+	const passMatches = await bcrypt.compare(pass, hashedPass)
+
+	if (!passMatches) {
+		res.status(401)
+		throw new Error('Incorrect password: not authorized')
+	}
+
+	//  return user data
+	const rawUserData = await asyncPool.query(
+		`SELECT * FROM users WHERE name = '${name}';`
+	)
+	const { user_id, hashed_pass, ...userData } = rawUserData[0][0]
+	const token = generateToken(user_id)
+
+	res.status(200).json({ ...userData, token })
 })
 
 function generateToken(id: string) {
