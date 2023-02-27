@@ -40,7 +40,8 @@
 			return (message = 'Error: could not locate name or bearer token')
 		}
 		message = ''
-		return dispatch('login', { name: response.name, token: response.token })
+		const { name: responseName, token } = response
+		return dispatch('login', { name: responseName, token })
 	}
 </script>
 

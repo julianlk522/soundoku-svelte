@@ -13,8 +13,9 @@
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
 	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
+	import UserInfo from './lib/components/UserInfo.svelte'
 
-	let loggedIn = localStorage.getItem('token') !== null
+	let loggedIn = localStorage.getItem('user') !== null
 	let playingLocally = false
 	$: canProceedToDifficultySelect = loggedIn || playingLocally
 
@@ -27,7 +28,7 @@
 	let gameReset = false
 
 	function loginUser(event: CustomEvent) {
-		localStorage.setItem('token', event.detail.token)
+		localStorage.setItem('user', JSON.stringify({ ...event.detail }))
 		loggedIn = true
 	}
 
@@ -166,6 +167,10 @@
 		on:enable-local-play={() => (playingLocally = true)}
 		on:login={loginUser}
 	/>
+{/if}
+
+{#if loggedIn}
+	<UserInfo />
 {/if}
 
 {#if gameOver}
