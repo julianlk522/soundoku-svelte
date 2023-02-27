@@ -1,16 +1,32 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte'
+	import {
+		selectedCellWithNavigationStore,
+		tutorialSelectedNumberStore,
+	} from '../../../stores'
 	import NumberSelectButton from '../NumberSelectButton.svelte'
+
+	const dispatch = createEventDispatcher()
 
 	let nums = Array.from(Array(9)).map((_, i) => i + 1)
 
 	export let errors = 0
 	export let showErrors: boolean = false
+
+	function handleNumberSelected(event: CustomEvent) {
+		tutorialSelectedNumberStore.set(event.detail + 1)
+		selectedCellWithNavigationStore.set(false)
+		dispatch('play-audio', event.detail)
+	}
 </script>
 
 <div class="flex-column">
 	<div id="selection-grid">
 		{#each nums as num (num)}
-			<NumberSelectButton value={num} on:play-audio />
+			<NumberSelectButton
+				value={num}
+				on:play-audio={handleNumberSelected}
+			/>
 		{/each}
 	</div>
 	{#if showErrors}

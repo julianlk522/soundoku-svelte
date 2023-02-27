@@ -75,6 +75,7 @@
 			if (!guessable || !selected || filled || newNum === undefined)
 				return
 			if (newNum === value) return (correct = true)
+			if (correct) return
 			tutorialErrorsStore.update((errors) => errors + 1)
 		})
 
