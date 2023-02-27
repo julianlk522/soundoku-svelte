@@ -12,7 +12,7 @@ export type Difficulty = (typeof difficulties)[number]
 
 //	API requests:
 
-export type SignUpData = {
+export type AuthData = {
 	name: string
 	pass: string
 }

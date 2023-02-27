@@ -1,4 +1,4 @@
-import type { SignUpData } from './types'
+import type { AuthData } from './types'
 
 const API_URL = 'http://localhost:5000'
 const jsonHeaders = {
@@ -11,8 +11,18 @@ export const getUsers = async () => {
 	return data
 }
 
-export const createUser = async (userInfo: SignUpData) => {
+export const createUser = async (userInfo: AuthData) => {
 	const response = await fetch(`${API_URL}/users`, {
+		method: 'POST',
+		headers: jsonHeaders,
+		body: JSON.stringify(userInfo),
+	})
+	const data = await response.json()
+	return data
+}
+
+export const loginUser = async (userInfo: AuthData) => {
+	const response = await fetch(`${API_URL}/users/login`, {
 		method: 'POST',
 		headers: jsonHeaders,
 		body: JSON.stringify(userInfo),
