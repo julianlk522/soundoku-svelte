@@ -9,7 +9,7 @@
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import type { Difficulty } from './lib/types'
-	import LoginPrompt from './lib/components/LoginPrompt.svelte'
+	import LoginPrompt from './lib/components/Auth.svelte'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
 	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
@@ -122,26 +122,26 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if !tutorial && difficulty && !gameReset}
-		<main class:game-over-fadeout={gameOver}>
-			<div class="leavesBg" />
-			<Board
-				{difficulty}
-				on:play-audio={(event) =>
-					playCellTone(
-						event.detail.toneIndex,
-						event.detail.triggeredByNavigation,
-						event.detail.panning
-					)}
-				on:incorrect-guess={() => errors++}
-				on:win={handleWin}
-			/>
-			<NumberSelect
-				time={formatSeconds(time)}
-				{errors}
-				on:play-audio={(event) => playCellTone(event.detail)}
-			/>
-		</main>
-	{/if}
+	<main class:game-over-fadeout={gameOver}>
+		<div class="leavesBg" />
+		<Board
+			{difficulty}
+			on:play-audio={(event) =>
+				playCellTone(
+					event.detail.toneIndex,
+					event.detail.triggeredByNavigation,
+					event.detail.panning
+				)}
+			on:incorrect-guess={() => errors++}
+			on:win={handleWin}
+		/>
+		<NumberSelect
+			time={formatSeconds(time)}
+			{errors}
+			on:play-audio={(event) => playCellTone(event.detail)}
+		/>
+	</main>
+{/if}
 
 {#if tutorial}
 	<Tutorial
@@ -162,10 +162,10 @@
 {/if}
 
 {#if !tutorial && !canProceedToDifficultySelect}
-<LoginPrompt
-	on:enable-local-play={() => playingLocally = true}
-	on:login={loginUser}
-/>
+	<LoginPrompt
+		on:enable-local-play={() => (playingLocally = true)}
+		on:login={loginUser}
+	/>
 {/if}
 
 {#if gameOver}
