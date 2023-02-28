@@ -1,8 +1,8 @@
 import asyncHandler from 'express-async-handler'
 import pool from '../config/db'
 import { createHmac } from 'crypto'
-import { difficultyLevels } from './types'
 import { getWinScore } from './util/getWinScore'
+import { difficultyLevels } from './types'
 
 const asyncPool = pool.promise()
 
@@ -16,7 +16,13 @@ export const getWins = asyncHandler(async (req, res) => {
 export const addWin = asyncHandler(async (req, res) => {
 	const { name, difficulty, duration, errors, hash: clientHash } = req.body
 
-	if (!name || !difficulty || !duration || !errors || !clientHash) {
+	if (
+		!name ||
+		!difficulty ||
+		!duration ||
+		errors === undefined ||
+		!clientHash
+	) {
 		res.status(400)
 		throw new Error('Not all fields provided')
 	}
@@ -31,9 +37,10 @@ export const addWin = asyncHandler(async (req, res) => {
 	}
 
 	const unserializedWin = { name, difficulty, duration, errors }
+	const serializedWin = JSON.stringify(unserializedWin)
 
 	const serverHash = createHmac('sha256', process.env.WIN_SECRET)
-		.update(JSON.stringify(unserializedWin))
+		.update(serializedWin)
 		.digest('base64')
 
 	if (serverHash !== clientHash) {
