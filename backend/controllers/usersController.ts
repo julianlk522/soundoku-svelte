@@ -41,7 +41,7 @@ export const addUser = asyncHandler(async (req, res) => {
 	//  return new user data
 	const select = `SELECT * FROM users WHERE name = '${name}';`
 	const newUserData = await asyncPool.query(select)
-	const { user_id, hashed_pass, total_score, ...userData } = newUserData[0][0]
+	const { user_id, hashed_pass, ...userData } = newUserData[0][0]
 	const token = generateToken(user_id)
 
 	res.status(200).json({ ...userData, token })
@@ -82,7 +82,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 	const rawUserData = await asyncPool.query(
 		`SELECT * FROM users WHERE name = '${name}';`
 	)
-	const { user_id, hashed_pass, total_score, ...userData } = rawUserData[0][0]
+	const { user_id, hashed_pass, ...userData } = rawUserData[0][0]
 	const token = generateToken(user_id)
 
 	res.status(200).json({ ...userData, token })
