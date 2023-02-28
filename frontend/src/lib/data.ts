@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js'
-import type { AuthData, FormData, WinData } from './types'
+import type { AuthData, FormData, UserWinData } from './types'
 
 const API_URL = 'http://localhost:5000'
 const jsonHeaders = {
@@ -40,15 +40,8 @@ export const getUserScore = async (userInfo: AuthData) => {
 	return data
 }
 
-export const submitWin = async (win: WinData) => {
-	const { name, token } = JSON.parse(localStorage.getItem('user') ?? '')
-	if (!name) return console.log('no name found')
-	if (!token) return console.log('no bearer token found')
-
-	//	todo: replace with secure string and store somewhere more private
-	const secret = 'bibimbap'
-
-	const { difficulty, duration, errors } = win
+export const submitWin = async (win: UserWinData) => {
+	const { name, token, difficulty, duration, errors } = win
 	const lowerCaseDifficulty = difficulty.toLowerCase()
 	const unserializedWin = {
 		name,
@@ -58,6 +51,8 @@ export const submitWin = async (win: WinData) => {
 	}
 	const serializedWin = JSON.stringify(unserializedWin)
 
+	//	todo: replace with secure string and store somewhere more private
+	const secret = 'bibimbap'
 	const hash = CryptoJS.HmacSHA256(serializedWin, secret).toString(
 		CryptoJS.enc.Base64
 	)

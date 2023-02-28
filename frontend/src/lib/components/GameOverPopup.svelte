@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte'
+	import { loggedInUserStore } from '../../stores'
 	import { submitWin } from '../data'
-	import type { Difficulty } from '../types'
+	import type { Difficulty, UserWinData } from '../types'
 
 	const dispatch = createEventDispatcher()
+
+	let loading = false
+	let message = ''
+	let submitted = false
 
 	export let victoryTime = '0: 00'
 	let time = 60 * +victoryTime.split(':')[0] + +victoryTime.split(':')[1]
@@ -11,6 +16,44 @@
 	export let difficulty: Difficulty = 'Very Easy'
 
 	let replayButton: HTMLButtonElement
+
+	async function handleSubmit() {
+		loading = true
+		const { name, token } = $loggedInUserStore
+		if (!name)
+			return console.log(
+				'unable to submit: could not determine user name'
+			)
+		if (!token)
+			return console.log(
+				'unable to submit: could not determine bearer token'
+			)
+
+		const data: UserWinData = {
+			name,
+			token,
+			difficulty,
+			duration: time,
+			errors,
+		}
+		const response = await submitWin(data)
+		console.log(response)
+		loading = false
+
+		if (response.error) {
+			return (message = response.error)
+		}
+
+		if (!response.score) {
+			return (message = 'Error: could not resolve your score')
+		}
+
+		submitted = true //	todo: use this to prevent multiple submissions
+		loggedInUserStore.update((user) => ({
+			...user,
+			total_score: user.total_score + response.score,
+		}))
+	}
 
 	onMount(() => replayButton.focus())
 </script>
@@ -33,10 +76,7 @@
 		>
 			Play Again?
 		</button>
-		<button
-			class="action-button"
-			on:click={() => submitWin({ difficulty, duration: time, errors })}
-		>
+		<button class="action-button" on:click|preventDefault={handleSubmit}>
 			Submit Score?
 		</button>
 	</div>
