@@ -1,21 +1,22 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
 	import {
+		loggedInUserStore,
 		selectedCellStore,
 		selectedCellWithNavigationStore,
 	} from './stores'
 	import Board from './lib/components/Board.svelte'
 	import NumberSelect from './lib/components/NumberSelect.svelte'
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
+	import Auth from './lib/components/Auth.svelte'
+	import UserInfo from './lib/components/UserInfo.svelte'
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import type { Difficulty } from './lib/types'
-	import LoginPrompt from './lib/components/Auth.svelte'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
 	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
-	import UserInfo from './lib/components/UserInfo.svelte'
 
-	let loggedIn = localStorage.getItem('user') !== null
+	$: loggedIn = $loggedInUserStore.token !== undefined
 	let playingLocally = false
 	$: canProceedToDifficultySelect = loggedIn || playingLocally
 
@@ -26,11 +27,6 @@
 	let errors = 0
 	let gameOver = false
 	let gameReset = false
-
-	function loginUser(event: CustomEvent) {
-		localStorage.setItem('user', JSON.stringify({ ...event.detail }))
-		loggedIn = true
-	}
 
 	function handleDifficultySelect(event: CustomEvent) {
 		difficulty = event.detail
@@ -163,10 +159,7 @@
 {/if}
 
 {#if !tutorial && !canProceedToDifficultySelect}
-	<LoginPrompt
-		on:enable-local-play={() => (playingLocally = true)}
-		on:login={loginUser}
-	/>
+	<Auth on:enable-local-play={() => (playingLocally = true)} />
 {/if}
 
 {#if loggedIn}

@@ -1,27 +1,34 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import { loggedInUserStore } from '../../stores'
 	import { getUserScore } from '../data'
 
-	const userData = JSON.parse(localStorage.getItem('user') ?? '')
-	let name = userData.name ? userData.name : 'unknown user'
-	const token = userData.token ? userData.token : undefined
-	let total_score = 0
+	let name = $loggedInUserStore.name
+		? $loggedInUserStore.name
+		: 'unknown user'
+	const token = $loggedInUserStore.token
+		? $loggedInUserStore.token
+		: undefined
 
 	onMount(async () => {
+		if (!token) return
 		const response = await getUserScore({ name, token })
 
 		if (response.error) {
 			return (name += ' (not authenticated)')
 		}
 
-		total_score = response
+		loggedInUserStore.update((store) => ({
+			...store,
+			total_score: response,
+		}))
 	})
 </script>
 
 <p>
 	{name}
 	<span class="placeholder">|</span>
-	{total_score}
+	{$loggedInUserStore.total_score ?? 0}
 </p>
 
 <style>
@@ -34,7 +41,6 @@
 		bottom: 2rem;
 		right: 2rem;
 		padding: 2px 8px;
-		border-radius: 4px;
 		background-color: var(--color-accent-soft);
 		outline: 1px solid rgb(255 255 255 / 0.1);
 	}

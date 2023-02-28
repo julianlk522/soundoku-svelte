@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
+	import { loggedInUserStore } from '../../stores'
 
 	//  don't remove - these are called via eval()
 	import { createUser, loginUser } from '../data'
@@ -40,8 +41,10 @@
 			return (message = 'Error: could not locate name or bearer token')
 		}
 		message = ''
-		const { name: responseName, token } = response
-		return dispatch('login', { name: responseName, token })
+
+		const { total_score, token } = response
+		loggedInUserStore.set({ name, token, total_score })
+		return localStorage.setItem('user', JSON.stringify({ name, token }))
 	}
 </script>
 
