@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte'
+	import { submitWin } from '../data'
+	import type { Difficulty } from '../types'
 
 	const dispatch = createEventDispatcher()
 
 	export let victoryTime = '0: 00'
+	let time = 60 * +victoryTime.split(':')[0] + +victoryTime.split(':')[1]
 	export let errors = 0
+	export let difficulty: Difficulty = 'Very Easy'
 
 	let replayButton: HTMLButtonElement
 
@@ -21,13 +25,21 @@
 		</span>
 	</h3>
 	<p id="errors">(with {errors} errors)</p>
-	<button
-		id="replay"
-		bind:this={replayButton}
-		on:click={() => dispatch('new-game')}
-	>
-		Play Again?
-	</button>
+	<div id="action-buttons">
+		<button
+			class="action-button"
+			bind:this={replayButton}
+			on:click={() => dispatch('new-game')}
+		>
+			Play Again?
+		</button>
+		<button
+			class="action-button"
+			on:click={() => submitWin({ difficulty, duration: time, errors })}
+		>
+			Submit Score?
+		</button>
+	</div>
 </div>
 
 <style>
@@ -65,9 +77,15 @@
 		margin: 1rem 0;
 	}
 
-	#replay {
-		color: white;
+	#action-buttons {
+		display: flex;
+		justify-content: space-between;
+		gap: 2rem;
 		margin-top: 2rem;
+	}
+
+	.action-button {
+		color: white;
 		padding: 0.5rem 1rem;
 		border: none;
 		border-radius: 0.25rem;
@@ -90,16 +108,16 @@
 		transition-property: transform;
 	}
 
-	#replay:hover,
-	#replay:focus {
+	.action-button:hover,
+	.action-button:focus {
 		transform: scale(1.1);
 	}
 
-	#replay:focus {
+	.action-button:focus {
 		outline: 2px solid var(--color-text-light);
 	}
 
-	#replay:active {
+	.action-button:active {
 		transform: scale(0.95);
 	}
 
@@ -118,11 +136,11 @@
 
 		h3:has(#victory-time),
 		#errors,
-		#replay {
+		#action-buttons {
 			font-size: 2rem;
 		}
 
-		#replay {
+		#action-buttons {
 			margin-top: 4rem;
 		}
 

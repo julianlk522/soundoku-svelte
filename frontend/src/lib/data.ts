@@ -1,4 +1,5 @@
-import type { AuthData, FormData } from './types'
+import CryptoJS from 'crypto-js'
+import type { AuthData, FormData, WinData } from './types'
 
 const API_URL = 'http://localhost:5000'
 const jsonHeaders = {
@@ -34,6 +35,43 @@ export const loginUser = async (userInfo: FormData) => {
 export const getUserScore = async (userInfo: AuthData) => {
 	const response = await fetch(`${API_URL}/users/${userInfo.name}`, {
 		headers: { Authorization: `Bearer ${userInfo.token}` },
+	})
+	const data = await response.json()
+	return data
+}
+
+export const submitWin = async (win: WinData) => {
+	const { name, token } = JSON.parse(localStorage.getItem('user') ?? '')
+	if (!name) return console.log('no name found')
+	if (!token) return console.log('no bearer token found')
+
+	//	todo: replace with secure string and store somewhere more private
+	const secret = 'bibimbap'
+
+	const { difficulty, duration, errors } = win
+	const lowerCaseDifficulty = difficulty.toLowerCase()
+	const unserializedWin = {
+		name,
+		difficulty: lowerCaseDifficulty,
+		duration,
+		errors,
+	}
+	const serializedWin = JSON.stringify(unserializedWin)
+
+	const hash = CryptoJS.HmacSHA256(serializedWin, secret).toString(
+		CryptoJS.enc.Base64
+	)
+
+	const response = await fetch(`${API_URL}/wins`, {
+		headers: { ...jsonHeaders, Authorization: `Bearer ${token}` },
+		method: 'POST',
+		body: JSON.stringify({
+			difficulty: lowerCaseDifficulty,
+			duration: win.duration,
+			errors: win.errors,
+			name,
+			hash,
+		}),
 	})
 	const data = await response.json()
 	return data

@@ -21,3 +21,9 @@ export type AuthData = {
 	name: string
 	token: string
 }
+
+export type WinData = {
+	difficulty: Difficulty
+	duration: number
+	errors: number
+}

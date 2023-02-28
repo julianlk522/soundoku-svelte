@@ -177,6 +177,7 @@
 	<GameOverPopup
 		victoryTime={formatSeconds(time)}
 		{errors}
+		{difficulty}
 		on:new-game={handleNewGame}
 	/>
 {/if}
