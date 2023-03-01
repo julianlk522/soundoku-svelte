@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte'
 	import { getWins } from '../data'
-	import { getFormattedDate } from '../utils/getFormattedDate'
+	import { formatDate } from '../utils/formatDate'
 	import type { Difficulty } from '../types'
 	import { formatSeconds } from '../utils/formatSeconds'
 
@@ -20,7 +20,7 @@
 	let message = ''
 
 	function beautifyScore(score: Score) {
-		score.date = getFormattedDate(new Date(score.date))
+		score.date = formatDate(new Date(score.date))
 		score.duration = formatSeconds(+score.duration)
 		score.difficulty = score.difficulty
 			.split(' ')

@@ -1,6 +1,6 @@
 //  thanks to https://stackoverflow.com/a/15764763/19516096
 
-export function getFormattedDate(date: Date) {
+export function formatDate(date: Date) {
 	const year = date.getFullYear().toString().slice(-2)
 
 	let month = (1 + date.getMonth()).toString()
