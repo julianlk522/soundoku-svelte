@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, createEventDispatcher } from 'svelte'
 	import { getWins } from '../data'
 	import { getFormattedDate } from '../utils/getFormattedDate'
 	import type { Difficulty } from '../types'
+
+	const dispatch = createEventDispatcher()
 
 	type Score = {
 		name: string
@@ -31,44 +33,59 @@
 	})
 </script>
 
-{#if loading}
-	<div class="spinner" />
-{:else}
-	<table>
-		<thead>
-			<tr>
-				<th />
-				<th>Name</th>
-				<th>Date</th>
-				<th>Difficulty</th>
-				<th>Time</th>
-				<th>Errors</th>
-				<th>Score</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each scores as score, index}
+<div id="highscores">
+	{#if loading}
+		<div class="spinner" />
+	{:else}
+		<table>
+			<thead>
 				<tr>
-					<th>{index + 1}.</th>
-					<td>{score.name}</td>
-					<td>{score.date}</td>
-					<td>{score.difficulty}</td>
-					<td>{score.duration}</td>
-					<td>{score.errors}</td>
-					<td>{score.score}</td>
+					<th />
+					<th>Name</th>
+					<th>Date</th>
+					<th>Difficulty</th>
+					<th>Time</th>
+					<th>Errors</th>
+					<th>Score</th>
 				</tr>
-			{/each}
-		</tbody>
-	</table>
-{/if}
+			</thead>
+			<tbody>
+				{#each scores as score, index}
+					<tr>
+						<th>{index + 1}.</th>
+						<td>{score.name}</td>
+						<td>{score.date}</td>
+						<td>{score.difficulty}</td>
+						<td>{score.duration}</td>
+						<td>{score.errors}</td>
+						<td>{score.score}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+
+		<button on:click={() => dispatch('close-highscores')}>Close</button>
+	{/if}
+</div>
 
 <style>
-	table {
+	#highscores {
 		position: absolute;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 2rem;
+		height: 100%;
+		width: 100%;
+	}
+	table {
 		table-layout: fixed;
 		border-collapse: collapse;
+		text-align: center;
 		width: 100%;
-		padding: 1rem;
+		min-width: 800px;
+		max-width: 1250px;
 	}
 	th {
 		color: var(--color-text-light);
@@ -85,7 +102,6 @@
 	.spinner {
 		width: 100px;
 		height: 100px;
-		position: absolute;
 		background-image: url('src/assets/loading.svg');
 		background-position: center;
 	}

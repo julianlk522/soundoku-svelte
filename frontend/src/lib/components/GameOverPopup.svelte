@@ -3,12 +3,14 @@
 	import { loggedInUserStore } from '../../stores'
 	import { submitWin } from '../data'
 	import type { Difficulty, UserWinData } from '../types'
+	import HighScores from './HighScores.svelte'
 
 	const dispatch = createEventDispatcher()
 
 	let loading = false
 	let message = ''
 	let submitted = false
+	let scoresShown = false
 
 	export let victoryTime = '0: 00'
 	let time = 60 * +victoryTime.split(':')[0] + +victoryTime.split(':')[1]
@@ -58,7 +60,7 @@
 	onMount(() => replayButton.focus())
 </script>
 
-<div id="game-over">
+<div id="game-over" class:hidden={scoresShown}>
 	<h2 id="congratulations">Congratulations, you won!</h2>
 	<h3 id="victory-flex">💪</h3>
 	<h3>
@@ -76,11 +78,23 @@
 		>
 			Play Again?
 		</button>
-		<button class="action-button" on:click|preventDefault={handleSubmit}>
+		<button class="action-button" on:click={handleSubmit}>
 			Submit Score?
+		</button>
+		<button
+			class="action-button"
+			on:click={() => {
+				scoresShown = true
+			}}
+		>
+			View Highscores?
 		</button>
 	</div>
 </div>
+
+{#if scoresShown}
+	<HighScores on:close-highscores={() => (scoresShown = false)} />
+{/if}
 
 <style>
 	#game-over {
@@ -98,6 +112,10 @@
 
 	#game-over * {
 		color: var(--color-text-light);
+	}
+
+	#game-over:is(.hidden) {
+		display: none;
 	}
 
 	#congratulations {
