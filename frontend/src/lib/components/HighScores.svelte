@@ -19,6 +19,15 @@
 	let loading = true
 	let message = ''
 
+	function beautifyScore(score: Score) {
+		score.date = getFormattedDate(new Date(score.date))
+		score.duration = formatSeconds(+score.duration)
+		score.difficulty = score.difficulty
+			.split(' ')
+			.map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+			.join(' ') as Difficulty
+	}
+
 	onMount(async () => {
 		const response = await getWins()
 
@@ -27,14 +36,7 @@
 		}
 		console.log(response)
 		scores = response.slice(0, 10)
-		scores.forEach((score) => {
-			score.date = getFormattedDate(new Date(score.date))
-			score.duration = formatSeconds(+score.duration)
-			score.difficulty = score.difficulty
-				.split(' ')
-				.map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-				.join(' ') as Difficulty
-		})
+		scores.forEach(beautifyScore)
 		loading = false
 	})
 </script>
