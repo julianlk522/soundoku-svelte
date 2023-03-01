@@ -8,7 +8,7 @@ const asyncPool = pool.promise()
 
 export const getWins = asyncHandler(async (req, res) => {
 	const sql =
-		'SELECT name, date, difficulty, duration, errors, score FROM wins;'
+		'SELECT name, date, difficulty, duration, errors, score FROM wins ORDER BY score DESC, errors ASC, duration ASC;'
 
 	const winData = await asyncPool.query(sql)
 	res.status(200).json(winData[0])
