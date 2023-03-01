@@ -7,7 +7,8 @@ import { difficultyLevels } from './types'
 const asyncPool = pool.promise()
 
 export const getWins = asyncHandler(async (req, res) => {
-	const sql = 'SELECT * FROM wins;'
+	const sql =
+		'SELECT name, date, difficulty, duration, errors, score FROM wins;'
 
 	const winData = await asyncPool.query(sql)
 	res.status(200).json(winData[0])
