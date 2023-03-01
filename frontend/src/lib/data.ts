@@ -40,6 +40,12 @@ export const getUserScore = async (userInfo: AuthData) => {
 	return data
 }
 
+export const getWins = async () => {
+	const response = await fetch(`${API_URL}/wins`)
+	const data = await response.json()
+	return data
+}
+
 export const submitWin = async (win: UserWinData) => {
 	const { name, token, difficulty, duration, errors } = win
 	const lowerCaseDifficulty = difficulty.toLowerCase()
