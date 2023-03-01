@@ -13,6 +13,7 @@
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import type { Difficulty } from './lib/types'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
+	import { formatSeconds } from './lib/utils/formatSeconds'
 	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
 
@@ -46,14 +47,6 @@
 		clearInterval(timer)
 		playArpeggio()
 		gameOver = true
-	}
-
-	function formatSeconds(totalSeconds: number) {
-		const minutes = Math.floor(totalSeconds / 60)
-		const remainder = totalSeconds % 60
-		const seconds = remainder < 10 ? '0' + remainder : remainder
-
-		return `${minutes}: ${seconds}`
 	}
 
 	function handleKeydown(event: KeyboardEvent) {

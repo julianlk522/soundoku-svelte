@@ -3,6 +3,7 @@
 	import { getWins } from '../data'
 	import { getFormattedDate } from '../utils/getFormattedDate'
 	import type { Difficulty } from '../types'
+	import { formatSeconds } from '../utils/formatSeconds'
 
 	const dispatch = createEventDispatcher()
 
@@ -26,9 +27,14 @@
 		}
 		console.log(response)
 		scores = response.slice(0, 10)
-		scores.map(
-			(score) => (score.date = getFormattedDate(new Date(score.date)))
-		)
+		scores.forEach((score) => {
+			score.date = getFormattedDate(new Date(score.date))
+			score.duration = formatSeconds(+score.duration)
+			score.difficulty = score.difficulty
+				.split(' ')
+				.map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+				.join(' ') as Difficulty
+		})
 		loading = false
 	})
 </script>
