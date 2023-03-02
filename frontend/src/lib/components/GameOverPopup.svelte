@@ -79,7 +79,11 @@
 		>
 			Play Again?
 		</button>
-		<button class="action-button" on:click={handleSubmit}>
+		<button
+			class="action-button"
+			disabled={submitted}
+			on:click|once={handleSubmit}
+		>
 			Submit Score?
 		</button>
 		<button
@@ -166,9 +170,14 @@
 		transition: none 0.18s ease-in-out;
 		transition-property: transform;
 	}
+	.action-button:disabled {
+		filter: grayscale(1);
+		opacity: 0.25;
+		transition: all 0.5s ease-out;
+	}
 
-	.action-button:hover,
-	.action-button:focus {
+	.action-button:not(:disabled):hover,
+	.action-button:not(:disabled):focus {
 		transform: scale(1.1);
 	}
 
@@ -176,7 +185,7 @@
 		outline: 2px solid var(--color-text-light);
 	}
 
-	.action-button:active {
+	.action-button:not(:disabled):active {
 		transform: scale(0.95);
 	}
 
