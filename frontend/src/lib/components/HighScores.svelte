@@ -1,11 +1,19 @@
 <script lang="ts">
-	import { onMount, createEventDispatcher } from 'svelte'
+	import { createEventDispatcher } from 'svelte'
+	import { fade } from 'svelte/transition'
+	import { createQuery } from '@tanstack/svelte-query'
 	import { getWins } from '../data'
 	import { formatDate } from '../utils/formatDate'
-	import type { Difficulty } from '../types'
 	import { formatSeconds } from '../utils/formatSeconds'
+	import type { Difficulty } from '../types'
 
 	const dispatch = createEventDispatcher()
+
+	const query = createQuery({
+		queryKey: ['scores'],
+		queryFn: async () => await getWins(),
+		refetchInterval: 1000 * 300,
+	})
 
 	type Score = {
 		name: string
@@ -15,9 +23,11 @@
 		errors: number
 		score: number
 	}
-	export let scores: Score[] = []
-	let loading = true
-	let message = ''
+
+	$: scores = $query.isSuccess
+		? $query.data.slice(0, 10).map((score: Score) => beautifyScore(score))
+		: []
+	$: error = $query.isError ? `Error: ${$query.error}` : undefined
 
 	function beautifyScore(score: Score) {
 		score.date = formatDate(new Date(score.date))
@@ -26,25 +36,16 @@
 			.split(' ')
 			.map((s) => s.charAt(0).toUpperCase() + s.substring(1))
 			.join(' ') as Difficulty
+		return score
 	}
-
-	onMount(async () => {
-		const response = await getWins()
-
-		if (response.error) {
-			return (message = response.error)
-		}
-		console.log(response)
-		scores = response.slice(0, 10)
-		scores.forEach(beautifyScore)
-		loading = false
-	})
 </script>
 
 <div id="highscores">
-	{#if loading}
+	{#if $query.isLoading}
 		<div class="spinner" />
-	{:else}
+	{:else if error}
+		<p class="error">{error}</p>
+	{:else if $query.isSuccess}
 		<table>
 			<thead>
 				<tr>
@@ -73,6 +74,10 @@
 		</table>
 
 		<button on:click={() => dispatch('close-highscores')}>Close</button>
+
+		{#if $query.isFetching}
+			<div out:fade class="spinner mini-spinner" />
+		{/if}
 	{/if}
 </div>
 
@@ -92,8 +97,8 @@
 		border-collapse: collapse;
 		text-align: center;
 		width: 100%;
-		min-width: 800px;
-		max-width: 1250px;
+		min-width: min(50%, 800px);
+		max-width: min(90%, 1250px);
 	}
 	th {
 		color: var(--color-text-light);
@@ -112,5 +117,14 @@
 		height: 100px;
 		background-image: url('src/assets/loading.svg');
 		background-position: center;
+	}
+	.mini-spinner {
+		position: absolute;
+		top: 0;
+		right: 0;
+		transform: scale(0.25);
+	}
+	.error {
+		color: hsl(15, 100%, 50%);
 	}
 </style>

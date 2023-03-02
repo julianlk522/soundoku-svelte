@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte'
 	import { lastWinScoreStore, loggedInUserStore } from '../../stores'
+	import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
 	import HighScores from './HighScores.svelte'
 	import { submitWin } from '../data'
 	import type { Difficulty, UserWinData } from '../types'
 
 	const dispatch = createEventDispatcher()
+	const queryClient = new QueryClient()
 
 	let loading = false
 	let message = ''
@@ -97,9 +99,11 @@
 	</div>
 </div>
 
-{#if scoresShown}
-	<HighScores on:close-highscores={() => (scoresShown = false)} />
-{/if}
+<QueryClientProvider client={queryClient}>
+	{#if scoresShown}
+		<HighScores on:close-highscores={() => (scoresShown = false)} />
+	{/if}
+</QueryClientProvider>
 
 <style>
 	#game-over {

@@ -24,6 +24,7 @@
 		"vitest": "^0.28.4"
 	},
 	"dependencies": {
+		"@tanstack/svelte-query": "^4.24.10",
 		"crypto-js": "^4.1.1",
 		"sudoku": "^0.0.3"
 	}
