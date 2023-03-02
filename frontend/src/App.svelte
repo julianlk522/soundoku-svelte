@@ -111,65 +111,73 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if !tutorial && difficulty && !gameReset}
-	<main class:game-over-fadeout={gameOver}>
-		<div class="leavesBg" />
-		<Board
-			{difficulty}
+<main>
+	{#if !tutorial && difficulty && !gameReset}
+		<div id="game-content" class:game-over-fadeout={gameOver}>
+			<div class="leavesBg" />
+			<Board
+				{difficulty}
+				on:play-audio={(event) =>
+					playCellTone(
+						event.detail.toneIndex,
+						event.detail.triggeredByNavigation,
+						event.detail.panning
+					)}
+				on:incorrect-guess={() => errors++}
+				on:win={handleWin}
+			/>
+			<NumberSelect
+				time={formatSeconds(time)}
+				{errors}
+				on:play-audio={(event) => playCellTone(event.detail)}
+			/>
+		</div>
+	{/if}
+
+	{#if tutorial}
+		<Tutorial
+			on:end-tutorial={() => {
+				tutorial = false
+			}}
 			on:play-audio={(event) =>
 				playCellTone(
 					event.detail.toneIndex,
 					event.detail.triggeredByNavigation,
 					event.detail.panning
 				)}
-			on:incorrect-guess={() => errors++}
-			on:win={handleWin}
 		/>
-		<NumberSelect
-			time={formatSeconds(time)}
+	{/if}
+
+	{#if !tutorial && !difficulty && canProceedToDifficultySelect}
+		<DifficultySelect on:difficulty-select={handleDifficultySelect} />
+	{/if}
+
+	{#if !tutorial && !canProceedToDifficultySelect}
+		<Auth on:enable-local-play={() => (playingLocally = true)} />
+	{/if}
+
+	{#if gameOver}
+		<GameOverPopup
+			victoryTime={formatSeconds(time)}
 			{errors}
-			on:play-audio={(event) => playCellTone(event.detail)}
+			{difficulty}
+			on:new-game={handleNewGame}
 		/>
-	</main>
-{/if}
+	{/if}
 
-{#if tutorial}
-	<Tutorial
-		on:end-tutorial={() => {
-			tutorial = false
-		}}
-		on:play-audio={(event) =>
-			playCellTone(
-				event.detail.toneIndex,
-				event.detail.triggeredByNavigation,
-				event.detail.panning
-			)}
-	/>
-{/if}
-
-{#if !tutorial && !difficulty && canProceedToDifficultySelect}
-	<DifficultySelect on:difficulty-select={handleDifficultySelect} />
-{/if}
-
-{#if !tutorial && !canProceedToDifficultySelect}
-	<Auth on:enable-local-play={() => (playingLocally = true)} />
-{/if}
-
-{#if loggedIn}
-	<UserInfo />
-{/if}
-
-{#if gameOver}
-	<GameOverPopup
-		victoryTime={formatSeconds(time)}
-		{errors}
-		{difficulty}
-		on:new-game={handleNewGame}
-	/>
-{/if}
+	{#if loggedIn}
+		<UserInfo />
+	{/if}
+</main>
 
 <style>
 	main {
+		display: flex;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+	}
+	#game-content {
 		position: relative;
 		height: 100%;
 		width: 100%;
@@ -213,7 +221,7 @@
 	}
 
 	@media (min-width: 896px) {
-		main {
+		#game-content {
 			flex-direction: row;
 			justify-content: space-evenly;
 		}
