@@ -44,8 +44,7 @@ let gainNode: GainNode
 let currentTimeAtLastNote = 0
 let waitTime: number | undefined = undefined
 
-const minimumWaitTimeToThrottleAttackViaNavigation = 0.15
-const minimumWaitTimeToThrottleAttackViaKeys = 0.1
+const minimumWaitTimeToThrottleAttack = 0.1
 const minAttackTime = 0.01
 const maxAttackTime = 0.2
 const attackTimeRateOfChange = 0.5
@@ -63,29 +62,22 @@ export function playAudio(
 	intonation?: 'staccato'
 ) {
 	waitTime = audioCtx.currentTime - currentTimeAtLastNote
-	//	let notes play their full duration by default, only cancel them prematurely if they are played rapidly via navigation keys, or if they are played extremely rapidly via number keys
+	const spammingNotes = waitTime <= minimumWaitTimeToThrottleAttack
+
+	//	let notes play their full duration by default, only cancel them prematurely if they are played rapidly
 
 	//	prevents cacophony from holding down one of the navigation buttons and triggering new notes at max speed
 
-	const spammingNotes =
-		waitTime <= minimumWaitTimeToThrottleAttackViaKeys ||
-		(triggeredByNavigation &&
-			waitTime < minimumWaitTimeToThrottleAttackViaNavigation)
-
-	//	the reason for different thresholds is that rapidly navigating over spaces that are partly filled/partly empty will cause waitTime to momentarily spike above the amount achieved by constant activations (due to the extra waitTime from crossing the empty spaces) resulting in noticeable tonal blips
-
-	//	raising minimumWaitTimeToThrottleAttackViaNavigation mostly counteracts this effect, though a board with with 3-4 empty spaces in a row is still prone to blips if those cells are rapidly navigated over
-
-	//	Todo: find a better solution
+	//	Todo: improve solution to prevent blips from rapidly navigating over some empty/some filled cells (2-3 in a row causes enough waitTime to exceed minimumWaitTimeToThrottleAttack)
 
 	if (spammingNotes) {
 		stopAudio()
 		getNewAttackTime()
-	} else if (waitTime > minimumWaitTimeToThrottleAttackViaNavigation) {
+	} else if (waitTime > minimumWaitTimeToThrottleAttack) {
 		attackTime = minAttackTime
 	}
 
-	//	abort early if spammingNotes via number keys: no reason to hear same tone more than once
+	//	abort early if spamming notes via number keys: no reason to hear same tone more than once
 	//	when calling via navigation keys it may be nice to hear the last note that was triggered
 
 	if (!triggeredByNavigation && spammingNotes) {
@@ -156,7 +148,7 @@ function stopAudio() {
 }
 
 function getNewAttackTime() {
-	if (waitTime! < minimumWaitTimeToThrottleAttackViaNavigation) {
+	if (waitTime! < minimumWaitTimeToThrottleAttack) {
 		attackTime = Math.min(
 			attackTime + attackTimeRateOfChange * (maxAttackTime - attackTime),
 			maxAttackTime
