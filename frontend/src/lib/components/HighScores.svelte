@@ -9,12 +9,6 @@
 
 	const dispatch = createEventDispatcher()
 
-	const query = createQuery({
-		queryKey: ['scores'],
-		queryFn: async () => await getWins(),
-		refetchInterval: 1000 * 300,
-	})
-
 	type Score = {
 		name: string
 		date: string
@@ -24,9 +18,16 @@
 		score: number
 	}
 
-	$: scores = $query.isSuccess
-		? $query.data.slice(0, 10).map((score: Score) => beautifyScore(score))
-		: []
+	const query = createQuery({
+		queryKey: ['scores'],
+		queryFn: async () => {
+			const response = await getWins()
+			return response.map((score: Score) => beautifyScore(score))
+		},
+		//	5 minutes
+		refetchInterval: 1000 * 300,
+	})
+
 	$: error = $query.isError ? `Error: ${$query.error}` : undefined
 
 	function beautifyScore(score: Score) {
@@ -59,7 +60,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each scores as score, index}
+				{#each $query.data as score, index}
 					<tr>
 						<th>{index + 1}.</th>
 						<td>{score.name}</td>
