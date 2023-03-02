@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte'
-	import { loggedInUserStore } from '../../stores'
+	import { lastWinScoreStore, loggedInUserStore } from '../../stores'
+	import HighScores from './HighScores.svelte'
 	import { submitWin } from '../data'
 	import type { Difficulty, UserWinData } from '../types'
-	import HighScores from './HighScores.svelte'
 
 	const dispatch = createEventDispatcher()
 
@@ -51,6 +51,7 @@
 		}
 
 		submitted = true //	todo: use this to prevent multiple submissions
+		lastWinScoreStore.set(response.score)
 		loggedInUserStore.update((user) => ({
 			...user,
 			total_score: user.total_score + response.score,

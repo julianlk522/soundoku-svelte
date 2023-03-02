@@ -23,3 +23,4 @@ export const loggedInUserStore = writable<User>({
 		: undefined,
 	total_score: undefined,
 })
+export const lastWinScoreStore = writable<number | undefined>(undefined)
