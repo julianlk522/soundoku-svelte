@@ -40,8 +40,9 @@ export const getUserScore = async (userInfo: AuthData) => {
 	return data
 }
 
-export const getWins = async () => {
-	const response = await fetch(`${API_URL}/wins`)
+export const getWins = async (start?: number) => {
+	const queryStringURLChunk = start ? `/?start=${start}` : ''
+	const response = await fetch(`${API_URL}/wins${queryStringURLChunk}`)
 	const data = await response.json()
 	return data
 }
