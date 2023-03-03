@@ -18,12 +18,19 @@
 		score: number
 	}
 
-	const query = createQuery({
-		queryKey: ['scores'],
-		queryFn: async () => {
-			const response = await getWins()
-			return response.map((score: Score) => beautifyScore(score))
-		},
+	async function getWinsWithPageParam(pageParam = 0) {
+		let response = await getWins(pageParam)
+		response.map((score: Score) => beautifyScore(score))
+		return response
+	}
+
+	let page = 0
+	$: start = page * 10
+
+	$: query = createQuery({
+		queryKey: ['scores', page],
+		queryFn: async () => await getWinsWithPageParam(start),
+		keepPreviousData: true,
 		//	5 minutes
 		refetchInterval: 1000 * 300,
 	})
@@ -62,7 +69,7 @@
 			<tbody>
 				{#each $query.data as score, index}
 					<tr>
-						<th>{index + 1}.</th>
+						<th>{index + 1 + start}.</th>
 						<td>{score.name}</td>
 						<td>{score.date}</td>
 						<td>{score.difficulty}</td>
@@ -74,7 +81,18 @@
 			</tbody>
 		</table>
 
-		<button on:click={() => dispatch('close-highscores')}>Close</button>
+		<div id="scores-actions">
+			<button
+				on:click={() => page--}
+				disabled={!page || $query.isFetching}>{'<='}</button
+			>
+			<button on:click={() => dispatch('close-highscores')}>Close</button>
+			<button
+				on:click={() => page++}
+				disabled={$query.data.length < 10 || $query.isFetching}
+				>{'=>'}</button
+			>
+		</div>
 
 		{#if $query.isFetching}
 			<div out:fade class="spinner mini-spinner" />
