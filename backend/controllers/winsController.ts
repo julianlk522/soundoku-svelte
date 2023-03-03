@@ -14,6 +14,10 @@ export const getWins = asyncHandler(async (req, res) => {
 	}10;`
 
 	const winData = await asyncPool.query(sql)
+	if (!winData[0].length) {
+		res.status(404)
+		throw new Error('Exceeded database boundary')
+	}
 	res.status(200).json(winData[0])
 })
 
