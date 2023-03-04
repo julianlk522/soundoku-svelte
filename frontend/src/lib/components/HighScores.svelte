@@ -32,7 +32,7 @@
 		queryFn: async () => await getWinsWithPageParam(start),
 		keepPreviousData: true,
 		//	5 minutes
-		refetchInterval: 1000 * 300,
+		refetchInterval: 1000 * 60,
 	})
 
 	$: error = $query.isError ? `Error: ${$query.error}` : undefined
@@ -49,9 +49,10 @@
 </script>
 
 <div id="highscores">
-	{#if $query.isLoading}
-		<div class="spinner" />
-	{:else if error}
+	{#if $query.isLoading || $query.isFetching}
+		<div out:fade class="spinner" />
+	{/if}
+	{#if error}
 		<p class="error">{error}</p>
 	{:else if $query.isSuccess}
 		<table>
@@ -93,10 +94,6 @@
 				>{'=>'}</button
 			>
 		</div>
-
-		{#if $query.isFetching}
-			<div out:fade class="spinner mini-spinner" />
-		{/if}
 	{/if}
 </div>
 
@@ -132,16 +129,13 @@
 		color: var(--color-text-light);
 	}
 	.spinner {
-		width: 100px;
-		height: 100px;
+		position: absolute;
+		top: 2rem;
+		right: 2rem;
+		width: 25px;
+		height: 25px;
 		background-image: url('src/assets/loading.svg');
 		background-position: center;
-	}
-	.mini-spinner {
-		position: absolute;
-		top: 0;
-		right: 0;
-		transform: scale(0.25);
 	}
 	.error {
 		color: hsl(15, 100%, 50%);
