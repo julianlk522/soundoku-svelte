@@ -40,9 +40,15 @@ export const getUserScore = async (userInfo: AuthData) => {
 	return data
 }
 
-export const getWins = async (start?: number) => {
-	const queryStringURLChunk = start ? `/?start=${start}` : ''
-	const response = await fetch(`${API_URL}/wins${queryStringURLChunk}`)
+export const getWins = async (page: number) => {
+	const pageQueryStringURLChunk = page ? `?page=${page}` : ''
+	const response = await fetch(`${API_URL}/wins${pageQueryStringURLChunk}`)
+	const data = await response.json()
+	return data
+}
+
+export const getWinsPages = async () => {
+	const response = await fetch(`${API_URL}/wins/pages`)
 	const data = await response.json()
 	return data
 }
