@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import { createQuery } from '@tanstack/svelte-query'
-	import { getWins } from '../data'
+	import { getWins, getWinsPages } from '../data'
 	import { formatDate } from '../utils/formatDate'
 	import { formatSeconds } from '../utils/formatSeconds'
 	import type { Difficulty } from '../types'
@@ -18,18 +18,16 @@
 		score: number
 	}
 
-	async function getWinsWithPageParam(pageParam = 0) {
+	async function getWinsWithPageParam(pageParam = 1) {
 		let response = await getWins(pageParam)
-		response.map((score: Score) => beautifyScore(score))
-		return response
+		return response.scores.map((score: Score) => beautifyScore(score))
 	}
 
-	let page = 0
-	$: start = page * 10
+	let page = 1
 
 	$: query = createQuery({
 		queryKey: ['scores', page],
-		queryFn: async () => await getWinsWithPageParam(start),
+		queryFn: async () => await getWinsWithPageParam(page),
 		keepPreviousData: true,
 		//	5 minutes
 		refetchInterval: 1000 * 60,
@@ -68,9 +66,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each $query.data as score, index}
+				{#each $query.data as score}
 					<tr>
-						<th>{index + 1 + start}.</th>
+						<th>{score.row_num ?? 1}.</th>
 						<td>{score.name}</td>
 						<td>{score.date}</td>
 						<td>{score.difficulty}</td>
@@ -84,14 +82,26 @@
 
 		<div id="scores-actions">
 			<button
+				on:click={() => (page = 1)}
+				disabled={page === 1 || $query.isFetching}>{'<=='}</button
+			>
+			<button
 				on:click={() => page--}
-				disabled={!page || $query.isFetching}>{'<='}</button
+				disabled={page === 1 || $query.isFetching}>{'<='}</button
 			>
 			<button on:click={() => dispatch('close-highscores')}>Close</button>
 			<button
 				on:click={() => page++}
 				disabled={$query.data.length < 10 || $query.isFetching}
 				>{'=>'}</button
+			>
+			<button
+				on:click={async () => {
+					const pagesResponse = await getWinsPages()
+					page = pagesResponse
+				}}
+				disabled={$query.data.length < 10 || $query.isFetching}
+				>{'==>'}</button
 			>
 		</div>
 	{/if}
