@@ -119,6 +119,9 @@
 	th {
 		color: var(--color-text-light);
 	}
+	thead tr th {
+		border-bottom: 2px solid var(--color-text-light);
+	}
 	tr:nth-child(even) {
 		background-color: var(--color-text-light);
 	}
