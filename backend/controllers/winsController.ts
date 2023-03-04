@@ -6,19 +6,36 @@ import { difficultyLevels } from './types'
 
 const asyncPool = pool.promise()
 
-export const getWins = asyncHandler(async (req, res) => {
-	const { start } = req.query
+export const getWinsPages = asyncHandler(async (req, res) => {
+	const numPagesSql = `SELECT CEIL(COUNT(*) / 10) AS pages FROM wins;`
 
-	const sql = `SELECT name, date, difficulty, duration, errors, score FROM wins ORDER BY score DESC, errors ASC, duration ASC LIMIT ${
+	const rawPagesData = await asyncPool.query(numPagesSql)
+	const pagesData = rawPagesData[0][0]
+	const { pages } = pagesData
+
+	if (!pagesData || !pages) {
+		res.status(500)
+		throw new Error('Messed up while querying for total pages')
+	}
+
+	res.status(200).json(pagesData.pages)
+})
+
+export const getWins = asyncHandler(async (req, res) => {
+	const { page } = req.query
+	const start = page ? (+page - 1) * 10 : 0
+
+	const sql = `SET @row_num = 0; SELECT *FROM (SELECT q2.row_count + 1 - @row_num := @row_num + 1 AS row_num, name, date, difficulty, duration,errors, score FROM (SELECT row_count, name, date, difficulty, duration, errors, score FROM wins JOIN (SELECT COUNT(*) AS row_count FROM wins) q1) q2 ORDER BY score ASC, errors DESC, difficulty DESC, duration DESC) q3 ORDER BY row_num ASC LIMIT ${
 		start ? start + ', ' : ''
 	}10;`
 
-	const winData = await asyncPool.query(sql)
-	if (!winData[0].length) {
+	const rawWinData = await asyncPool.query(sql)
+	const winData = rawWinData[0][1]
+	if (!winData.length) {
 		res.status(404)
 		throw new Error('Exceeded database boundary')
 	}
-	res.status(200).json(winData[0])
+	res.status(200).json({ scores: winData })
 })
 
 export const addWin = asyncHandler(async (req, res) => {

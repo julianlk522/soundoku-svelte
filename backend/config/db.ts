@@ -8,6 +8,7 @@ const pool = mysql.createPool({
 	password,
 	database,
 	port,
+	multipleStatements: true,
 })
 
 export default pool
