@@ -5,18 +5,9 @@
 	import { getWins, getWinsPages } from '../data'
 	import { formatDate } from '../utils/formatDate'
 	import { formatSeconds } from '../utils/formatSeconds'
-	import type { Difficulty } from '../types'
+	import type { Difficulty, Score } from '../types'
 
 	const dispatch = createEventDispatcher()
-
-	type Score = {
-		name: string
-		date: string
-		difficulty: Difficulty
-		duration: string
-		errors: number
-		score: number
-	}
 
 	async function getWinsWithPageParam(pageParam = 1) {
 		let response = await getWins(pageParam)

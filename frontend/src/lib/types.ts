@@ -36,6 +36,13 @@ export type WinData = {
 	errors: number
 }
 
+export interface Score extends Omit<WinData, 'duration'> {
+	name: string
+	date: string
+	duration: string
+	score: number
+}
+
 export interface UserWinData extends WinData {
 	name: string
 	token: string
