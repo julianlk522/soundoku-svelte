@@ -1,5 +1,9 @@
 {
 	"rewrites": [
-		{ "source": "dist/server.js", "destination": "dist/server.js" }
+		{
+			"source": "dist/server.js",
+			"destination": "dist/server.js",
+			"outputDirectory": "dist"
+		}
 	]
 }
