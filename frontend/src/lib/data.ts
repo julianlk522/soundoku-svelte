@@ -53,6 +53,12 @@ export const getWinsPages = async () => {
 	return data
 }
 
+export const getWinsByUser = async () => {
+	const response = await fetch(`${API_URL}/users/scores`)
+	const data = await response.json()
+	return data
+}
+
 export const submitWin = async (win: UserWinData) => {
 	const { name, token, difficulty, duration, errors } = win
 	const lowerCaseDifficulty = difficulty.toLowerCase()
