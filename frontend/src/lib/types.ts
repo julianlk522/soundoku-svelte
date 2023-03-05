@@ -10,6 +10,8 @@ export const difficulties = [
 
 export type Difficulty = (typeof difficulties)[number]
 
+export type DeviceType = 'mobile' | 'tablet' | 'desktop'
+
 //	API requests:
 
 export type User = {
@@ -28,12 +30,15 @@ export type AuthData = {
 	token: string
 }
 
-export type DeviceType = 'mobile' | 'tablet' | 'desktop'
-
 export type WinData = {
 	difficulty: Difficulty
 	duration: number
 	errors: number
+}
+
+export interface UserWinData extends WinData {
+	name: string
+	token: string
 }
 
 export interface Score extends Omit<WinData, 'duration'> {
@@ -41,9 +46,4 @@ export interface Score extends Omit<WinData, 'duration'> {
 	date: string
 	duration: string
 	score: number
-}
-
-export interface UserWinData extends WinData {
-	name: string
-	token: string
 }
