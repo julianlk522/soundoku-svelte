@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { createEventDispatcher } from 'svelte'
-	import type { Difficulty } from '../types'
+	import type { DeviceType, Difficulty } from '../types'
 	import { difficulties } from '../types'
 
 	const dispatch = createEventDispatcher()
 
-	let deviceType: 'mobile' | 'tablet' | 'desktop' = 'mobile'
+	export let deviceType: DeviceType = 'mobile'
 	$: canUseHoverAnimations = deviceType === 'desktop'
 
 	let currentlyHovered: Difficulty | undefined = undefined
@@ -32,26 +31,6 @@
 			document.getElementById('very-easy')?.focus()
 		}
 	}
-
-	//	Big thanks to https://abdessalam.dev/blog/detect-device-type-javascript/ for this function
-	function getDeviceType() {
-		const ua = navigator.userAgent
-		if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
-			return 'tablet'
-		}
-		if (
-			/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
-				ua
-			)
-		) {
-			return 'mobile'
-		}
-		return 'desktop'
-	}
-
-	onMount(() => {
-		deviceType = getDeviceType()
-	})
 </script>
 
 <div id="difficulty-select-container">

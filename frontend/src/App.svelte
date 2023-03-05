@@ -11,21 +11,27 @@
 	import Auth from './lib/components/Auth.svelte'
 	import UserInfo from './lib/components/UserInfo.svelte'
 	import DifficultySelect from './lib/components/DifficultySelect.svelte'
-	import type { Difficulty } from './lib/types'
+	import type { DeviceType, Difficulty } from './lib/types'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
 	import { formatSeconds } from './lib/utils/formatSeconds'
 	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
+	import { getDeviceType } from './lib/utils/getDeviceType'
 
 	$: loggedIn = $loggedInUserStore.token !== undefined
 	let playingLocally = false
 	$: canProceedToDifficultySelect = loggedIn || playingLocally
 
+	//	determines animations to be shown in DifficultySelect
+	let deviceType: DeviceType = 'mobile'
+
 	let tutorial = true
+
 	let difficulty: Difficulty | undefined = undefined
 	let time = 0
 	let timer: NodeJS.Timeout
 	let errors = 0
+
 	let gameOver = false
 	let gameReset = false
 
@@ -102,6 +108,7 @@
 	}
 
 	onMount(() => {
+		deviceType = getDeviceType()
 		clearInterval(timer)
 		time = 0
 	})
@@ -149,7 +156,10 @@
 	{/if}
 
 	{#if !tutorial && !difficulty && canProceedToDifficultySelect}
-		<DifficultySelect on:difficulty-select={handleDifficultySelect} />
+		<DifficultySelect
+			{deviceType}
+			on:difficulty-select={handleDifficultySelect}
+		/>
 	{/if}
 
 	{#if !tutorial && !canProceedToDifficultySelect}

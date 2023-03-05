@@ -28,6 +28,8 @@ export type AuthData = {
 	token: string
 }
 
+export type DeviceType = 'mobile' | 'tablet' | 'desktop'
+
 export type WinData = {
 	difficulty: Difficulty
 	duration: number
