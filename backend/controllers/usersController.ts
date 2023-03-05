@@ -116,6 +116,20 @@ export const getUserScore = asyncHandler(async (req, res) => {
 	res.status(200).json(total_score)
 })
 
+export const getWinsByUser = asyncHandler(async (req, res) => {
+	//	might use these at some point...
+
+	//	const { page } = req.params
+	//	const start = page ? (+page - 1) * 10 : 0
+
+	const sql = `SET @row_num = 0; SELECT @row_num := @row_num + 1 AS row_num, name, total_score, games_played FROM (SELECT name, SUM(score) as total_score, COUNT(*) as games_played FROM wins GROUP BY name ORDER BY total_score DESC) q1;`
+
+	const rawWinData = await asyncPool.query(sql)
+	const winData = rawWinData[0][1]
+
+	res.status(200).json(winData)
+})
+
 function generateToken(id: string) {
 	if (!process.env.JWT_SECRET) {
 		throw new Error('Could not access JWT secret')
