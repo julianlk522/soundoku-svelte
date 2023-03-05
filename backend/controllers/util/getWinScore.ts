@@ -18,7 +18,7 @@ export function getWinScore(
 
 	//  cap error-based deductions at 30 errors
 	const maxPenalizedErrors = 30
-	const penalizedErrors = Math.min(maxPenalizedErrors, errors)
+	const penalizedErrors = Math.min(errors, maxPenalizedErrors)
 
 	//  lose up to 75% of potentialLostScore from errors
 	const maxErrorPointDeductions = 0.75 * potentialLostScore
@@ -32,8 +32,8 @@ export function getWinScore(
 
 	if (duration > gracePeriod) {
 		//  cap duration-based deductions at 45min
-		const durationDeductionStop = 45 * MINUTE
-		const maxPenalizedDuration = durationDeductionStop - gracePeriod
+		const penalizedDurationStop = 45 * MINUTE
+		const maxPenalizedDuration = penalizedDurationStop - gracePeriod
 
 		//  lose up to 25% of potentialLostScore from time expenditure
 		const maxDurationPointDeductions = 0.25 * potentialLostScore
