@@ -25,13 +25,10 @@
 		loading = true
 		const { name, token } = $loggedInUserStore
 		if (!name)
-			return console.log(
-				'unable to submit: could not determine user name'
-			)
+			return (message = 'Unable to submit: could not determine user name')
 		if (!token)
-			return console.log(
-				'unable to submit: could not determine bearer token'
-			)
+			return (message =
+				'Unable to submit: could not determine bearer token')
 
 		const data: UserWinData = {
 			name,
@@ -41,7 +38,6 @@
 			errors,
 		}
 		const response = await submitWin(data)
-		console.log(response)
 		loading = false
 
 		if (response.error) {
