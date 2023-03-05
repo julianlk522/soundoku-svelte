@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import { createQuery } from '@tanstack/svelte-query'
-	import { getWins, getWinsPages } from '../data'
+	import { getWins, getWinsByUser, getWinsPages } from '../data'
 	import { formatDate } from '../utils/formatDate'
 	import { formatSeconds } from '../utils/formatSeconds'
 	import type { Difficulty, Score } from '../types'
@@ -15,16 +15,25 @@
 	}
 
 	let page = 1
+	let sortMethod: 'wins' | 'users' = 'wins'
 
-	$: query = createQuery({
-		queryKey: ['scores', page],
+	$: winsQuery = createQuery({
+		queryKey: ['wins', page],
 		queryFn: async () => await getWinsWithPageParam(page),
 		keepPreviousData: true,
-		//	5 minutes
+		//	1 minute
 		refetchInterval: 1000 * 60,
 	})
+	$: usersQuery = createQuery({
+		queryKey: ['users'],
+		queryFn: async () => await getWinsByUser(),
+		keepPreviousData: true,
+		//	1 minute
+		refetchInterval: 1000 * 60,
+	})
+	$: currentQuery = sortMethod === 'wins' ? $winsQuery : $usersQuery
 
-	$: error = $query.isError ? `Error: ${$query.error}` : undefined
+	$: error = currentQuery.isError ? `Error: ${currentQuery.error}` : undefined
 
 	function beautifyScore(score: Score) {
 		score.date = formatDate(new Date(score.date))
@@ -38,34 +47,44 @@
 </script>
 
 <div id="highscores">
-	{#if $query.isLoading || $query.isFetching}
+	{#if currentQuery.isLoading || currentQuery.isFetching}
 		<div out:fade class="spinner" />
 	{/if}
 	{#if error}
 		<p class="error">{error}</p>
-	{:else if $query.isSuccess}
+	{:else if currentQuery.isSuccess}
 		<table>
 			<thead>
 				<tr>
 					<th />
 					<th>Name</th>
-					<th>Date</th>
-					<th>Difficulty</th>
-					<th>Time</th>
-					<th>Errors</th>
-					<th>Score</th>
+					{#if currentQuery === $winsQuery}
+						<th>Date</th>
+						<th>Difficulty</th>
+						<th>Time</th>
+						<th>Errors</th>
+						<th>Score</th>
+					{:else}
+						<th>Total Score</th>
+						<th>Games Played</th>
+					{/if}
 				</tr>
 			</thead>
 			<tbody>
-				{#each $query.data as score}
+				{#each currentQuery.data as score}
 					<tr>
 						<th>{score.row_num ?? 1}.</th>
 						<td>{score.name}</td>
-						<td>{score.date}</td>
-						<td>{score.difficulty}</td>
-						<td>{score.duration}</td>
-						<td>{score.errors}</td>
-						<td>{score.score}</td>
+						{#if currentQuery === $winsQuery}
+							<td>{score.date}</td>
+							<td>{score.difficulty}</td>
+							<td>{score.duration}</td>
+							<td>{score.errors}</td>
+							<td>{score.score}</td>
+						{:else}
+							<td>{score.total_score}</td>
+							<td>{score.games_played}</td>
+						{/if}
 					</tr>
 				{/each}
 			</tbody>
@@ -74,27 +93,33 @@
 		<div id="scores-actions">
 			<button
 				on:click={() => (page = 1)}
-				disabled={page === 1 || $query.isFetching}>{'<=='}</button
+				disabled={page === 1 || currentQuery.isFetching}>{'<=='}</button
 			>
 			<button
 				on:click={() => page--}
-				disabled={page === 1 || $query.isFetching}>{'<='}</button
+				disabled={page === 1 || currentQuery.isFetching}>{'<='}</button
 			>
 			<button on:click={() => dispatch('close-highscores')}>Close</button>
 			<button
 				on:click={() => page++}
-				disabled={$query.data.length < 10 || $query.isFetching}
-				>{'=>'}</button
+				disabled={currentQuery.data.length < 10 ||
+					currentQuery.isFetching}>{'=>'}</button
 			>
 			<button
 				on:click={async () => {
 					const pagesResponse = await getWinsPages()
 					page = pagesResponse
 				}}
-				disabled={$query.data.length < 10 || $query.isFetching}
-				>{'==>'}</button
+				disabled={currentQuery.data.length < 10 ||
+					currentQuery.isFetching}>{'==>'}</button
 			>
 		</div>
+		<button
+			on:click={() => {
+				currentQuery =
+					currentQuery === $winsQuery ? $usersQuery : $winsQuery
+			}}>Sort by {currentQuery === $winsQuery ? 'users' : 'wins'}</button
+		>
 	{/if}
 </div>
 
@@ -131,6 +156,10 @@
 	}
 	tr:nth-child(odd) td {
 		color: var(--color-text-light);
+	}
+	#scores-actions {
+		display: flex;
+		gap: 0.5rem;
 	}
 	.spinner {
 		position: absolute;
