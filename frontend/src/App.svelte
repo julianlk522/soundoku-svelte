@@ -1,23 +1,37 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
 	import {
+		loggedInUserStore,
 		selectedCellStore,
 		selectedCellWithNavigationStore,
 	} from './stores'
-	import type { Difficulty } from './lib/types'
 	import Board from './lib/components/Board.svelte'
 	import NumberSelect from './lib/components/NumberSelect.svelte'
-	import DifficultySelect from './lib/components/DifficultySelect.svelte'
 	import Tutorial from './lib/components/tutorial/Tutorial.svelte'
+	import Auth from './lib/components/Auth.svelte'
+	import UserInfo from './lib/components/UserInfo.svelte'
+	import DifficultySelect from './lib/components/DifficultySelect.svelte'
+	import type { DeviceType, Difficulty } from './lib/types'
 	import GameOverPopup from './lib/components/GameOverPopup.svelte'
+	import { formatSeconds } from './lib/utils/formatSeconds'
 	import { playAudio, playArpeggio } from './lib/utils/audio'
 	import { keys } from './lib/utils/keyboardNavigation'
+	import { getDeviceType } from './lib/utils/getDeviceType'
+
+	$: loggedIn = $loggedInUserStore.token !== undefined
+	let playingLocally = false
+	$: canProceedToDifficultySelect = loggedIn || playingLocally
+
+	//	determines animations to be shown in DifficultySelect
+	let deviceType: DeviceType = 'mobile'
 
 	let tutorial = true
+
 	let difficulty: Difficulty | undefined = undefined
 	let time = 0
 	let timer: NodeJS.Timeout
 	let errors = 0
+
 	let gameOver = false
 	let gameReset = false
 
@@ -39,14 +53,6 @@
 		clearInterval(timer)
 		playArpeggio()
 		gameOver = true
-	}
-
-	function formatSeconds(totalSeconds: number) {
-		const minutes = Math.floor(totalSeconds / 60)
-		const remainder = totalSeconds % 60
-		const seconds = remainder < 10 ? '0' + remainder : remainder
-
-		return `${minutes}: ${seconds}`
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -102,6 +108,7 @@
 	}
 
 	onMount(() => {
+		deviceType = getDeviceType()
 		clearInterval(timer)
 		time = 0
 	})
@@ -111,56 +118,76 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if !tutorial && !gameReset && difficulty}
-	<main class:game-over-fadeout={gameOver}>
-		<div class="leavesBg" />
-		<Board
-			{difficulty}
+<main>
+	{#if !tutorial && difficulty && !gameReset}
+		<div id="game-content" class:game-over-fadeout={gameOver}>
+			<div class="leavesBg" />
+			<Board
+				{difficulty}
+				on:play-audio={(event) =>
+					playCellTone(
+						event.detail.toneIndex,
+						event.detail.triggeredByNavigation,
+						event.detail.panning
+					)}
+				on:incorrect-guess={() => errors++}
+				on:win={handleWin}
+			/>
+			<NumberSelect
+				time={formatSeconds(time)}
+				{errors}
+				on:play-audio={(event) => playCellTone(event.detail)}
+			/>
+		</div>
+	{/if}
+
+	{#if tutorial}
+		<Tutorial
+			on:end-tutorial={() => {
+				tutorial = false
+			}}
 			on:play-audio={(event) =>
 				playCellTone(
 					event.detail.toneIndex,
 					event.detail.triggeredByNavigation,
 					event.detail.panning
 				)}
-			on:incorrect-guess={() => errors++}
-			on:win={handleWin}
 		/>
-		<NumberSelect
-			time={formatSeconds(time)}
+	{/if}
+
+	{#if !tutorial && !difficulty && canProceedToDifficultySelect}
+		<DifficultySelect
+			{deviceType}
+			on:difficulty-select={handleDifficultySelect}
+		/>
+	{/if}
+
+	{#if !tutorial && !canProceedToDifficultySelect}
+		<Auth on:enable-local-play={() => (playingLocally = true)} />
+	{/if}
+
+	{#if gameOver}
+		<GameOverPopup
+			victoryTime={formatSeconds(time)}
 			{errors}
-			on:play-audio={(event) => playCellTone(event.detail)}
+			{difficulty}
+			on:new-game={handleNewGame}
 		/>
-	</main>
-{/if}
+	{/if}
 
-{#if tutorial}
-	<Tutorial
-		on:end-tutorial={() => {
-			tutorial = false
-		}}
-		on:play-audio={(event) =>
-			playCellTone(
-				event.detail.toneIndex,
-				event.detail.triggeredByNavigation,
-				event.detail.panning
-			)}
-	/>
-{/if}
-
-{#if !tutorial && !difficulty}
-	<DifficultySelect on:difficulty-select={handleDifficultySelect} />
-{/if}
-
-{#if gameOver}
-	<GameOverPopup
-		victoryTime={formatSeconds(time)}
-		{errors}
-		on:new-game={handleNewGame}
-	/>
-{/if}
+	{#if loggedIn}
+		<UserInfo />
+	{/if}
+</main>
 
 <style>
 	main {
+		display: flex;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+	}
+	#game-content {
 		position: relative;
 		height: 100%;
 		width: 100%;
@@ -204,7 +231,7 @@
 	}
 
 	@media (min-width: 896px) {
-		main {
+		#game-content {
 			flex-direction: row;
 			justify-content: space-evenly;
 		}

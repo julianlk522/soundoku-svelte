@@ -1,0 +1,13 @@
+//  thanks to https://stackoverflow.com/a/15764763/19516096
+
+export function formatDate(date: Date) {
+	const year = date.getFullYear().toString().slice(-2)
+
+	let month = (1 + date.getMonth()).toString()
+	month = month.length > 1 ? month : '0' + month
+
+	let day = date.getDate().toString()
+	day = day.length > 1 ? day : '0' + day
+
+	return month + '-' + day + '-' + year
+}
