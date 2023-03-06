@@ -48,7 +48,7 @@
 			return (message = 'Error: could not resolve your score')
 		}
 
-		submitted = true //	todo: use this to prevent multiple submissions
+		submitted = true
 		lastWinScoreStore.set(response.score)
 		loggedInUserStore.update((user) => ({
 			...user,
@@ -79,7 +79,7 @@
 		</button>
 		<button
 			class="action-button"
-			disabled={submitted}
+			disabled={submitted || !$loggedInUserStore.name}
 			on:click|once={handleSubmit}
 		>
 			Submit Score?
@@ -88,11 +88,13 @@
 			class="action-button"
 			on:click={() => {
 				scoresShown = true
+				message = ''
 			}}
 		>
 			View Highscores?
 		</button>
 	</div>
+	<p class='message'>{message}</p>
 </div>
 
 <QueryClientProvider client={queryClient}>
@@ -187,6 +189,9 @@
 
 	.action-button:not(:disabled):active {
 		transform: scale(0.95);
+	}
+	.message {
+		margin-top: 2rem;
 	}
 
 	@media (min-width: 640px) {

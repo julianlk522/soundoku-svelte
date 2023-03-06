@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js'
 import type { AuthData, FormData, UserWinData } from './types'
 
-const API_URL = 'http://localhost:5000'
+const API_URL = 'https://soundoku-server.onrender.com'
 const jsonHeaders = {
 	'Content-Type': 'application/json',
 }
