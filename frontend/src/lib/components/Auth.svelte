@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import { loggedInUserStore } from '../../stores'
-
-	//  don't remove - these are called via eval()
 	import { createUser, loginUser } from '../data'
 
 	const dispatch = createEventDispatcher()
@@ -19,6 +17,10 @@
 	function formSubmit(event: SubmitEvent) {
 		const action = (event.submitter as HTMLButtonElement)
 			.value as AuthAction
+		if (!authActions.includes(action)) {
+			loading = false
+			return (message = "hey, don't modify the client-side code 😋")
+		}
 		return authenticate(event, action)
 	}
 
@@ -26,12 +28,12 @@
 		event.preventDefault()
 		loading = true
 
-		if (!authActions.includes(action)) {
-			loading = false
-			return (message = "hey, don't modify the client-side code 😋")
+		let response
+		if (action === 'create') {
+			response = await createUser({name, pass})
+		} else {
+			response = await loginUser({name, pass})
 		}
-
-		const response = await eval(`${action}User({name, pass})`)
 		loading = false
 
 		if (response.error) {
