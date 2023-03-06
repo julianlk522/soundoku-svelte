@@ -167,7 +167,7 @@
 		right: 2rem;
 		width: 25px;
 		height: 25px;
-		background-image: url('src/assets/loading.svg');
+		background-image: url('../../assets/loading.svg');
 		background-position: center;
 	}
 	.error {
