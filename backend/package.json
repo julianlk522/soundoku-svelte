@@ -8,7 +8,8 @@
 		"start": "node ./dist/server.js",
 		"client": "npm run dev --prefix ../frontend",
 		"dev": "concurrently \"npm run server\" \"npm run client\"",
-		"build": "tsc --build"
+		"tscbuild": "tsc --build",
+		"build": "npm i & npm run start"
 	},
 	"author": "Julian Lindsay-Kaufman",
 	"license": "ISC",
