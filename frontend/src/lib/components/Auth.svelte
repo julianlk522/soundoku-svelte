@@ -51,10 +51,13 @@
 </script>
 
 <div id="login-prompt">
-	<h2>
-		Please log in if you would like to submit your scores to the server and
-		compete against other players
-	</h2>
+		<div>
+			<h2>
+				Please log in if you would like to submit your scores to the server and
+				compete against other players
+			</h2>
+			<h3>(not required)</h3>
+		</div>
 
 	{#if loading}
 		<p>Loading...</p>
@@ -98,11 +101,12 @@
 </div>
 
 <style>
-	p,
-	h2,
-	input,
-	label,
-	button:hover,
+	button:not(:hover),
+	button:not(:focus) {
+		color: var(--color-text);
+	}
+	*,
+	button:hover, 
 	button:focus {
 		color: var(--color-text-light);
 	}
@@ -112,6 +116,12 @@
 		flex-direction: column;
 		justify-content: space-evenly;
 		align-items: center;
+	}
+	h2, h3 {
+		text-align: center;
+	}
+	h3 {
+		margin-top: 1rem;
 	}
 	.input-group {
 		min-width: 350px;
