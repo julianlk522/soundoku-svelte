@@ -63,7 +63,7 @@
 	function handleClick() {
 		selectedCellWithNavigationStore.set(false)
 		if ($tutorialSelectedCellStore !== index) {
-			tutorialSelectedCellStore.set(index)
+			return tutorialSelectedCellStore.set(index)
 		}
 		return handleSelect()
 		

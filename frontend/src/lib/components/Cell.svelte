@@ -69,7 +69,7 @@
 	function handleClick() {
 		selectedCellWithNavigationStore.set(false)
 		if ($selectedCellStore !== overallIndex) {
-			selectedCellStore.set(overallIndex)
+			return selectedCellStore.set(overallIndex)
 		}
 		return handleSelect()
 		
