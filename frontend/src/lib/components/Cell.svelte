@@ -75,6 +75,7 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === "Tab") return
 		if (!value && /\d/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
 		}
@@ -102,7 +103,7 @@
 	class:right-of-box-divider={rightOfBoxDivider}
 	bind:this={self}
 	on:click={handleClick}
-	on:keydown={handleKeydown}
+	on:keydown|preventDefault={handleKeydown}
 	in:fade={{
 		duration: 200,
 		delay: 50 + 10 * topLeftToBottomRightStagger(overallIndex, 9),
