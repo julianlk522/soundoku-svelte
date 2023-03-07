@@ -63,7 +63,7 @@
 			return navigateBox(event.key)
 		}
 		if (
-			/\d/.test(event.key) &&
+			/^[\d]+$/.test(event.key) &&
 			(indexesOfSlidesWithMockNumberSelects.indexOf(currSlide) !== -1 ||
 				indexesOfSlidesWithGuessableMockBoxes.indexOf(currSlide) !== -1)
 		) {

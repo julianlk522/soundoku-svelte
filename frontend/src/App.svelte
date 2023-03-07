@@ -57,7 +57,7 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (!difficulty || gameOver) return
-		if (/\d/.test(event.key)) {
+		if (/^[\d]+$/.test(event.key)) {
 			selectedCellWithNavigationStore.set(false)
 			playCellTone(parseInt(event.key) - 1)
 		}

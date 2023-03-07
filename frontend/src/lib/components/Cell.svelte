@@ -78,7 +78,7 @@
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.code === "Space") return handleSelect()
 		if (event.key === "Tab") return
-		if (!value && /\d/.test(event.key)) {
+		if (!value && /^[\d]+$/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
 		}
 	}

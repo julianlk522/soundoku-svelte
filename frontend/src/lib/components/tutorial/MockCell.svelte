@@ -55,7 +55,7 @@
 		if (event.key === 'Tab') {
 			return dispatch('select-back-button')
 		}
-		if (!filled && !correct && /\d/.test(event.key)) {
+		if (!filled && !correct && /^[\d]+$/.test(event.key)) {
 			tutorialSelectedNumberStore.set(+event.key)
 		}
 	}
