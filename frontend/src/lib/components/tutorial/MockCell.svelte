@@ -51,6 +51,7 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
+		if (event.code === "Space") return handleSelect()
 		if (event.key === 'Tab') {
 			return dispatch('select-back-button')
 		}
@@ -61,10 +62,11 @@
 
 	function handleClick() {
 		selectedCellWithNavigationStore.set(false)
-		if ($tutorialSelectedCellStore === index) {
-			return handleSelect()
+		if ($tutorialSelectedCellStore !== index) {
+			tutorialSelectedCellStore.set(index)
 		}
-		tutorialSelectedCellStore.set(index)
+		return handleSelect()
+		
 	}
 
 	const unsubTutorialSelectedCellStore = tutorialSelectedCellStore.subscribe(

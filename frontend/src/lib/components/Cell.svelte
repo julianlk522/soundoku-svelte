@@ -68,13 +68,15 @@
 
 	function handleClick() {
 		selectedCellWithNavigationStore.set(false)
-		if ($selectedCellStore === overallIndex) {
-			return handleSelect()
+		if ($selectedCellStore !== overallIndex) {
+			selectedCellStore.set(overallIndex)
 		}
-		selectedCellStore.set(overallIndex)
+		return handleSelect()
+		
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
+		if (event.code === "Space") return handleSelect()
 		if (event.key === "Tab") return
 		if (!value && /\d/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
