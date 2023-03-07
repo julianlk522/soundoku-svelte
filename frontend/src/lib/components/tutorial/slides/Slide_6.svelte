@@ -22,6 +22,7 @@
 	selectableCells={true}
 	guessable={true}
 	on:play-audio
+	on:select-back-button
 />
 
 <p>Errors: {$tutorialErrorsStore}</p>

@@ -8,7 +8,7 @@
 	clicking each cell you wish to select.
 </h3>
 
-<MockBox randomlyFilled={true} selectableCells={true} on:play-audio />
+<MockBox randomlyFilled={true} selectableCells={true} on:play-audio on:select-back-button />
 
 <h3>
 	Selecting a filled cell will play one of 9 tones; the tone you hear is

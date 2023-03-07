@@ -51,6 +51,9 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Tab') {
+			return dispatch('select-back-button')
+		}
 		if (!filled && !correct && /\d/.test(event.key)) {
 			tutorialSelectedNumberStore.set(+event.key)
 		}
@@ -109,7 +112,7 @@
 		class:cell-hue-quaternary={cellHueQuaternary || correct}
 		bind:this={self}
 		on:click|stopPropagation={handleClick}
-		on:keydown={handleKeydown}
+		on:keydown|preventDefault={handleKeydown}
 		in:fade={{
 			duration: 200,
 			easing: sineIn,

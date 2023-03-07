@@ -14,6 +14,7 @@
 	import { keys } from '../../utils/keyboardNavigation'
 	const dispatch = createEventDispatcher()
 
+	let backButton: HTMLButtonElement
 	let continueButton: HTMLButtonElement
 
 	const slides = [
@@ -132,6 +133,7 @@
 				triggeredByNavigation,
 			})
 		}}
+		on:select-back-button={() => backButton.focus()}
 	/>
 
 	<div id="tutorial-navigation-buttons">
@@ -142,6 +144,7 @@
 					currSlide--
 					focusContinueButtonIfNeeded()
 				}}
+				bind:this={backButton}
 			>
 				(P)
 			</button>

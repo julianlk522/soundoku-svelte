@@ -48,6 +48,7 @@
 			{flashFilled}
 			{guessable}
 			on:play-audio
+			on:select-back-button
 		/>
 	{/each}
 </div>

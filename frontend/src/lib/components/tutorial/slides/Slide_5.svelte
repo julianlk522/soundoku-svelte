@@ -16,6 +16,7 @@
 	selectableCells={true}
 	guessable={true}
 	on:play-audio
+	on:select-back-button
 />
 <MockNumberSelect on:play-audio />
 <p>Errors: {$tutorialErrorsStore}</p>
