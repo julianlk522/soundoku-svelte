@@ -11,6 +11,7 @@
 	import Slide_5 from './slides/Slide_5.svelte'
 	import Slide_6 from './slides/Slide_6.svelte'
 	import Slide_7 from './slides/Slide_7.svelte'
+	import Slide_8 from './slides/Slide_8.svelte'
 	import { keys } from '../../utils/keyboardNavigation'
 	const dispatch = createEventDispatcher()
 
@@ -25,6 +26,7 @@
 		Slide_5,
 		Slide_6,
 		Slide_7,
+		Slide_8,
 	]
 	let currSlide = 0
 	const slidesWithMockBoxes = [3, 5, 6]
