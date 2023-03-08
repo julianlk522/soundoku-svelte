@@ -150,25 +150,14 @@ function getNewAttackTime() {
 }
 
 export function playArpeggio() {
-	const arpeggioNotes = [1, 3, 5, 8]
+	const arpeggioNotes = [1, 3, 5, 8, 5, 3, 1]
 
 	let curr = 0
-	let ascending = true
 
 	const arpeggioInterval = setInterval(() => {
-		playAudio(arpeggioNotes[curr] - 1)
-
-		if (ascending) {
-			if (curr < arpeggioNotes.length - 1) {
-				curr++
-			} else if (curr === arpeggioNotes.length - 1) {
-				ascending = false
-				curr--
-			}
-		} else if (curr > 0) {
-			curr--
-		} else {
-			clearInterval(arpeggioInterval)
-		}
+		if (curr < arpeggioNotes.length) {
+			playAudio(arpeggioNotes[curr] - 1)
+			curr++
+		} else clearInterval(arpeggioInterval)
 	}, 200)
 }
