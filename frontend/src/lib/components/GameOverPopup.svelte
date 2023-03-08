@@ -68,7 +68,7 @@
 			{victoryTime}
 		</span>
 	</h3>
-	<p id="errors">(with {errors} errors)</p>
+	<p id="errors">(with {errors} {errors > 1 ? 'errors' : 'error'})</p>
 	<div id="action-buttons">
 		<button
 			class="action-button"
