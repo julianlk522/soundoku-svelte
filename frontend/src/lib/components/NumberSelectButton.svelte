@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onDestroy, createEventDispatcher } from 'svelte'
+	import { createEventDispatcher } from 'svelte'
 	import {
-		remainingCellsStore,
+		boardStore,
 		selectedCellFilledStore,
 		selectedNumberStore,
 	} from '../../stores'
@@ -10,10 +10,7 @@
 
 	export let value: number
 
-	let cellsRemaining = 81
-	const unsubRemainingCellStore = remainingCellsStore.subscribe(
-		(remaining) => (cellsRemaining = remaining)
-	)
+	let cellsRemaining = 81 - $boardStore.filter(cell => cell !== undefined).length
 
 	function handleNumberSelect(value: number) {
 		//	todo: don't run this during tutorial
@@ -23,8 +20,7 @@
 		if (cellsRemaining) dispatch('play-audio', value - 1)
 	}
 
-	onDestroy(unsubRemainingCellStore)
-</script>
+	</script>
 
 <button
 	class="selectionButton"

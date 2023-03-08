@@ -5,8 +5,8 @@
 		selectedCellStore,
 		selectedCellWithNavigationStore,
 		selectedNumberStore,
-		remainingCellsStore,
 		selectedCellFilledStore,
+		boardStore,
 	} from '../../../src/stores'
 	import Row from './Row.svelte'
 	import type { Difficulty } from '../types'
@@ -29,13 +29,9 @@
 	let rows: (number | undefined)[][] = []
 	let completedCells = new Set<number>()
 
-	selectedCellStore.set(undefined)
 	$: $selectedCellStore !== undefined &&
 		$selectedNumberStore &&
 		handleGuess($selectedNumberStore)
-	remainingCellsStore.set(81)
-	$: Number.isInteger($remainingCellsStore) &&
-		checkForWin($remainingCellsStore)
 
 	//  split board into groups of 9 and assign product to rows
 	function setRows() {
@@ -63,8 +59,7 @@
 				n--
 			}
 			checkedIndices.push(randomIndex)
-		}
-		remainingCellsStore.set(81 - desiredFilledNumsCount)
+		}	
 	}
 
 	function handleCellSelected(event: CustomEvent) {
@@ -97,22 +92,23 @@
 	}
 
 	function handleCorrectGuess() {
-		remainingCellsStore.update((n) => n - 1)
 		selectedCellFilledStore.set(true)
-		board.splice($selectedCellStore!, 1, solution[$selectedCellStore!])
-		setRows()
-		completedCells.add($selectedCellStore!)
-	}
 
-	function checkForWin(remaining: number) {
-		if (!remaining) {
+		board.splice($selectedCellStore!, 1, solution[$selectedCellStore!])
+		boardStore.set(board)
+
+		const filledCells = board.filter(cell => cell !== undefined).length
+		const remainingCells = 81 - filledCells
+		if (!remainingCells) {
 			dispatch('win')
 		}
+
+		completedCells.add($selectedCellStore!)
+		setRows()
 	}
 
 	onMount(() => {
 		board = makepuzzle()
-
 		//  solvepuzzle() relies on a range of 0-8 so it must be run before mapping values to 1-9
 		solution = solvepuzzle(board).map((num: number) => num + 1)
 
@@ -120,8 +116,8 @@
 			num != undefined ? num + 1 : undefined
 		)
 		fillCellsToDecreaseDifficulty()
-
 		setRows()
+		boardStore.set(board)
 	})
 </script>
 

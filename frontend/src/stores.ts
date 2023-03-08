@@ -1,10 +1,10 @@
 import { writable } from 'svelte/store'
 import type { User } from './lib/types'
 
+export const boardStore = writable<(number | undefined)[]>([])
 export const selectedCellStore = writable<undefined | number>(undefined)
 export const selectedCellWithNavigationStore = writable(false)
 export const selectedCellFilledStore = writable(false)
-export const remainingCellsStore = writable(81)
 export const selectedNumberStore = writable<undefined | number>(undefined)
 
 export const tutorialSelectedCellStore = writable(0)
