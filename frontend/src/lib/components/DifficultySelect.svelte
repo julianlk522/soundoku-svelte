@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte'
+	import { createEventDispatcher, onMount } from 'svelte'
 	import type { DeviceType, Difficulty } from '../types'
 	import { difficulties } from '../types'
 
@@ -31,6 +31,9 @@
 			document.getElementById('very-easy')?.focus()
 		}
 	}
+
+	onMount(() => document.getElementById('very-easy')?.focus())
+
 </script>
 
 <div id="difficulty-select-container">
@@ -121,8 +124,8 @@
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		grid-template-rows: repeat(3, minmax(0, 1fr));
 		grid-template-areas:
-			'very-easy . easy'
-			'. medium .'
+			'easy . medium'
+			'. very-easy .'
 			'hard . very-hard';
 	}
 
