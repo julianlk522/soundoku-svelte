@@ -58,34 +58,29 @@ const noteDuration = attackTime + decayTime + releaseTime
 export function playAudio(
 	toneIndex: number,
 	triggeredByNavigation: boolean = false,
-	panning?: number,
-	intonation?: 'staccato'
+	panning?: number
 ) {
 	waitTime = audioCtx.currentTime - currentTimeAtLastNote
-	const spammingNotes = waitTime <= minimumWaitTimeToThrottleAttack
 
 	//	let notes play their full duration by default, only cancel them prematurely if they are played rapidly
 
 	//	prevents cacophony from holding down one of the navigation buttons and triggering new notes at max speed
+	const spammingNotes = waitTime <= minimumWaitTimeToThrottleAttack
 
 	//	Todo: improve solution to prevent blips from rapidly navigating over some empty/some filled cells (2-3 in a row causes enough waitTime to exceed minimumWaitTimeToThrottleAttack)
 
-	if (spammingNotes) {
-		stopAudio()
-		getNewAttackTime()
-	} else if (waitTime > minimumWaitTimeToThrottleAttack) {
-		attackTime = minAttackTime
-	}
-
 	//	abort early if spamming notes via number keys: no reason to hear same tone more than once
 	//	when calling via navigation keys it may be nice to hear the last note that was triggered
-
-	if (!triggeredByNavigation && spammingNotes) {
-		return (currentTimeAtLastNote = audioCtx.currentTime)
-	}
+	if (spammingNotes) {
+		getNewAttackTime()
+		if (!triggeredByNavigation) {
+			return (currentTimeAtLastNote = audioCtx.currentTime)
+		}
+		stopAudio()
+	} else attackTime = minAttackTime
 
 	init(panning)
-	generateOscillation(toneIndex, intonation)
+	generateOscillation(toneIndex)
 
 	currentTimeAtLastNote = audioCtx.currentTime
 }
@@ -107,34 +102,27 @@ function init(panning?: number) {
 	gainNode.connect(audioCtx.destination)
 }
 
-function generateOscillation(toneIndex: number, intonation?: 'staccato') {
+function generateOscillation(toneIndex: number) {
 	oscillator.frequency.value = notes[toneIndex].frequency
 
 	const now = audioCtx.currentTime
-	const duration = intonation === 'staccato' ? noteDuration / 2 : noteDuration
-	const peakVolume = intonation === 'staccato' ? 0.75 : 0.5
+	const peakVolume = 0.5
 
 	//	silence tone immediately then fade in to prevent jumbled tones when rapidly playing notes
 	gainNode.gain.exponentialRampToValueAtTime(0.00001, now)
 
 	//	ramp to peakVolume over attackTime
-	gainNode.gain.exponentialRampToValueAtTime(
-		peakVolume,
-		now + (intonation === 'staccato' ? attackTime / 2 : attackTime)
-	)
+	gainNode.gain.exponentialRampToValueAtTime(peakVolume, now + attackTime)
 	//	drop to releaseVolume over decayTime
 	gainNode.gain.linearRampToValueAtTime(
 		releaseVolume,
-		now +
-			(intonation === 'staccato'
-				? (attackTime + decayTime) / 2
-				: attackTime + decayTime)
+		now + attackTime + decayTime
 	)
 	//	fade out over releaseTime
-	gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration)
+	gainNode.gain.exponentialRampToValueAtTime(0.0001, now + noteDuration)
 
 	oscillator.start(now)
-	oscillator.stop(now + duration)
+	oscillator.stop(now + noteDuration)
 }
 
 function stopAudio() {
@@ -168,7 +156,7 @@ export function playArpeggio() {
 	let ascending = true
 
 	const arpeggioInterval = setInterval(() => {
-		playAudio(arpeggioNotes[curr] - 1, undefined, undefined, 'staccato')
+		playAudio(arpeggioNotes[curr] - 1)
 
 		if (ascending) {
 			if (curr < arpeggioNotes.length - 1) {
