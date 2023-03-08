@@ -4,6 +4,7 @@
 		loggedInUserStore,
 		selectedCellStore,
 		selectedCellWithNavigationStore,
+		selectedNumberStore,
 	} from './stores'
 	import Board from './lib/components/Board.svelte'
 	import NumberSelect from './lib/components/NumberSelect.svelte'
@@ -41,6 +42,8 @@
 	}
 
 	function handleNewGame() {
+		selectedCellStore.set(undefined)
+		selectedNumberStore.set(undefined)
 		time = 0
 		timer = setInterval(() => time++, 1000)
 		errors = 0
