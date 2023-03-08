@@ -1,10 +1,11 @@
 <script lang="ts">
 	import {
+	boardStore,
 		selectedCellStore,
 		selectedCellWithNavigationStore,
 		selectedNumberStore,
 	} from '../../../src/stores'
-	import { onDestroy } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import { sineIn } from 'svelte/easing'
 	import { createEventDispatcher } from 'svelte'
@@ -58,6 +59,8 @@
 	$: relatedToSelectedIncorrect =
 		relatedToSelected && completed && value === $selectedNumberStore
 
+	$: columnFilled = $boardStore.some((_,index) => index % 9 === indexInRow && completedCells.has(index)) && $boardStore.filter((_, index) => index % 9 === indexInRow).every(cell => cell !== undefined)
+
 	function handleSelect() {
 		selectedNumberStore.set(undefined)
 		dispatch('select', {
@@ -83,6 +86,9 @@
 		}
 	}
 
+	onMount(() => {
+		self.style.setProperty('--filled-column-animation-delay', (rowIndex * 0.05).toString())
+	})
 	onDestroy(unsubSelectedCellStore)
 </script>
 
@@ -103,6 +109,7 @@
 	class:below-box-divider={belowBoxDivider}
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
+	class:column-filled={columnFilled}
 	bind:this={self}
 	on:click={handleClick}
 	on:keydown|preventDefault={handleKeydown}
@@ -150,6 +157,7 @@
 	.selected {
 		background-color: var(--color-primary);
 		color: var(--color-text-light);
+		border: none;
 	}
 
 	.selected:focus,
@@ -195,6 +203,19 @@
 
 	.right-of-box-divider {
 		border-left: none;
+	}
+
+	.column-filled {
+		animation: group-completed 1s ease-out calc(var(--filled-column-animation-delay) * 1s) 1;
+	}
+
+	@keyframes group-completed {
+		0% {
+			opacity: 0.25;
+		}
+		50% {
+			background-color: var(--color-secondary);
+		}
 	}
 
 	@media (min-width: 640px) {
