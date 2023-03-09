@@ -17,8 +17,6 @@
 	export let value: number | undefined = 0
 	$: empty = value === undefined
 
-	export let row: (number | undefined)[]
-
 	export let rowIndex = 0
 	$: aboveBoxDivider = rowIndex === 2 || rowIndex === 5
 	$: belowBoxDivider = rowIndex === 3 || rowIndex === 6
@@ -49,15 +47,11 @@
 		selectedCell !== undefined &&
 		!selected &&
 		//	same row
-		((selectedCell >= rowIndex * 9 && selectedCell < (rowIndex + 1) * 9) ||
-			// same col
-			selectedCell % 9 === indexInRow ||
-			//	same box
-			//	same box rows
-			(Math.floor(selectedCell / 27) === Math.floor(rowIndex / 3) &&
-				//	same box cols
-				Math.floor((selectedCell % 9) / 3) ===
-					Math.floor(indexInRow / 3)))
+		((selectedCell >= rowIndex * 9 && selectedCell < (rowIndex + 1) * 9) 
+		//	or same column
+		|| selectedCell % 9 === indexInRow
+		//	or same box
+		|| isSameBox(selectedCell))
 	$: relatedToSelectedIncorrect =
 		relatedToSelected && completed && value === $selectedNumberStore
 
@@ -65,6 +59,8 @@
 	//	reset classes after animations to prevent conflicts
 	const groupFilledAnimationDuration = 1400
 
+	export let row: (number | undefined)[]
+	
 	$: rowFilled = $boardStore.some((_,index) => Math.floor(index / 9) === rowIndex && completedCells.has(index)) && row.every(cell => cell !== undefined)
 	let applyRowFilledClass = false
 	$: rowFilled && (applyRowFilledClass = true)
@@ -76,14 +72,8 @@
 	$: columnFilled && setTimeout(() => applyColumnFilledClass = false, groupFilledAnimationDuration)
 
 	$: boxFilled = $boardStore.some((_, index) => {
-		return Math.floor(index / 27) === Math.floor(rowIndex / 3) &&
-				Math.floor((index % 9) / 3) ===
-					Math.floor(indexInRow / 3) && completedCells.has(index)
-	}) && $boardStore.filter((_, index) => {
-		return Math.floor(index / 27) === Math.floor(rowIndex / 3) &&
-				Math.floor((index % 9) / 3) ===
-					Math.floor(indexInRow / 3)
-	}).every(cell => cell !== undefined)
+		return isSameBox(index) && completedCells.has(index)
+	}) && $boardStore.filter((_, index) => isSameBox(index)).every(cell => cell !== undefined)
 	let applyBoxFilledClass = false
 	$: boxFilled && (applyBoxFilledClass = true)
 	$: boxFilled && setTimeout(() => applyBoxFilledClass = false, groupFilledAnimationDuration)
@@ -111,6 +101,13 @@
 		if (!value && /^[\d]+$/.test(event.key)) {
 			selectedNumberStore.set(+event.key)
 		}
+	}
+
+	function isSameBox(index: number) {
+		//	same box rows
+		return (Math.floor(index / 27) === Math.floor(rowIndex / 3) 
+		//	same box columns
+		&& Math.floor((index % 9) / 3) === Math.floor(indexInRow / 3))
 	}
 
 	onMount(() => {
