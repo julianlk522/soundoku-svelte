@@ -75,6 +75,19 @@
 	$: columnFilled && (applyColumnFilledClass = true)
 	$: columnFilled && setTimeout(() => applyColumnFilledClass = false, groupFilledAnimationDuration)
 
+	$: boxFilled = $boardStore.some((_, index) => {
+		return Math.floor(index / 27) === Math.floor(rowIndex / 3) &&
+				Math.floor((index % 9) / 3) ===
+					Math.floor(indexInRow / 3) && completedCells.has(index)
+	}) && $boardStore.filter((_, index) => {
+		return Math.floor(index / 27) === Math.floor(rowIndex / 3) &&
+				Math.floor((index % 9) / 3) ===
+					Math.floor(indexInRow / 3)
+	}).every(cell => cell !== undefined)
+	let applyBoxFilledClass = false
+	$: boxFilled && (applyBoxFilledClass = true)
+	$: boxFilled && setTimeout(() => applyBoxFilledClass = false, groupFilledAnimationDuration)
+
 	function handleSelect() {
 		selectedNumberStore.set(undefined)
 		dispatch('select', {
@@ -126,6 +139,7 @@
 	class:right-of-box-divider={rightOfBoxDivider}
 	class:row-filled={applyRowFilledClass}
 	class:column-filled={applyColumnFilledClass}
+	class:box-filled={applyBoxFilledClass}
 	bind:this={self}
 	on:click={handleClick}
 	on:keydown|preventDefault={handleKeydown}
@@ -221,11 +235,15 @@
 		border-left: none;
 	}
 
-	.row-filled {
+	.box-filled {
+		animation: group-completed 1s ease-out 0s 1;
+	}
+
+	.row-filled:not(.box-filled) {
 		animation: group-completed 1s ease-out calc(var(--filled-row-animation-delay) * 1s) 1;
 	}
 
-	.column-filled {
+	.column-filled:not(.box-filled) {
 		animation: group-completed 1s ease-out calc(var(--filled-column-animation-delay) * 1s) 1;
 	}
 
