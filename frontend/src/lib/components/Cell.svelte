@@ -17,6 +17,8 @@
 	export let value: number | undefined = 0
 	$: empty = value === undefined
 
+	export let row: (number | undefined)[]
+
 	export let rowIndex = 0
 	$: aboveBoxDivider = rowIndex === 2 || rowIndex === 5
 	$: belowBoxDivider = rowIndex === 3 || rowIndex === 6
@@ -40,8 +42,8 @@
 	$: selected = selectedCell === overallIndex
 	$: selected && handleSelect()
 	$: incorrect =
-		$selectedNumberStore &&
 		selectedCell === overallIndex &&
+		$selectedNumberStore &&
 		$selectedNumberStore !== value
 	$: relatedToSelected =
 		selectedCell !== undefined &&
@@ -59,7 +61,19 @@
 	$: relatedToSelectedIncorrect =
 		relatedToSelected && completed && value === $selectedNumberStore
 
+	//	1s animation duration + (0.05s * 8) max delay if cell at index 8 of local row/column/box
+	//	reset classes after animations to prevent conflicts
+	const groupFilledAnimationDuration = 1400
+
+	$: rowFilled = $boardStore.some((_,index) => Math.floor(index / 9) === rowIndex && completedCells.has(index)) && row.every(cell => cell !== undefined)
+	let applyRowFilledClass = false
+	$: rowFilled && (applyRowFilledClass = true)
+	$: rowFilled && setTimeout(() => applyRowFilledClass = false, groupFilledAnimationDuration)
+
 	$: columnFilled = $boardStore.some((_,index) => index % 9 === indexInRow && completedCells.has(index)) && $boardStore.filter((_, index) => index % 9 === indexInRow).every(cell => cell !== undefined)
+	let applyColumnFilledClass = false
+	$: columnFilled && (applyColumnFilledClass = true)
+	$: columnFilled && setTimeout(() => applyColumnFilledClass = false, groupFilledAnimationDuration)
 
 	function handleSelect() {
 		selectedNumberStore.set(undefined)
@@ -88,6 +102,7 @@
 
 	onMount(() => {
 		self.style.setProperty('--filled-column-animation-delay', (rowIndex * 0.05).toString())
+		self.style.setProperty('--filled-row-animation-delay', (indexInRow * 0.05).toString())
 	})
 	onDestroy(unsubSelectedCellStore)
 </script>
@@ -109,7 +124,8 @@
 	class:below-box-divider={belowBoxDivider}
 	class:left-of-box-divider={leftOfBoxDivider}
 	class:right-of-box-divider={rightOfBoxDivider}
-	class:column-filled={columnFilled}
+	class:row-filled={applyRowFilledClass}
+	class:column-filled={applyColumnFilledClass}
 	bind:this={self}
 	on:click={handleClick}
 	on:keydown|preventDefault={handleKeydown}
@@ -203,6 +219,10 @@
 
 	.right-of-box-divider {
 		border-left: none;
+	}
+
+	.row-filled {
+		animation: group-completed 1s ease-out calc(var(--filled-row-animation-delay) * 1s) 1;
 	}
 
 	.column-filled {

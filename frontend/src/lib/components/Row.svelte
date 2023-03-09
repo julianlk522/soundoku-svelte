@@ -8,7 +8,7 @@
 
 <div class="row">
 	{#each row as value, i}
-		<Cell {value} {rowIndex} indexInRow={i} {completedCells} on:select />
+		<Cell {value} {row} {rowIndex} indexInRow={i} {completedCells} on:select />
 	{/each}
 </div>
 
