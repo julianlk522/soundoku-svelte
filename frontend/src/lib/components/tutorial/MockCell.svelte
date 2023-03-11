@@ -37,6 +37,10 @@
 		!filled &&
 		$tutorialSelectedNumberStore &&
 		value !== $tutorialSelectedNumberStore
+	export let boxFilled: boolean | undefined
+	let applyBoxFilledClass = false
+	$: boxFilled && (applyBoxFilledClass = true)
+	$: boxFilled && setTimeout(() => applyBoxFilledClass = false, 1000)
 
 	function handleSelect() {
 		//	reset tutorialSelectedNumberStore after each new cell selected (prevent applying incorrect class after navigation)
@@ -79,7 +83,10 @@
 		tutorialSelectedNumberStore.subscribe((newNum) => {
 			if (!guessable || !selected || filled || newNum === undefined)
 				return
-			if (newNum === value) return (correct = true)
+			if (newNum === value) {
+				correct = true
+				return dispatch('correct-guess')
+			}
 			if (correct) return
 			tutorialErrorsStore.update((errors) => errors + 1)
 		})
@@ -112,6 +119,7 @@
 		class:cell-hue-secondary={activeCellInCycle}
 		class:cell-hue-tertiary={cellHueTertiary || incorrect}
 		class:cell-hue-quaternary={cellHueQuaternary || correct}
+		class:box-filled={applyBoxFilledClass}
 		bind:this={self}
 		on:click|stopPropagation={handleClick}
 		on:keydown|preventDefault={handleKeydown}
@@ -171,6 +179,10 @@
 			calc(var(--flash-filled-delay) * 1s) infinite;
 	}
 
+	.box-filled {
+		animation: box-completed 1s ease-out 0s 1;
+	}
+
 	@keyframes flash-filled {
 		0%,
 		100% {
@@ -185,9 +197,19 @@
 		}
 	}
 
+	@keyframes box-completed {
+		0% {
+			opacity: 0.25;
+		}
+		50% {
+			background-color: var(--color-secondary);
+		}
+	}
+
 	.selected {
 		background-color: var(--color-primary);
 		color: var(--color-text-light);
+		border: none;
 	}
 
 	.selected:focus {

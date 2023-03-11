@@ -21,9 +21,18 @@
 				(val) => val > Math.floor(Math.random() + 0.5) * val
 			)
 		)
+	let completedCellCount = randomlyFilled ? 0 : undefined
+	let boxFilled = randomlyFilled ? false : undefined
 
 	export let flashFilled: boolean = false
 	export let guessable: boolean = false
+
+	function checkForCompleteBox() {
+		completedCellCount!++
+		if (completedCellCount! + $tutorialRandomlyFilledCellsStore.length === 9) {
+			boxFilled = true
+		}
+	}
 
 	onMount(() => {
 		tutorialSelectedNumberStore.set(undefined)
@@ -41,14 +50,16 @@
 		<MockCell
 			{value}
 			cycles={cycles ? cycles : undefined}
-			activeCellInCycle={Number.isInteger(currentCycleIndex)
-				? i === currentCycleIndex
+			activeCellInCycle={currentCycleIndex !== undefined
+				? currentCycleIndex === i
 				: undefined}
 			selectable={selectableCells}
 			{flashFilled}
 			{guessable}
+			{boxFilled}
 			on:play-audio
 			on:select-back-button
+			on:correct-guess={checkForCompleteBox}
 		/>
 	{/each}
 </div>
