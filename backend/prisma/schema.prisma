@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  name        String @db.VarChar(32) @unique
+  total_score Int    @default(0)
+  hashed_pass String @db.VarChar(255)
+  wins        Win[]
+
+  @@index([name], map: "fk_users_name")
+}
+
+model Win {
+  win_id     Int             @id @default(autoincrement()) @db.UnsignedInt
+  name       String          @db.VarChar(32)
+  date       DateTime        @default(now()) @db.Timestamp(0)
+  difficulty wins_difficulty
+  score      Int
+  duration   Int?
+  errors     Int
+  player     User           @relation(fields: [name], references: [name], map: "fk_users_name")
+
+  @@index([name], map: "fk_users_name")
+}
+
+enum wins_difficulty {
+  very_easy @map("very easy")
+  easy
+  medium
+  hard
+  very_hard @map("very hard")
+}
