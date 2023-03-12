@@ -1,46 +1,41 @@
 import asyncHandler from 'express-async-handler'
-import pool from '../config/db'
+import { PrismaClient } from '@prisma/client'
 import { createHmac } from 'crypto'
 import { getWinScore } from './util/getWinScore'
 import { difficultyLevels } from './types'
 
-const asyncPool = pool.promise()
+const prisma = new PrismaClient()
 
 export const getWinsPages = asyncHandler(async (req, res) => {
-	const numPagesSql = `SELECT CEIL(COUNT(*) / 10) AS pages FROM wins;`
-
-	const rawPagesData = await asyncPool.query(numPagesSql)
-	const pagesData = rawPagesData[0][0]
-	const { pages } = pagesData
-
-	if (!pagesData || !pages) {
-		res.status(500)
-		throw new Error('Messed up while querying for total pages')
-	}
-
-	res.status(200).json(pagesData.pages)
+	const wins = await prisma.win.count()
+	const pages = Math.ceil(wins / 10)
+	res.status(200).json(pages)
 })
 
 export const getWins = asyncHandler(async (req, res) => {
 	const { page } = req.query
-	const start = page ? (+page - 1) * 10 : 0
+	const skip = page ? (+page - 1) * 10 : 0
 
-	const sql = `SET @row_num = 0; SELECT *FROM (SELECT q2.row_count + 1 - @row_num := @row_num + 1 AS row_num, name, date, difficulty, duration,errors, score FROM (SELECT row_count, name, date, difficulty, duration, errors, score FROM wins JOIN (SELECT COUNT(*) AS row_count FROM wins) q1) q2 ORDER BY score ASC, errors DESC, difficulty DESC, duration DESC) q3 ORDER BY row_num ASC LIMIT ${
-		start ? start + ', ' : ''
-	}10;`
-
-	const rawWinData = await asyncPool.query(sql)
-	const winData = rawWinData[0][1]
-	if (!winData.length) {
-		res.status(404)
-		throw new Error('Exceeded database boundary')
-	}
-	res.status(200).json({ scores: winData })
+	const wins = await prisma.win.findMany({
+		skip,
+		take: 10,
+		orderBy: {
+			score: 'desc',
+		},
+		select: {
+			name: true,
+			date: true,
+			difficulty: true,
+			duration: true,
+			errors: true,
+			score: true,
+		},
+	})
+	res.status(200).json(wins)
 })
 
 export const addWin = asyncHandler(async (req, res) => {
 	const { name, difficulty, duration, errors, hash: clientHash } = req.body
-
 	if (
 		!name ||
 		!difficulty ||
@@ -52,11 +47,13 @@ export const addWin = asyncHandler(async (req, res) => {
 		throw new Error('Not all fields provided')
 	}
 
+	//	check for valid difficulty level
 	if (!difficultyLevels.includes(difficulty)) {
 		res.status(400)
 		throw new Error('Invalid difficulty level supplied')
 	}
 
+	//	check hash against win secret
 	if (!process.env.WIN_SECRET) {
 		throw new Error('Could not access hash secret')
 	}
@@ -73,21 +70,37 @@ export const addWin = asyncHandler(async (req, res) => {
 		throw new Error('Failed hash check')
 	}
 
+	//	get score
 	const score = getWinScore(difficulty, duration, errors)
 
-	const insertWinData = `INSERT INTO wins (name, difficulty, duration, errors, score) VALUES ('${name}', '${difficulty}', '${duration}', '${errors}', '${score}');`
-
-	const updateTotalScore = `UPDATE users SET total_score = total_score + ${score} WHERE name = '${name}'`
-
+	//	add win to db
 	try {
-		await asyncPool.query(insertWinData)
-		await asyncPool.query(updateTotalScore)
-	} catch {
-		res.status(400)
-		throw new Error(
-			'Could not insert data. Supplied name probably is not a real user'
-		)
+		await prisma.win.create({
+			data: {
+				name,
+				difficulty: difficulty.split(' ').join('_'),
+				duration: +duration,
+				errors: +errors,
+				score: +score,
+			},
+		})
+
+		await prisma.user.update({
+			where: {
+				name,
+			},
+			data: {
+				total_score: {
+					increment: score,
+				},
+			},
+		})
+	} catch (error) {
+		res.status(500).json({
+			error: 'Something went wrong while logging your win. Sorry about that',
+		})
 	}
 
+	//	return new win data
 	res.status(201).json({ name, difficulty, duration, errors, score })
 })
