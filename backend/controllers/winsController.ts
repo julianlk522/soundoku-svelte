@@ -31,7 +31,10 @@ export const getWins = asyncHandler(async (req, res) => {
 			score: true,
 		},
 	})
-	res.status(200).json(wins)
+	const winsWithIndexes = wins.map((win, index) => {
+		return { row_num: index + skip + 1, ...win }
+	})
+	res.status(200).json(winsWithIndexes)
 })
 
 export const addWin = asyncHandler(async (req, res) => {
