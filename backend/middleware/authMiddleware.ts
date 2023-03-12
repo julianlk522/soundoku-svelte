@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import asyncHandler from 'express-async-handler'
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import pool from '../config/db'
+import { PrismaClient } from '@prisma/client'
 
-const asyncPool = pool.promise()
+const prisma = new PrismaClient()
 
 interface reqWithUserId extends Request {
 	user_id?: string
@@ -39,13 +39,15 @@ const protect = asyncHandler(async (req: reqWithUserId, res, next) => {
 				process.env.JWT_SECRET
 			) as jwtPayloadWithId
 
-			const userExists = await asyncPool.query(
-				`SELECT EXISTS (SELECT user_id FROM users WHERE user_id = \'${decoded.id}\');`
-			)
-
-			if (!Object.values(userExists[0][0])[0]) {
+			//	check if user exists
+			const user = await prisma.user.findFirst({
+				where: { user_id: +decoded.id },
+			})
+			if (!user) {
 				res.status(401)
-				throw new Error('User not found: not authorized')
+				throw new Error(
+					'Could not find user with given bearer token: not authorized'
+				)
 			}
 
 			req.user_id = decoded.id
