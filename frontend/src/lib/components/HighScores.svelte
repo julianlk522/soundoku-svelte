@@ -11,7 +11,7 @@
 
 	async function getWinsWithPageParam(pageParam = 1) {
 		let response = await getWins(pageParam)
-		return response.scores.map((score: Score) => beautifyScore(score))
+		return response.map((score: Score) => beautifyScore(score))
 	}
 
 	let page = 1
@@ -39,7 +39,7 @@
 		score.date = formatDate(new Date(score.date))
 		score.duration = formatSeconds(+score.duration)
 		score.difficulty = score.difficulty
-			.split(' ')
+			.split('_')
 			.map((s) => s.charAt(0).toUpperCase() + s.substring(1))
 			.join(' ') as Difficulty
 		return score
