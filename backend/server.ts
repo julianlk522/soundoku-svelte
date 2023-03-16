@@ -8,7 +8,7 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 //	connect to MySQL db
-pool.query('SELECT * FROM users LIMIT 1;', (err: any) => {
+pool.query('SELECT * FROM User LIMIT 1;', (err: any) => {
 	if (err) throw err
 	console.log('Queries are working!')
 })
