@@ -12,7 +12,7 @@ const router = express.Router()
 
 router.route('/').get(getUsers).post(addUser)
 router.route('/login').post(loginUser)
-router.route('/scores').get(getWinsByUser)
+router.route('/wins').get(getWinsByUser)
 router.route('/:name').get(protect, getUserScore)
 
 export default router
