@@ -54,7 +54,7 @@ export const getWinsPages = async () => {
 }
 
 export const getWinsByUser = async () => {
-	const response = await fetch(`${API_URL}/users/scores`)
+	const response = await fetch(`${API_URL}/users/wins`)
 	const data = await response.json()
 	return data
 }
